@@ -79,8 +79,8 @@
     decline: 'recusar', reject: 'recusar', mudo: 'mudo', mutar: 'mudo', mute: 'mudo', unmute: 'mudo', desmutar: 'mudo', silenciar: 'mudo',
     microfone: 'mudo', camera: 'camera', video: 'camera', webcam: 'camera', cam: 'camera', encerrar: 'encerrar', desligar: 'encerrar',
     sair: 'encerrar', end: 'encerrar', leave: 'encerrar', hangup: 'encerrar', endcall: 'encerrar', leavecall: 'encerrar' };
-  var APPS_CHAMADA = [['auto', tr('Automático (a chamada que estiver na frente)')], ['whatsapp', 'WhatsApp'], ['zoom', 'Zoom'], ['teams', 'Microsoft Teams'],
-    ['meet', 'Google Meet'], ['facetime', 'FaceTime'], ['webex', 'Webex'], ['discord', 'Discord'], ['slack', 'Slack']];
+  var APPS_CHAMADA = [['auto', tr('Automático (a reunião aberta)')], ['zoom', 'Zoom'], ['teams', 'Microsoft Teams'], ['meet', 'Google Meet'],
+    ['facetime', 'FaceTime'], ['webex', 'Webex'], ['discord', 'Discord'], ['slack', 'Slack']];
   function chamadaDe(b) { var c = ALIAS_CHAMADA[simples(ler(b, 'chamada') || '').replace(/[^a-z]/g, '')]; return CHAMADA.filter(function (x) { return x[0] === c; })[0] || CHAMADA[2]; }
   var ROTULO_PADRAO = { teclas: tr('Teclas'), texto: tr('Texto'), app: 'App', link: 'Link', atalho: tr('Atalho'), comando: tr('Comando'),
     applescript: 'Script', midia: tr('Mídia'), volume: 'Volume', microfone: tr('Microfone'), energia: tr('Energia'), pagina: tr('Página'), sequencia: tr('Sequência'), esperar: tr('Esperar') };
@@ -1524,19 +1524,17 @@
     var appAtual = String(ler(b, 'app') || 'auto').toLowerCase().replace(/[^a-z]/g, '');
     if (appAtual === 'microsoftteams' || appAtual === 'msteams') appAtual = 'teams';
     if (appAtual === 'googlemeet') appAtual = 'meet';
-    if (appAtual === 'whats' || appAtual === 'zap' || appAtual === 'wpp') appAtual = 'whatsapp';
+    if (!APPS_CHAMADA.some(function (a) { return a[0] === appAtual; })) appAtual = 'auto';
     var appSel = h('select', { class: 'campo', 'aria-label': tr('App da chamada') });
     APPS_CHAMADA.forEach(function (a) { appSel.appendChild(h('option', { value: a[0], text: a[1], selected: a[0] === appAtual })); });
     appSel.addEventListener('change', function () { mudar(function () { escrever(b, 'app', appSel.value === 'auto' ? null : appSel.value); }); });
     var notas = [];
     if (atual === 'atender' || atual === 'recusar') {
       notas.push(S.sistema === 'mac'
-        ? tr('No Mac, ligações do FaceTime, do iPhone (pela Continuidade) e do WhatsApp aparecem no celular com Atender e Recusar. Nos outros apps, o deck usa o atalho do app.')
+        ? tr('No Mac, chamadas do FaceTime e do iPhone (pela Continuidade) aparecem no celular com Atender e Recusar. Nos outros apps, o deck usa o atalho do app.')
         : tr('O deck traz o app para frente e aperta o atalho de atender dele (Zoom, Teams e Discord têm).'));
     }
-    if (appAtual === 'auto') notas.push(tr('No automático, o deck usa o app de chamada que estiver na frente no computador (WhatsApp, Zoom, Teams, Meet…); se nenhum estiver, a reunião aberta.'));
-    if (appAtual === 'whatsapp' && (atual === 'mudo' || atual === 'camera')) notas.push(tr('No WhatsApp, use durante a chamada: fora dela, o mesmo atalho silencia a conversa aberta.'));
-    if (appAtual === 'whatsapp' && (atual === 'atender' || atual === 'recusar')) notas.push(tr('O WhatsApp não tem atalho de atender: no Mac, a ligação aparece no celular com Atender e Recusar.'));
+    if (appAtual === 'auto') notas.push(tr('No automático, o deck usa a reunião aberta: Meet, Zoom, Teams, Webex ou FaceTime. Para Discord e Slack, escolha o app aqui.'));
     if (atual === 'mudo') notas.push(tr('Sem chamada aberta, este botão silencia o microfone do computador.'));
     if (atual === 'encerrar' && (appAtual === 'zoom' || appAtual === 'auto')) notas.push(tr('No Zoom, sair pede confirmação na tela.'));
     if (atual === 'encerrar' && appAtual === 'meet') notas.push(tr('No Meet, encerrar fecha a aba da reunião.'));

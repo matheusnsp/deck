@@ -93,7 +93,7 @@ Everything saves by itself to `config.json` (a copy of the previous one stays in
 | Power | shut down, restart, sleep, lock (with a second tap) | ✓ | ✓ | ✓⁵ |
 | Go to page | switches the page on the phone | ✓ | ✓ | ✓ |
 | Mode | Do Not Disturb, opens and closes apps, volume and a timer on the phone (section 5) | ✓⁶ | ✓⁶ | ✓⁶ |
-| Call | answer, decline, mute, camera and hang up in the call app — WhatsApp, Zoom, Teams, Meet… (section 5) | ✓ | ✓ | ✓⁷ |
+| Call | answer, decline, mute, camera and hang up in the meeting app (section 5) | ✓ | ✓ | ✓⁷ |
 
 ¹ on a Mac, with Safari, Chrome, Edge, Brave, Arc, Vivaldi or Opera; on Windows and Linux it opens a new tab ·
 ² needs `xdotool` (or `wtype` on Wayland) · ³ `playerctl` · ⁴ `pactl` or `wpctl` (included in most distros) · ⁵ `systemctl`/`loginctl` (systemd) ·
@@ -121,9 +121,9 @@ If you prefer editing `config.json` by hand you still can (the editor and the ph
 | Windows | Windows doesn't let programs turn it on: the mode does the rest and reminds you on the phone to turn it on with Win+N |
 | Linux | on GNOME, by itself |
 
-**Calls.** Answer, decline, mute, camera and hang up: the deck brings the call window to the front and presses the app's own shortcut — WhatsApp, Zoom, Teams, Meet, Webex, Discord and Slack. In automatic, it uses the call app that is in front on the computer and, if none is, the open meeting (Meet, Zoom, Teams, Webex or FaceTime). With no call open, mute silences the computer's microphone. On WhatsApp, mute (⌘⇧M / Ctrl+Shift+M) only works during the call — outside it, the same shortcut mutes the open chat — and there is no answer shortcut. On a Mac, FaceTime, iPhone and WhatsApp calls reach the phone with **Answer** and **Decline** when the deck has any Call button (it reads the Notification Center alert and WhatsApp's small call window — experimental, it may stop working if macOS or WhatsApp change that alert).
+**Calls.** Answer, decline, mute, camera and hang up: the deck brings the meeting window to the front and presses the app's own shortcut — Zoom, Teams, Meet, Webex, Discord and Slack. In automatic, it uses the open meeting (Meet, Zoom, Teams, Webex or FaceTime); for Discord and Slack, choose the app on the button. With no meeting open, mute silences the computer's microphone. On a Mac, FaceTime and iPhone calls reach the phone with **Answer** and **Decline** when the deck has any Call button (it reads the Notification Center alert — experimental, it may stop working if macOS changes that alert).
 
-In `config.json`: `{"tipo": "modo", "nao_perturbe": true, "minutos": 25, "volume": 30, "abrir": ["Notion", "gmail.com"], "fechar": ["WhatsApp"], "pagina": "DJ"}`, `{"tipo": "chamada", "chamada": "mudo", "app": "whatsapp"}` and, on a page, `"tipo": "player"` or `"oculta": true`.
+In `config.json`: `{"tipo": "modo", "nao_perturbe": true, "minutos": 25, "volume": 30, "abrir": ["Notion", "gmail.com"], "fechar": ["WhatsApp"], "pagina": "DJ"}`, `{"tipo": "chamada", "chamada": "mudo", "app": "zoom"}` and, on a page, `"tipo": "player"` or `"oculta": true`.
 
 ---
 

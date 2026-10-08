@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.0"
+VERSAO = "3.2.1"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -412,8 +412,8 @@ TEXTOS_EN = {
     "⏱ %s: tempo encerrado": "⏱ %s: time's up",
     "Atender pelo deck só funciona no Mac. Use o botão do app da chamada.": "Answering from the deck only works on a Mac. Use the call app's button.",
     "A chamada não está mais tocando.": "The call isn't ringing anymore.",
-    "Não achei a chamada: deixe a janela dela na frente no computador ou escolha o app no botão.":
-        "I couldn't find the call: bring its window to the front on the computer or choose the app on the button.",
+    "Não achei nenhuma reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime). Para Discord e Slack, escolha o app no botão.":
+        "I couldn't find an open meeting (Meet, Zoom, Teams, Webex or FaceTime). For Discord and Slack, choose the app on the button.",
     "O %s não tem atalho para “%s”.": "%s has no shortcut for “%s”.",
     "Não achei a janela do %s para mandar o atalho.": "I couldn't find the %s window to send the shortcut to.",
     "📞 Chamada chegando: %s": "📞 Incoming call: %s",
@@ -1105,93 +1105,65 @@ set sep to (ASCII character 31)
 set fim to (ASCII character 30)
 set saida to ""
 tell application "System Events"
-	set fontes to {}
-	if exists process "NotificationCenter" then set end of fontes to "NotificationCenter"
-	if exists process "WhatsApp" then set end of fontes to "WhatsApp"
-	repeat with fonte in fontes
-		set nomeFonte to fonte as text
-		tell process nomeFonte
-			repeat with w in windows
-				set olhar to true
-				if nomeFonte is "WhatsApp" then
+	if not (exists process "NotificationCenter") then return ""
+	tell process "NotificationCenter"
+		repeat with w in windows
+			try
+				repeat with e in (entire contents of w)
 					try
-						set tamanho to size of w
-						if ((item 1 of tamanho) * (item 2 of tamanho)) > 200000 then set olhar to false
-					end try
-				end if
-				if olhar then
-					try
-						repeat with e in (entire contents of w)
+						set papel to role of e
+						if papel is "AXButton" then
+							set d to ""
 							try
-								set papel to role of e
-								if papel is "AXButton" then
-									set d to ""
-									try
-										set d to description of e
-									end try
-									if d is missing value then set d to ""
-									set n to ""
-									try
-										set n to name of e
-									end try
-									if n is missing value then set n to ""
-									set saida to saida & "B" & sep & (d as text) & sep & (n as text) & fim
-								else if papel is "AXStaticText" then
-									set v to value of e
-									if v is not missing value then set saida to saida & "T" & sep & (v as text) & sep & fim
-								end if
+								set d to description of e
 							end try
-						end repeat
+							if d is missing value then set d to ""
+							set n to ""
+							try
+								set n to name of e
+							end try
+							if n is missing value then set n to ""
+							set saida to saida & "B" & sep & (d as text) & sep & (n as text) & fim
+						else if papel is "AXStaticText" then
+							set v to value of e
+							if v is not missing value then set saida to saida & "T" & sep & (v as text) & sep & fim
+						end if
 					end try
-					set saida to saida & "W" & sep & nomeFonte & sep & fim
-				end if
-			end repeat
-		end tell
-	end repeat
+				end repeat
+			end try
+			set saida to saida & "W" & sep & sep & fim
+		end repeat
+	end tell
 end tell
 return saida
 """
+
 SCRIPT_CLICAR_CHAMADA_MAC = """
 on run argv
 	set alvo to item 1 of argv
 	tell application "System Events"
-		set fontes to {}
-		if exists process "NotificationCenter" then set end of fontes to "NotificationCenter"
-		if exists process "WhatsApp" then set end of fontes to "WhatsApp"
-		repeat with fonte in fontes
-			set nomeFonte to fonte as text
-			tell process nomeFonte
-				repeat with w in windows
-					set olhar to true
-					if nomeFonte is "WhatsApp" then
-						try
-							set tamanho to size of w
-							if ((item 1 of tamanho) * (item 2 of tamanho)) > 200000 then set olhar to false
-						end try
-					end if
-					if olhar then
-						repeat with e in (entire contents of w)
+		tell process "NotificationCenter"
+			repeat with w in windows
+				repeat with e in (entire contents of w)
+					try
+						if role of e is "AXButton" then
+							set d to ""
 							try
-								if role of e is "AXButton" then
-									set d to ""
-									try
-										set d to description of e
-									end try
-									set n to ""
-									try
-										set n to name of e
-									end try
-									if d is alvo or n is alvo then
-										perform action "AXPress" of e
-										return "ok"
-									end if
-								end if
+								set d to description of e
 							end try
-						end repeat
-					end if
+							set n to ""
+							try
+								set n to name of e
+							end try
+							if d is alvo or n is alvo then
+								perform action "AXPress" of e
+								return "ok"
+							end if
+						end if
+					end try
 				end repeat
-			end tell
-		end repeat
+			end repeat
+		end tell
 	end tell
 	return "nao"
 end run
@@ -1212,7 +1184,6 @@ def ler_chamada_mac(saida):
         if not partes or not partes[0]:
             continue
         if partes[0] == "W":
-            janela["origem"] = partes[1].strip() if len(partes) > 1 else ""
             janelas.append(janela)
             janela = {"botoes": [], "textos": []}
         elif partes[0] == "B" and len(partes) >= 3:
@@ -1228,11 +1199,8 @@ def ler_chamada_mac(saida):
             continue
         recusar = next((b for b in j["botoes"] if _rotulo_de(b, ROTULOS_RECUSAR)), None)
         textos = [t for t in j["textos"] if len(t) < 120]
-        quem = textos[0] if textos else ""
-        detalhe = " · ".join(textos[1:3])
-        if j.get("origem") == "WhatsApp" and "whatsapp" not in (quem + " " + detalhe).lower():
-            detalhe = (detalhe + " · " if detalhe else "") + "WhatsApp"
-        return {"aceitar": aceitar, "recusar": recusar, "quem": quem, "detalhe": detalhe}
+        return {"aceitar": aceitar, "recusar": recusar, "quem": textos[0] if textos else "",
+                "detalhe": " · ".join(textos[1:3])}
     return None
 
 
@@ -1504,9 +1472,6 @@ class Sistema:
 
     def processos(self):
         return set()
-
-    def app_na_frente(self):
-        return None
 
     def ativar_processo(self, nomes):
         return False
@@ -1822,13 +1787,6 @@ class SistemaMac(Sistema):
 
     def processos(self):
         return {os.path.basename(x.strip()).lower() for x in _saida(["ps", "axo", "comm="]).splitlines() if x.strip()}
-
-    def app_na_frente(self):
-        try:
-            saida = osascript('tell application "System Events" to get name of first application process whose frontmost is true', espera=4)
-        except ErroAcao:
-            return None
-        return (saida or "").strip().lower() or None
 
     def ativar_processo(self, nomes):
         rodando = self.processos()
@@ -2382,25 +2340,6 @@ class SistemaWindows(Sistema):
                       "ForEach-Object { [void]$_.CloseMainWindow() } }" % lista)
             rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=12)
         return {"ok": True}
-
-    def app_na_frente(self):
-        try:
-            user32, kernel32 = ctypes.windll.user32, ctypes.windll.kernel32
-            pid = ctypes.c_ulong()
-            user32.GetWindowThreadProcessId(user32.GetForegroundWindow(), ctypes.byref(pid))
-            processo = kernel32.OpenProcess(0x1000, False, pid.value)
-            if not processo:
-                return None
-            try:
-                caminho = ctypes.create_unicode_buffer(1024)
-                tamanho = ctypes.c_ulong(1024)
-                if not kernel32.QueryFullProcessImageNameW(processo, 0, caminho, ctypes.byref(tamanho)):
-                    return None
-            finally:
-                kernel32.CloseHandle(processo)
-        except (AttributeError, OSError, ValueError):
-            return None
-        return re.sub(r"\.exe$", "", os.path.basename(caminho.value), flags=re.I).lower() or None
 
     def processos(self):
         nomes = set()
@@ -3286,19 +3225,6 @@ class SistemaLinux(Sistema):
     def processos(self):
         return {x.strip().lower() for x in _saida(["ps", "axo", "comm="]).splitlines() if x.strip()}
 
-    def app_na_frente(self):
-        if not shutil.which("xdotool"):
-            return None
-        codigo, saida, erro = rodar(["xdotool", "getactivewindow", "getwindowpid"], espera=3)
-        pid = (saida or "").strip()
-        if codigo or not pid.isdigit():
-            return None
-        try:
-            with open("/proc/%s/comm" % pid, encoding="utf-8") as f:
-                return f.read().strip().lower() or None
-        except OSError:
-            return None
-
     def ativar_processo(self, nomes):
         if not shutil.which("xdotool"):
             return False
@@ -3566,12 +3492,10 @@ APPS_CHAMADA = {
     "facetime": {"nome": "FaceTime", "mac": ["FaceTime"], "windows": [], "linux": []},
     "discord": {"nome": "Discord", "mac": ["Discord"], "windows": ["Discord"], "linux": ["Discord", "discord"]},
     "slack": {"nome": "Slack", "mac": ["Slack"], "windows": ["slack"], "linux": ["slack"]},
-    "whatsapp": {"nome": "WhatsApp", "mac": ["WhatsApp"], "windows": ["WhatsApp", "WhatsApp.Root"], "linux": []},
 }
 ALIAS_APP_CHAMADA = {"auto": "auto", "automatico": "auto", "qualquer": "auto", "zoom": "zoom", "zoomus": "zoom",
                      "teams": "teams", "microsoftteams": "teams", "msteams": "teams", "meet": "meet", "googlemeet": "meet",
-                     "webex": "webex", "facetime": "facetime", "discord": "discord", "slack": "slack",
-                     "whatsapp": "whatsapp", "whats": "whatsapp", "zap": "whatsapp", "wpp": "whatsapp"}
+                     "webex": "webex", "facetime": "facetime", "discord": "discord", "slack": "slack", "whatsapp": "auto"}
 ORDEM_CHAMADA = ["meet", "zoom", "teams", "webex", "facetime"]
 ATALHOS_CHAMADA = {
     "zoom": {"mac": {"mudo": "cmd+shift+a", "camera": "cmd+shift+v", "encerrar": "cmd+w", "atender": "ctrl+shift+a", "recusar": "ctrl+shift+d"},
@@ -3584,12 +3508,10 @@ ATALHOS_CHAMADA = {
     "discord": {"mac": {"mudo": "cmd+shift+m", "atender": "cmd+return", "recusar": "escape"},
                 "outros": {"mudo": "ctrl+shift+m", "atender": "ctrl+return", "recusar": "escape"}},
     "slack": {"mac": {"mudo": "cmd+shift+space", "camera": "cmd+shift+v"}, "outros": {"mudo": "ctrl+shift+space", "camera": "ctrl+shift+v"}},
-    "whatsapp": {"mac": {"mudo": "cmd+shift+m", "camera": "cmd+shift+o", "encerrar": "escape"},
-                 "outros": {"mudo": "ctrl+shift+m", "camera": "ctrl+shift+o", "encerrar": "escape"}},
 }
 NOMES_CHAMADA = {"atender": "Atender", "recusar": "Recusar", "mudo": "Mudo na chamada", "camera": "Câmera", "encerrar": "Encerrar"}
 ROTULOS_ACEITAR = ("accept", "aceitar", "atender", "answer", "aceptar", "contestar")
-ROTULOS_RECUSAR = ("decline", "recusar", "rejeitar", "rechazar", "reject", "ignorar", "ignore")
+ROTULOS_RECUSAR = ("decline", "recusar", "rejeitar", "rechazar", "reject")
 ATALHOS_FOCO_MAC = {True: ("Deck Foco Ligar", "Deck Focus On"), False: ("Deck Foco Desligar", "Deck Focus Off")}
 ALIAS_ENERGIA = {
     "desligar": "desligar", "shutdown": "desligar", "poweroff": "desligar", "apagar": "desligar", "off": "desligar",
@@ -6581,14 +6503,6 @@ class Estado:
 
     def app_de_chamada(self):
         s = self.sistema
-        try:
-            frente = s.app_na_frente()
-        except Exception:
-            frente = None
-        if frente:
-            for k, info in APPS_CHAMADA.items():
-                if frente in [n.lower() for n in info.get(SISTEMA, [])]:
-                    return k
         rodando = s.processos()
         for k in ORDEM_CHAMADA:
             if k == "meet":
@@ -6618,7 +6532,7 @@ class Estado:
             if not app:
                 if acao == "mudo":
                     return s.microfone()
-                raise ErroAcao(tr("Não achei a chamada: deixe a janela dela na frente no computador ou escolha o app no botão."))
+                raise ErroAcao(tr("Não achei nenhuma reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime). Para Discord e Slack, escolha o app no botão."))
         combo = ATALHOS_CHAMADA.get(app, {}).get("mac" if SISTEMA == "mac" else "outros", {}).get(acao)
         nome = APPS_CHAMADA[app]["nome"]
         if not combo:

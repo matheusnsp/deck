@@ -248,8 +248,8 @@
       <div class="recurso"><b>Pages</b><span>Favorites, Apps, Sites, Media… as many as you want, 4×2 up to 8×8.</span></div>
       <div class="recurso"><b>DJ</b><span>What's playing on the computer, with artwork and controls.</span></div>
       <div class="recurso"><b>Modes</b><span>Focus, work, study: one tap sets the computer up.</span></div>
-      <div class="recurso"><b>Calls</b><span>Mute, camera and leave in WhatsApp, Zoom, Teams and Meet.</span></div>
-      <div class="recurso"><b>Phone calls</b><span>Answer FaceTime, iPhone and WhatsApp calls from the phone (Mac).</span></div>
+      <div class="recurso"><b>Calls</b><span>Mute, camera and leave in Zoom, Teams and Meet.</span></div>
+      <div class="recurso"><b>Phone calls</b><span>Answer FaceTime and iPhone calls from the phone (Mac).</span></div>
     </div>
     <div class="figura"><img src="img/en/energia.webp" alt="Editor with the System page and the Shut down button panel" width="1200" height="781" loading="lazy"></div>
     <p class="legenda">The System page, with the power buttons and the edit panel open.</p>
@@ -261,7 +261,7 @@
     <div class="tres">
       <div class="cartao"><img class="foto" src="img/en/dj.webp" alt="DJ page on the phone: artwork, song name, time, back, pause, skip and volume" width="852" height="393" loading="lazy"><h3>DJ</h3><p>What's playing on the computer — Spotify, Music, YouTube, any player — with artwork or the video's thumbnail, time and controls. On the other pages, a mini player sits in the corner.</p></div>
       <div class="cartao"><img class="foto" src="img/en/foco.webp" alt="Focus mode timer on the phone, with 18:02 left and the Pause, +5 min and End buttons" width="852" height="393" loading="lazy"><h3>Modes</h3><p>Focus, Work, Study: one tap turns on Do Not Disturb, opens and closes apps, sets the volume and puts a big timer on the screen. Another tap undoes it.</p></div>
-      <div class="cartao"><img class="foto" src="img/en/chamada.webp" alt="Incoming call alert on the phone, with Decline and Answer, over the Calls page" width="852" height="393" loading="lazy"><h3>Calls</h3><p>Mute, camera and leave in WhatsApp, Zoom, Teams, Meet and others, without hunting for the window. On a Mac, FaceTime, iPhone and WhatsApp calls show up on the phone to answer.</p></div>
+      <div class="cartao"><img class="foto" src="img/en/chamada.webp" alt="Incoming call alert on the phone, with Decline and Answer, over the Calls page" width="852" height="393" loading="lazy"><h3>Calls</h3><p>Mute, camera and leave in Zoom, Teams, Meet and others, without hunting for the window. On a Mac, FaceTime and iPhone calls show up on the phone to answer.</p></div>
     </div>
   </section>
 
@@ -363,7 +363,7 @@
         <li><b>Power</b><span>Shut down, restart, sleep or lock. Asks for a second tap.</span></li>
         <li><b>Go to page</b><span>Jumps to another page on the phone.</span></li>
         <li><b>Mode</b><span>Turns on Do Not Disturb, opens and closes apps, sets the volume and shows a timer.</span></li>
-        <li><b>Call</b><span>Answer, decline, mute, camera and hang up in the call app (WhatsApp, Zoom, Teams, Meet…).</span></li>
+        <li><b>Call</b><span>Answer, decline, mute, camera and hang up in the meeting app.</span></li>
       </ul>
       <p>Drag the buttons to rearrange and the <b>pages</b> in the sidebar to change their order; the <b>eye</b> next to the name hides the page from the phone without deleting it. Click the card's <b>···</b> to edit (name, icon, color, confirmation) and use <b>Settings</b> for the theme, the grid size, the language and the QR code. <kbd>⌘Z</kbd> undoes. Everything is saved automatically to the folder's <code>config.json</code> file, which you can copy to another computer.</p>
       <div class="figura"><img src="img/en/editor-normal.webp" alt="Editor in the normal theme, without LEDs" width="1200" height="781" loading="lazy"></div>
@@ -388,7 +388,7 @@
       <ul>
         <li><b>DJ:</b> the DJ page shows full screen whatever is playing on the computer, with artwork, time, back, play/pause, skip and volume; tap the bar to jump to another point. YouTube videos show up with the video's thumbnail, in full (16:9). Any page can become a player in the editor (Page › Page type › Player).</li>
         <li><b>Modes:</b> Focus (25 min), Work, Study (50 min), Home and Break come ready. Each one can turn on Do Not Disturb, open apps and sites, close distractions, set the volume, switch page and show a timer. Another tap turns it off.</li>
-        <li><b>Calls:</b> the deck brings the call window to the front and presses the app's own shortcut (WhatsApp, Zoom, Teams, Meet, Webex, Discord, Slack). In automatic, it uses the call app that is in front on the computer. With no call open, mute silences the computer's microphone. On WhatsApp, mute only works during the call (outside it, the shortcut mutes the open chat).</li>
+        <li><b>Calls:</b> the deck brings the meeting window to the front and presses the app's own shortcut (Zoom, Teams, Meet, Webex, Discord, Slack). With no meeting open, mute silences the computer's microphone.</li>
       </ul>
       <table>
         <tr><th>Do Not Disturb</th><th>How it works</th></tr>
@@ -396,7 +396,7 @@
         <tr><td>Windows</td><td>Not possible from a program: the mode does the rest and reminds you on the phone to turn it on with <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
         <tr><td>Linux</td><td>On GNOME, by itself.</td></tr>
       </table>
-      <p>On a Mac, FaceTime, iPhone and WhatsApp calls reach the phone with <b>Answer</b> and <b>Decline</b> when the deck has any Call button. The deck reads the Notification Center alert and WhatsApp's small call window (with the Accessibility permission) — it's experimental and may fail if macOS or WhatsApp change that alert.</p>
+      <p>On a Mac, FaceTime and iPhone calls reach the phone with <b>Answer</b> and <b>Decline</b> when the deck has any Call button. The deck reads the Notification Center alert (with the Accessibility permission) — it's experimental and may fail if macOS changes that alert.</p>
     </section>
 
     <section id="g-aparelhos">
@@ -434,7 +434,7 @@
     <details><summary>Can I turn the computer on from the phone?</summary><p>A computer that's off has nothing running to receive the request, so no. Use the Sleep button: the computer wakes with any key and, on a Mac with an Apple TV or HomePod on the network, it wakes by itself when Deck opens on the phone.</p></details>
     <details><summary>Is it safe? Can someone on the same network press my buttons?</summary><p>Only whoever has the phone link, which carries a secret key — and even then only the buttons you created; the phone never sends free-form commands. The editor only opens on the computer itself. To cut someone off, just generate a new link.</p></details>
     <details><summary>Does it work with Spotify, YouTube and Apple Music?</summary><p>Yes. The DJ page shows whatever is playing on the computer, in any app or browser tab, with artwork (on YouTube, the video's thumbnail) and controls. On a Mac it uses the same "Now Playing" as Control Center; on Windows, the system media controls; on Linux, <code>playerctl</code>.</p></details>
-    <details><summary>Can I answer calls and mute the meeting from the phone?</summary><p>Yes. The Call buttons mute, toggle the camera and leave WhatsApp, Zoom, Teams, Meet, Webex, Discord and Slack. On a Mac, FaceTime, iPhone and WhatsApp calls show up on the phone with Answer and Decline (experimental).</p></details>
+    <details><summary>Can I answer calls and mute the meeting from the phone?</summary><p>Yes. The Call buttons mute, toggle the camera and leave Zoom, Teams, Meet, Webex, Discord and Slack. On a Mac, FaceTime and iPhone calls show up on the phone with Answer and Decline (experimental).</p></details>
     <details><summary>How much does it cost?</summary><p>Nothing. Download, unzip and use it.</p></details>
     <details><summary>Do I need to install anything?</summary><p>On Mac and Linux, no. On Windows, only Python (official installer, one click). Deck itself is a folder: to uninstall, delete it.</p></details>
     <details><summary>Is it in English?</summary><p>Yes. The editor, the phone and the guide follow the computer's language (Portuguese or English), and you can switch it in <b>Settings › Language</b>. Only the start files keep their Portuguese names: <code>Iniciar</code> means Start.</p></details>

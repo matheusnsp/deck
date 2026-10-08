@@ -93,7 +93,7 @@ Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-ant
 | Energia | desligar, reiniciar, suspender, bloquear (com segundo toque) | ✓ | ✓ | ✓⁵ |
 | Ir para página | troca a página no celular | ✓ | ✓ | ✓ |
 | Modo | Não perturbe, abre e fecha apps, volume e cronômetro no celular (seção 5) | ✓⁶ | ✓⁶ | ✓⁶ |
-| Chamada | atender, recusar, mudo, câmera e encerrar no app da chamada — WhatsApp, Zoom, Teams, Meet… (seção 5) | ✓ | ✓ | ✓⁷ |
+| Chamada | atender, recusar, mudo, câmera e encerrar no app da reunião (seção 5) | ✓ | ✓ | ✓⁷ |
 
 ¹ no Mac, com Safari, Chrome, Edge, Brave, Arc, Vivaldi ou Opera; no Windows e no Linux abre uma aba nova ·
 ² precisa do `xdotool` (ou `wtype` no Wayland) · ³ `playerctl` · ⁴ `pactl` ou `wpctl` (já vêm na maioria das distros) · ⁵ `systemctl`/`loginctl` (systemd) ·
@@ -121,9 +121,9 @@ Quem prefere editar o `config.json` na mão ainda pode (o editor e o celular aco
 | Windows | o Windows não deixa programas ligarem: o modo faz o resto e lembra no celular de ligar em Win+N |
 | Linux | no GNOME, sozinho |
 
-**Chamadas.** Atender, recusar, mudo, câmera e encerrar: o deck traz a janela da chamada para frente e aperta o atalho do próprio app — WhatsApp, Zoom, Teams, Meet, Webex, Discord e Slack. No automático ele usa o app de chamada que estiver na frente no computador e, se nenhum estiver, a reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime). Sem chamada aberta, o mudo silencia o microfone do computador. No WhatsApp, o mudo (⌘⇧M / Ctrl+Shift+M) só vale durante a chamada — fora dela, o mesmo atalho silencia a conversa aberta — e não existe atalho de atender. No Mac, ligações do FaceTime, do iPhone e do WhatsApp chegam no celular com **Atender** e **Recusar** quando o deck tem algum botão de Chamada (ele lê o aviso da Central de Notificações e a janelinha de ligação do WhatsApp — experimental, pode parar se o macOS ou o WhatsApp mudarem esse aviso).
+**Chamadas.** Atender, recusar, mudo, câmera e encerrar: o deck traz a janela da reunião para frente e aperta o atalho do próprio app — Zoom, Teams, Meet, Webex, Discord e Slack. No automático ele usa a reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime); para Discord e Slack, escolha o app no botão. Sem reunião aberta, o mudo silencia o microfone do computador. No Mac, ligações do FaceTime e do iPhone chegam no celular com **Atender** e **Recusar** quando o deck tem algum botão de Chamada (ele lê o aviso da Central de Notificações — experimental, pode parar se o macOS mudar esse aviso).
 
-No `config.json`: `{"tipo": "modo", "nao_perturbe": true, "minutos": 25, "volume": 30, "abrir": ["Notion", "gmail.com"], "fechar": ["WhatsApp"], "pagina": "DJ"}`, `{"tipo": "chamada", "chamada": "mudo", "app": "whatsapp"}` e, numa página, `"tipo": "player"` ou `"oculta": true`.
+No `config.json`: `{"tipo": "modo", "nao_perturbe": true, "minutos": 25, "volume": 30, "abrir": ["Notion", "gmail.com"], "fechar": ["WhatsApp"], "pagina": "DJ"}`, `{"tipo": "chamada", "chamada": "mudo", "app": "zoom"}` e, numa página, `"tipo": "player"` ou `"oculta": true`.
 
 ---
 
