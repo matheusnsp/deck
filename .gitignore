@@ -1,0 +1,10 @@
+.DS_Store
+__pycache__/
+*.pyc
+deck/config.local.json
+deck/.config-anterior.json
+deck/icones/*
+!deck/icones/.gitkeep
+deck/.deck-dados/
+deck/.deck-cache/
+deck/.token

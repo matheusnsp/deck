@@ -1,0 +1,26 @@
+{
+  "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/deck.zip",
+      "headers": [
+        { "key": "Content-Disposition", "value": "attachment; filename=\"deck.zip\"" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    },
+    {
+      "source": "/instalar.sh",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    },
+    {
+      "source": "/instalar-windows.ps1",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    }
+  ]
+}

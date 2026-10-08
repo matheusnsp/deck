@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Como usar o Deck</title>
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<style>
+  :root {
+    --fundo: #04060a;
+    --tecla: #0f131a;
+    --vidro: #171d27;
+    --borda: #222a36;
+    --papel: #f3f5f8;
+    --texto: #c6cdd8;
+    --apagado: #8b93a1;
+    --azul: #3b82f6;
+    --verde: #22c55e;
+    --ambar: #f59e0b;
+    --vermelho: #ef4444;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Inter, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: #93c5fd; }
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 24px;
+    border-bottom: 1px solid #161c26;
+    background: rgba(4, 6, 10, .86);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .topo img { width: 32px; height: 32px; border-radius: 9px; }
+  .topo b { color: var(--papel); font-size: 16px; }
+  .topo nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .topo nav a { padding: 7px 11px; border-radius: 999px; color: var(--apagado); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .topo nav a:hover { background: var(--vidro); color: var(--papel); }
+  .topo nav a.destaque { background: var(--azul); color: #fff; }
+  main { width: min(920px, 100%); margin: 0 auto; padding: 48px 24px 90px; }
+  h1 { margin: 0; font-size: clamp(36px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--papel); }
+  .lead { margin: 14px 0 0; max-width: 60ch; color: var(--apagado); font-size: 19px; }
+  .trilha { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 30px; }
+  .trilha a {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    background: var(--tecla);
+    color: var(--papel);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .trilha a small { color: var(--apagado); font-weight: 500; font-size: 13px; }
+  .trilha a:hover { border-color: var(--azul); }
+  section { margin-top: 64px; scroll-margin-top: 80px; }
+  h2 { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; font-size: 28px; font-weight: 700; letter-spacing: -0.015em; color: var(--papel); }
+  h2 .n { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: rgba(59, 130, 246, .14); color: #93c5fd; font-size: 17px; }
+  h3 { margin: 26px 0 8px; font-size: 18px; font-weight: 700; color: var(--papel); }
+  p { margin: 0 0 12px; }
+  ol, ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin: 6px 0; }
+  li::marker { color: var(--apagado); }
+  b { color: var(--papel); font-weight: 600; }
+  code, kbd { padding: 2px 6px; border-radius: 6px; background: var(--vidro); color: var(--papel); font: 500 .92em ui-monospace, "SF Mono", Consolas, Menlo, monospace; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 15px; }
+  th, td { padding: 11px 12px; border-bottom: 1px solid #161c26; text-align: left; vertical-align: top; }
+  th { color: var(--apagado); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  td:first-child { color: var(--papel); font-weight: 600; white-space: nowrap; }
+  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 14px 0 18px; }
+  .cartao { padding: 16px 18px; border: 1px solid var(--borda); border-radius: 16px; background: var(--tecla); }
+  .cartao b { display: block; margin-bottom: 6px; font-size: 16px; }
+  .cartao p { margin: 0; color: var(--apagado); font-size: 14.5px; }
+  .nota { padding: 14px 18px; border-radius: 14px; background: rgba(59, 130, 246, .1); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, .35); color: var(--papel); font-size: 15px; }
+  .nota.aviso { background: rgba(245, 158, 11, .1); box-shadow: inset 0 0 0 1px rgba(245, 158, 11, .4); }
+  .nota p:last-child { margin: 0; }
+  .tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 18px; margin: 8px 0 16px; padding: 0; list-style: none; }
+  .tipos li { margin: 0; padding: 8px 0; border-bottom: 1px solid #161c26; font-size: 15px; }
+  .tipos li b { display: block; }
+  .tipos li span { color: var(--apagado); font-size: 14px; }
+  .rodape { margin-top: 70px; padding-top: 22px; border-top: 1px solid #161c26; color: var(--apagado); font-size: 14px; }
+  @media (max-width: 640px) {
+    .topo { padding: 10px 14px; }
+    .topo b { display: none; }
+    main { padding: 32px 16px 70px; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<header class="topo">
+  <img src="icon-192.png" alt="">
+  <b>Como usar o Deck</b>
+  <nav aria-label="Seções">
+    <a href="#baixar">Baixar</a>
+    <a href="#ligar">Ligar</a>
+    <a href="#conectar">Conectar</a>
+    <a href="#botoes">Botões</a>
+    <a href="#celular">Celular</a>
+    <a href="#aparelhos">Aparelhos</a>
+    <a href="#problemas">Problemas</a>
+    <a href="/editar" class="destaque">Abrir o editor →</a>
+  </nav>
+</header>
+<main>
+  <h1>Do download ao primeiro botão.</h1>
+  <p class="lead">O Deck transforma qualquer celular num painel de botões para o seu computador. Funciona em Mac, Windows e Linux; o painel abre em iPhone, Android, tablet ou em outro computador. Este guia leva você do zero ao uso.</p>
+  <div class="trilha">
+    <a href="#baixar"><span>1 · Baixar</span><small>2 minutos</small></a>
+    <a href="#ligar"><span>2 · Ligar no computador</span><small>duplo clique</small></a>
+    <a href="#conectar"><span>3 · Conectar o celular</span><small>QR code</small></a>
+    <a href="#botoes"><span>4 · Montar os botões</span><small>no editor</small></a>
+    <a href="#celular"><span>5 · Usar no celular</span><small>deitado, como app</small></a>
+  </div>
+
+  <section id="baixar">
+    <h2><span class="n">1</span>Baixar</h2>
+    <ol>
+      <li>No Mac e no Linux, o jeito mais fácil é a <b>linha do Terminal</b> que está no site do Deck: ela cria a pasta <code>Deck</code> na sua pasta pessoal, já liberada pelo sistema, e liga o deck. Rodar a mesma linha de novo atualiza o Deck sem perder seus botões.</li>
+      <li>Ou baixe o arquivo <b>deck.zip</b> e descompacte numa pasta sua — por exemplo <code>Documentos/Deck</code>. É só isso: nada é instalado no sistema, e para desinstalar basta apagar a pasta.</li>
+      <li>Confira se a pasta tem <code>server.py</code>, a pasta <code>web</code> e os arquivos de iniciar (<code>Iniciar no Mac.command</code>, <code>Iniciar no Windows.bat</code>, <code>iniciar-linux.sh</code>).</li>
+    </ol>
+    <table>
+      <tr><th>Computador</th><th>Precisa de</th></tr>
+      <tr><td>Mac</td><td>Nada. Se na primeira vez o Mac pedir para instalar as "ferramentas de linha de comando", aceite (é o Python que já vem com ele).</td></tr>
+      <tr><td>Windows</td><td>Python 3 — baixe em <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a> e, no instalador, marque <b>Add python.exe to PATH</b>.</td></tr>
+      <tr><td>Linux</td><td>Python 3 (já vem em praticamente todas as distribuições).</td></tr>
+    </table>
+  </section>
+
+  <section id="ligar">
+    <h2><span class="n">2</span>Ligar no computador</h2>
+    <table>
+      <tr><th>Computador</th><th>Como ligar</th></tr>
+      <tr><td>Mac</td><td>Duplo clique em <code>Iniciar no Mac.command</code>. Se instalou pela linha do Terminal do site, abre direto. Se baixou o zip, na primeira vez o macOS bloqueia ("A Apple não pôde verificar…"): clique em <b>OK</b>, vá em <b>Ajustes do Sistema › Privacidade e Segurança</b>, role até o fim e clique em <b>Abrir Mesmo Assim</b> — uma vez só. No macOS 14 ou anterior, botão direito › <b>Abrir</b>. Sem aviso nenhum: Terminal na pasta e <code>python3 server.py</code>.</td></tr>
+      <tr><td>Windows</td><td>Duplo clique em <code>Iniciar no Windows.bat</code>. Se o Windows perguntar se quer mesmo executar, desmarque <b>Sempre perguntar antes de abrir este arquivo</b> e clique em <b>Executar</b> (ou <b>Mais informações › Executar assim mesmo</b>) — assim ele não pergunta de novo. Se o Firewall perguntar, <b>Permitir acesso</b> (redes privadas).</td></tr>
+      <tr><td>Linux</td><td>Na pasta, rode <code>./iniciar-linux.sh</code> (ou <code>python3 server.py</code>).</td></tr>
+    </table>
+    <p>Abre uma janela de terminal com o endereço do deck e, em seguida, o <b>editor</b> no navegador (<code>http://localhost:8787/editar</code>). Deixe a janela do terminal aberta enquanto usa: é ela que está rodando o deck. Para desligar, feche a janela ou aperte <kbd>Ctrl</kbd>+<kbd>C</kbd> nela.</p>
+    <h3>Permissões (só na primeira vez)</h3>
+    <ul>
+      <li><b>Mac:</b> para botões que apertam teclas, o macOS pede <b>Acessibilidade</b> (Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ligue o Terminal). Para ver as abas abertas do navegador, pede <b>Automação</b>. Se o Firewall do Mac estiver ligado, clique em <b>Permitir</b> quando ele perguntar sobre o Python.</li>
+      <li><b>Windows:</b> só o aviso do Firewall acima.</li>
+      <li><b>Linux:</b> no Wayland, teclas e texto usam <code>wtype</code> ou <code>ydotool</code>; no X11, <code>xdotool</code>. O deck avisa no terminal se faltar algum.</li>
+    </ul>
+    <div class="nota"><p>Quer o editor como um app com janela própria? No Safari: <b>Arquivo › Adicionar ao Dock</b>. No Chrome ou Edge: menu <b>⋮ › Transmitir, salvar e compartilhar › Instalar página como app</b>.</p></div>
+  </section>
+
+  <section id="conectar">
+    <h2><span class="n">3</span>Conectar o celular</h2>
+    <p>No editor, clique em <b>Conectar celular</b>. Aparece um QR code: abra a <b>câmera</b> do celular, aponte e toque no link. Depois salve na tela inicial para abrir como app — <b>iPhone:</b> Compartilhar › Adicionar à Tela de Início; <b>Android:</b> menu ⋮ › Adicionar à tela inicial.</p>
+    <p>O deck precisa só de um caminho de rede entre o celular e o computador. Há quatro, e a janela Conectar celular tem uma aba para cada um:</p>
+    <div class="cartoes">
+      <div class="cartao"><b>Wi-Fi</b><p>Os dois na mesma rede. É o normal — só escanear. No Mac o link vem <b>pelo nome</b> (<code>SeuMac.local</code>), que não muda quando o roteador troca o IP; Android não abre por nome, então nele use <b>Pelo IP</b>.</p></div>
+      <div class="cartao"><b>Cabo USB</b><p>Na mesa, sem depender de roteador: zero atraso e carrega o celular. iPhone: Ajustes › <b>Hotspot Pessoal</b> › Permitir que Outros se Conectem, e ligue o cabo. Android: <b>Ancoragem USB</b> (no Mac, só Android 14 ou mais novo).</p></div>
+      <div class="cartao"><b>Bluetooth</b><p>Sem cabo e sem roteador. Hotspot Pessoal (ou Ancoragem Bluetooth) ligado, pareie os dois e, no Mac, menu Bluetooth › celular › <b>Conectar à Rede</b>. Mais lento, mas sobra para apertar botões.</p></div>
+      <div class="cartao"><b>Rede do computador</b><p>Quando não há Wi-Fi nenhum, ou o plano do celular não tem hotspot. Mac: <b>Compartilhamento de Internet</b> por Bluetooth PAN. Windows: <b>Ponto de acesso móvel</b>. Linux: ponto de acesso Wi-Fi.</p></div>
+    </div>
+    <p>Em cada aba o deck detecta sozinho quando o celular aparece por aquele caminho e mostra o QR code certo. Cabo USB e Bluetooth usam o Hotspot Pessoal do celular, que precisa estar liberado no plano da operadora (quase todos liberam).</p>
+    <div class="nota aviso"><p>Com o cabo ligado, o computador pode passar a usar a internet do celular. No Mac: Ajustes do Sistema › Rede › ⋯ › <b>Definir Ordem de Serviço</b> e deixe o Wi-Fi acima de "iPhone USB".</p></div>
+  </section>
+
+  <section id="botoes">
+    <h2><span class="n">4</span>Montar os botões</h2>
+    <p>Tudo é feito no editor, no computador; o celular espelha na hora. Cada <b>página</b> da lateral é uma tela do celular (4×2 por padrão). Clique num espaço vazio para criar um botão, ou use <b>＋ Apps</b> e <b>＋ Sites</b> no topo.</p>
+    <ul class="tipos">
+      <li><b>App</b><span>Escolha na lista dos programas instalados — o botão ganha o mesmo ícone do app.</span></li>
+      <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial do site.</span></li>
+      <li><b>Atalho de teclado</b><span>Grave uma combinação, como ⌘C ou Ctrl+Z, para apertar de longe.</span></li>
+      <li><b>Texto</b><span>Digita uma frase pronta onde o cursor estiver.</span></li>
+      <li><b>Mídia e Volume</b><span>Tocar/pausar, pular, subir, baixar, mudo.</span></li>
+      <li><b>Microfone</b><span>Liga e desliga o mudo; a luz acende no celular enquanto estiver mudo.</span></li>
+      <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear o computador. Pede um segundo toque por segurança.</span></li>
+      <li><b>Ir para página</b><span>Pula para outra página do celular.</span></li>
+    </ul>
+    <p>Arraste os botões para reorganizar, clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> (engrenagem) para o tema, o tamanho da grade e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta — que você pode copiar para outro computador.</p>
+    <div class="nota"><p><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular.</p></div>
+  </section>
+
+  <section id="celular">
+    <h2><span class="n">5</span>Usar no celular</h2>
+    <ul>
+      <li>Abra pelo ícone da tela inicial, <b>deitado</b>: é assim que a grade 4×2 encaixa.</li>
+      <li><b>Deslize</b> para o lado para trocar de página.</li>
+      <li>Toque num botão e ele executa na hora; o card pisca em branco quando deu certo e em vermelho quando falhou (com a explicação). Botões com confirmação pedem um <b>segundo toque</b>.</li>
+      <li>Botões de estado (mudo, microfone) ficam com a luz acesa enquanto estiverem ativos.</li>
+      <li>A tela não apaga enquanto o app está aberto. No Android, use o botão de <b>tela cheia</b> no canto para esconder as barras.</li>
+      <li>Mudou algo no editor? O celular atualiza sozinho em até dois segundos.</li>
+    </ul>
+  </section>
+
+  <section id="aparelhos">
+    <h2><span class="n">6</span>Outros aparelhos</h2>
+    <table>
+      <tr><th>Aparelho</th><th>Como</th></tr>
+      <tr><td>iPhone / iPad</td><td>Câmera no QR code › link › Compartilhar › Adicionar à Tela de Início. Pelo nome ou pelo IP, os dois funcionam.</td></tr>
+      <tr><td>Samsung / Android</td><td>Câmera (ou o app de QR) › link no Chrome › ⋮ › Adicionar à tela inicial. Use o link <b>Pelo IP</b>. Para cabo USB, a Ancoragem USB funciona direto no Windows e no Linux; no Mac, a partir do Android 14.</td></tr>
+      <tr><td>Tablet</td><td>Igual ao celular. Com mais tela, aumente a grade em Configurações (até 8×8).</td></tr>
+      <tr><td>Outro computador</td><td>Abra o link do celular (botão <b>Copiar link</b>) em qualquer navegador — vira um painel de botões no segundo computador.</td></tr>
+      <tr><td>Vários ao mesmo tempo</td><td>Pode: todos usam o mesmo link e veem os mesmos botões.</td></tr>
+    </table>
+  </section>
+
+  <section id="problemas">
+    <h2><span class="n">7</span>Se algo der errado</h2>
+    <ul>
+      <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo. Para não repetir, use o link pelo nome (padrão no Mac) ou o cabo USB.</li>
+      <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
+      <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só), ou instale pela linha do Terminal do site, que não tem esse aviso.</li>
+      <li><b>Botão de teclas não faz nada no Mac:</b> falta a permissão de Acessibilidade para o Terminal (seção 2).</li>
+      <li><b>Abas abertas não aparecem no Mac:</b> falta a permissão de Automação para o Safari/Chrome.</li>
+      <li><b>"A porta já está em uso":</b> o deck já está aberto em outra janela. Feche a outra, ou ligue com <code>--porta 8788</code>.</li>
+      <li><b>Perdeu o celular ou quer desconectar todos:</b> ligue com <code>--novo-link</code> e escaneie de novo.</li>
+    </ul>
+  </section>
+
+  <section id="seguranca">
+    <h2><span class="n">8</span>Segurança</h2>
+    <p>O editor e o QR code só abrem no próprio computador. Só quem tem o link do celular (com a chave secreta dentro) aperta os botões — e mesmo assim só os botões que você criou; o celular nunca manda comandos livres. Nada é enviado para fora: favoritos, histórico e endereços ficam no computador. Use em rede de confiança: a conexão local não é criptografada.</p>
+  </section>
+
+  <p class="rodape">Deck · documentação também no arquivo README.md da pasta.</p>
+</main>
+</body>
+</html>

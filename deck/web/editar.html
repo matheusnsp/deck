@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-BR" data-tema="preto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck — escolher os botões</title>
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="teclas.css">
+<link rel="stylesheet" href="conectar.css">
+<link rel="stylesheet" href="editar.css">
+</head>
+<body>
+<div class="janela">
+  <header class="barra">
+    <div class="marca">
+      <span class="logo-tile" aria-hidden="true"></span>
+      <input id="nome-deck" class="nome-deck" maxlength="40" spellcheck="false" autocomplete="off" aria-label="Nome do deck" value="Control Deck">
+    </div>
+    <div class="barra-direita">
+      <span id="salvo" class="salvo" role="status" aria-live="polite"></span>
+      <button id="celular" class="status-celular" type="button"><i></i><span>Conectar celular</span></button>
+      <span class="divisor"></span>
+      <button id="btn-celular" class="icone-btn" type="button" title="Conectar celular" aria-label="Conectar celular"></button>
+      <button id="btn-config" class="icone-btn" type="button" title="Configurações" aria-label="Configurações"></button>
+    </div>
+  </header>
+
+  <div class="corpo">
+    <nav class="lateral" aria-label="Páginas">
+      <div id="abas" class="lista-paginas" role="tablist"></div>
+      <button id="nova-pagina" class="nova-pagina" type="button"></button>
+      <a id="guia-lateral" class="item-lateral" href="/guia" target="_blank" rel="noopener"></a>
+      <button id="config-lateral" class="item-lateral" type="button"></button>
+      <div class="lateral-rodape">
+        <span class="tracinho" aria-hidden="true"></span>
+        <p class="lema">Mais produtividade,<br>todos os dias.</p>
+      </div>
+    </nav>
+
+    <main class="conteudo">
+      <div class="cabecalho">
+        <div class="titulo-pagina">
+          <span id="pagina-tile" class="pagina-tile" aria-hidden="true"></span>
+          <div class="titulo-textos">
+            <h1 id="titulo-pagina">Favoritos</h1>
+            <p id="sub-pagina">Seus atalhos mais usados, sempre à mão.</p>
+          </div>
+        </div>
+        <div id="pilulas-topo" class="pilulas pilulas-topo" role="tablist" aria-label="Páginas"></div>
+        <div class="acoes-pagina">
+          <div class="segmentos-add" role="group" aria-label="Adicionar botão">
+            <button type="button" data-add="app" class="add-app" title="Adicionar um app"></button>
+            <button type="button" data-add="site" class="add-site" title="Adicionar um site"></button>
+          </div>
+          <button id="btn-buscar" class="icone-btn borda" type="button" title="Procurar botão" aria-label="Procurar"></button>
+          <button id="btn-pagina" class="icone-btn borda" type="button" title="Editar esta página" aria-label="Editar página"></button>
+        </div>
+      </div>
+      <div id="busca-caixa" class="busca-caixa" hidden>
+        <input id="busca" class="campo" type="search" placeholder="Procurar botão em todas as páginas…" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="faixa" class="faixa" role="alert" hidden></div>
+      <div id="aparelhos" class="aparelhos"><div class="carregando">Carregando…</div></div>
+      <div class="rodape-paginas"><div id="pilulas" class="pilulas" role="tablist" aria-label="Páginas (como no celular)"></div></div>
+    </main>
+
+    <aside id="gaveta" class="gaveta" aria-label="Editar" hidden>
+      <div class="gaveta-topo">
+        <span id="gaveta-titulo" class="gaveta-titulo">Editar</span>
+        <button id="fechar-gaveta" class="icone-btn" type="button" aria-label="Fechar"></button>
+      </div>
+      <div id="painel" class="painel"></div>
+    </aside>
+  </div>
+</div>
+
+<div id="menu-card" class="menu" hidden>
+  <button type="button" data-acao="editar">Editar</button>
+  <button type="button" data-acao="mover">Mover para outra página…</button>
+  <button type="button" data-acao="remover" class="perigo">Remover</button>
+</div>
+
+<div id="conectar" class="modal" hidden>
+  <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="conectar-titulo">
+    <button type="button" class="icone-btn fechar-modal" id="fechar-conectar" aria-label="Fechar"></button>
+    <h2 id="conectar-titulo">Conectar o celular</h2>
+    <div id="conectar-ui"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-txt"></span><button type="button" id="toast-acao" hidden></button></div>
+
+<script src="qrcode.js"></script>
+<script src="conectar.js"></script>
+<script src="icones.js"></script>
+<script src="tom.js"></script>
+<script src="editar.js"></script>
+</body>
+</html>

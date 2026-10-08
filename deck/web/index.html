@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR" data-tema="preto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deck">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no">
+<title>Deck</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="teclas.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="topo">
+    <h1 id="nome">Deck</h1>
+    <button id="avisos" class="avisos" type="button" hidden></button>
+    <div id="status" class="status tentando" role="status"><i></i><span>Conectando…</span></div>
+    <button class="tela-cheia" type="button" hidden aria-label="Tela cheia">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path class="abrir" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="fechar" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+    </button>
+  </header>
+
+  <main id="palco">
+    <div id="grade" class="grade"></div>
+    <div id="vazio" class="vazio" hidden></div>
+  </main>
+
+  <nav id="rodape" hidden>
+    <div id="bancos" class="bancos"></div>
+  </nav>
+</div>
+
+<div id="cantinho" class="cantinho">
+  <span id="status-mini" class="status-mini tentando" role="status"></span>
+  <button class="tela-cheia" type="button" hidden aria-label="Tela cheia">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path class="abrir" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="fechar" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
+  </button>
+</div>
+
+<div id="dica" class="dica" hidden>
+  <p id="dica-texto"></p>
+  <button type="button" id="dica-fechar" aria-label="Fechar dica">✕</button>
+</div>
+
+<div id="folha" class="folha" hidden>
+  <div class="folha-caixa">
+    <h2>Avisos dos botões</h2>
+    <ul id="folha-lista" class="rolavel"></ul>
+    <p class="folha-nota">Corrija no editor do computador — o celular atualiza sozinho.</p>
+    <button type="button" id="folha-ok">Entendi</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="alert"></div>
+
+<script src="icones.js"></script>
+<script src="tom.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

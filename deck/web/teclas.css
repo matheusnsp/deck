@@ -1,0 +1,215 @@
+.tecla {
+  --tom: 128, 140, 160;
+  --led: 1;
+  --fundo: 1;
+  --raio: min(28px, calc(var(--k, 140px) * .11));
+  --ico-h: calc(var(--k, 140px) * .4);
+  --fonte-tecla: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Inter, system-ui, sans-serif;
+  --emoji-tecla: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", var(--fonte-tecla);
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  box-sizing: border-box;
+  width: var(--k);
+  height: var(--k);
+  margin: 0;
+  padding: calc(var(--k) * .19) calc(var(--k) * .08) calc(var(--k) * .09);
+  border: 1px solid transparent;
+  border-radius: var(--raio);
+  background:
+    linear-gradient(158deg,
+      rgba(var(--tom), calc(.13 * var(--fundo))) 0%,
+      rgba(var(--tom), calc(.035 * var(--fundo))) 45%,
+      rgba(var(--tom), 0) 72%) padding-box,
+    radial-gradient(circle at 50% 42%,
+      rgba(var(--tom), calc(.04 * var(--fundo))) 0%,
+      rgba(var(--tom), 0) 62%) padding-box,
+    linear-gradient(#05080d, #05080d) padding-box,
+    linear-gradient(160deg,
+      rgba(var(--tom), calc(.12 * var(--led))) 8%,
+      rgba(var(--tom), calc(.4 * var(--led))) 50%,
+      rgba(var(--tom), calc(.95 * var(--led))) 100%) border-box;
+  background-origin: border-box;
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  backdrop-filter: blur(12px) saturate(130%);
+  box-shadow:
+    0 0 14px -5px rgba(var(--tom), calc(.22 * var(--led))),
+    0 12px 24px rgba(0, 0, 0, .28),
+    inset 0 -26px 40px -30px rgba(var(--tom), calc(.55 * var(--led)));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: calc(var(--k) * .09);
+  color: #fff;
+  font-family: var(--fonte-tecla);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .16s ease-out, box-shadow .22s, border-color .22s, background-color .22s, opacity .22s;
+}
+.tecla::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(var(--tom), 0) 52%, rgba(var(--tom), calc(.05 * var(--led))) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, 0) 30%);
+}
+.tecla.colorida, .tecla.clara {
+  border-color: rgba(var(--tom), .6);
+  background-image:
+    radial-gradient(circle at 50% 40%, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(135deg, rgba(var(--tom), .82), rgba(var(--tom), .5) 55%, rgba(var(--tom), .36));
+}
+.tecla.clara { color: #15161a; }
+
+@media (hover: hover) {
+  .tecla:hover, .slot:hover > .tecla { --led: 1.25; --fundo: 1.3; transform: translateY(-1px); }
+  .tecla:hover .seta, .slot:hover > .tecla .seta { opacity: 1; box-shadow: inset 0 0 0 1px rgba(var(--tom), .6), 0 0 10px rgba(var(--tom), .4); }
+}
+.tecla.pressionada, .tecla.acesa, .slot.selecionado > .tecla { --led: 1.6; --fundo: 1.5; }
+.tecla.pressionada { transform: scale(.98); transition-duration: .06s; }
+
+[data-tema="normal"] .tecla { --ico-h: calc(var(--k, 140px) * .36); }
+[data-tema="normal"] .tecla, [data-tema="normal"] .tecla.pressionada, [data-tema="normal"] .slot.selecionado > .tecla {
+  border-color: #343b46;
+  background-color: #272d36;
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .03), rgba(255, 255, 255, 0) 45%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 14px 28px -20px rgba(0, 0, 0, .85), inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+[data-tema="normal"] .tecla::before { display: none; }
+[data-tema="normal"] .tecla.colorida, [data-tema="normal"] .tecla.clara {
+  border-color: rgba(var(--tom), .6);
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, .1), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(150deg, rgba(var(--tom), .62), rgba(var(--tom), .36));
+}
+[data-tema="normal"] .tecla.pressionada, [data-tema="normal"] .slot.selecionado > .tecla { background-color: #2c3542; border-color: #3a4556; }
+@media (hover: hover) {
+  [data-tema="normal"] .tecla:hover, [data-tema="normal"] .slot:hover > .tecla { border-color: #3f4754; background-color: #2a303a; }
+}
+
+.tecla .ico {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ico-h);
+  height: var(--ico-h);
+  font-size: calc(var(--k) * .34);
+  line-height: 1;
+  font-family: var(--emoji-tecla);
+  filter: drop-shadow(0 calc(var(--k) * .03) calc(var(--k) * .05) rgba(0, 0, 0, .5));
+}
+.tecla .ico.txt {
+  width: auto;
+  min-width: var(--ico-h);
+  font-family: var(--fonte-tecla);
+  font-size: calc(var(--k) * .22);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.tecla .ico.figura {
+  filter: drop-shadow(0 0 calc(var(--k) * .045) rgba(var(--tom), .3)) drop-shadow(0 calc(var(--k) * .025) calc(var(--k) * .05) rgba(0, 0, 0, .6));
+  transform: translateZ(0);
+}
+[data-tema="normal"] .tecla .ico.figura {
+  filter: drop-shadow(0 calc(var(--k) * .035) calc(var(--k) * .06) rgba(0, 0, 0, .5));
+}
+.tecla .ico.figura img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 22%;
+  pointer-events: none;
+}
+.tecla .ico.letra {
+  --matiz: 220;
+  border-radius: 24%;
+  background-image:
+    linear-gradient(148deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, 0) 50%),
+    linear-gradient(160deg, hsl(var(--matiz) 42% 52%), hsl(var(--matiz) 44% 32%));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), inset 0 -1px 0 rgba(0, 0, 0, .25);
+  color: #fff;
+  font-family: var(--fonte-tecla);
+  font-size: calc(var(--k) * .19);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .35);
+}
+
+.tecla .rot {
+  max-width: 100%;
+  font-size: clamp(11px, calc(var(--k) * .09), 17px);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-align: center;
+  color: rgba(255, 255, 255, .96);
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+[data-tema="normal"] .tecla .rot { font-weight: 600; color: #f3f5f8; }
+.tecla.clara .rot { color: rgba(21, 22, 26, .92); }
+.tecla.com-figura .rot { display: block; white-space: nowrap; text-overflow: ellipsis; }
+.tecla.so-texto .rot { font-size: clamp(13px, calc(var(--k) * .11), 22px); -webkit-line-clamp: 3; }
+.tecla.so-texto { justify-content: center; padding-top: calc(var(--k) * .1); }
+
+.tecla .seta {
+  position: absolute;
+  right: calc(var(--k) * .07);
+  bottom: calc(var(--k) * .07);
+  display: grid;
+  place-items: center;
+  width: max(22px, calc(var(--k) * .125));
+  height: max(22px, calc(var(--k) * .125));
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
+  color: #fff;
+  opacity: .9;
+  transition: box-shadow .2s, opacity .2s;
+}
+.tecla.clara .seta { background: rgba(0, 0, 0, .14); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .14); color: rgba(21, 22, 26, .8); }
+.tecla .seta svg { width: 52%; height: 52%; stroke-width: 2; }
+[data-tema="normal"] .tecla .seta { background: transparent; box-shadow: none; color: #9aa3b2; opacity: 1; width: calc(var(--k) * .12); height: calc(var(--k) * .12); }
+[data-tema="normal"] .tecla .seta svg { width: 70%; height: 70%; stroke-width: 1.8; }
+@media (hover: hover) {
+  [data-tema="normal"] .tecla:hover .seta, [data-tema="normal"] .slot:hover > .tecla .seta { box-shadow: none; color: #c6cdd8; }
+}
+
+.tecla .pontos {
+  position: absolute;
+  top: calc(var(--k) * .07);
+  right: calc(var(--k) * .08);
+  width: calc(var(--k) * .095);
+  height: calc(var(--k) * .06);
+  color: rgba(255, 255, 255, .55);
+  transition: color .15s;
+}
+.tecla .pontos:hover { color: #fff; }
+.tecla.clara .pontos { color: rgba(21, 22, 26, .6); }
+
+.tecla.vazia, .tecla.vazia:hover {
+  --led: 0;
+  cursor: default;
+  background-color: transparent;
+  background-image: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 1.5px dashed rgba(255, 255, 255, .1);
+  box-shadow: none;
+}
+.tecla.vazia::before { display: none; }
+[data-tema="normal"] .tecla.vazia { border-color: rgba(255, 255, 255, .13); }
+
+@media (prefers-reduced-motion: reduce) {
+  .tecla { transition-duration: .01s; }
+}

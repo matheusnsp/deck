@@ -1,0 +1,91 @@
+{
+  "nome": "Control Deck",
+  "tema": "preto",
+  "grade": {"colunas": 4, "linhas": 2},
+  "paginas": [
+    {
+      "nome": "Favoritos",
+      "icone": "estrela",
+      "botoes": [
+        {"titulo": "YouTube", "tipo": "site", "url": "https://www.youtube.com"},
+        {"titulo": "Gmail", "tipo": "site", "url": "https://mail.google.com"},
+        {"titulo": "WhatsApp", "tipo": "site", "url": "https://web.whatsapp.com"},
+        {"titulo": "Agenda", "tipo": "site", "url": "https://calendar.google.com"},
+        {"titulo": "Drive", "tipo": "site", "url": "https://drive.google.com"},
+        {"titulo": "Instagram", "tipo": "site", "url": "https://www.instagram.com"},
+        {"titulo": "Netflix", "tipo": "site", "url": "https://www.netflix.com"},
+        {"titulo": "Spotify", "tipo": "site", "url": "https://open.spotify.com"}
+      ]
+    },
+    {
+      "nome": "Apps",
+      "icone": "grade",
+      "botoes": [
+        {"titulo": "Navegador", "tipo": "app", "app": {"mac": "Safari", "windows": "Microsoft Edge", "linux": ["Firefox", "Google Chrome", "Chromium"]}},
+        {"titulo": "Arquivos", "tipo": "app", "app": {"mac": "Finder", "windows": ["Explorador de Arquivos", "File Explorer", "explorer"], "linux": ["Arquivos", "Files", "nautilus", "dolphin", "thunar", "nemo"]}},
+        {"titulo": "Terminal", "tipo": "app", "app": {"mac": "Terminal", "windows": ["Terminal", "Windows PowerShell", "wt", "powershell"], "linux": ["Terminal", "Console", "gnome-terminal", "konsole", "xterm"]}},
+        {"titulo": "Calculadora", "tipo": "app", "app": {"mac": "Calculator", "windows": ["Calculadora", "Calculator", "calc"], "linux": ["Calculadora", "Calculator", "gnome-calculator", "kcalc"]}},
+        {"titulo": "Notas", "tipo": "app", "app": {"mac": "Notes", "windows": ["Bloco de Notas", "Notepad", "notepad"], "linux": ["Editor de texto", "Text Editor", "gnome-text-editor", "gedit", "kate"]}},
+        {"titulo": "Captura", "tipo": "app", "app": {"mac": "Screenshot", "windows": ["Ferramenta de Captura", "Snipping Tool", "SnippingTool"], "linux": ["Captura de tela", "Screenshot", "gnome-screenshot", "spectacle"]}},
+        {"titulo": "Monitor", "tipo": "app", "app": {"mac": "Activity Monitor", "windows": ["Gerenciador de Tarefas", "Task Manager", "taskmgr"], "linux": ["Monitor do sistema", "System Monitor", "gnome-system-monitor", "plasma-systemmonitor"]}},
+        {"titulo": "Ajustes", "tipo": "app", "app": {"mac": ["System Settings", "System Preferences"], "windows": ["Configurações", "Settings", "ms-settings:"], "linux": ["Configurações", "Settings", "gnome-control-center", "systemsettings"]}}
+      ]
+    },
+    {
+      "nome": "Sites",
+      "icone": "globo",
+      "botoes": [
+        {"titulo": "ChatGPT", "tipo": "site", "url": "https://chatgpt.com"},
+        {"titulo": "Notion", "tipo": "site", "url": "https://www.notion.so"},
+        {"titulo": "Canva", "tipo": "site", "url": "https://www.canva.com"},
+        {"titulo": "LinkedIn", "tipo": "site", "url": "https://www.linkedin.com"},
+        {"titulo": "Docs", "tipo": "site", "url": "https://docs.google.com"},
+        {"titulo": "Planilhas", "tipo": "site", "url": "https://sheets.google.com"},
+        {"titulo": "Meet", "tipo": "site", "url": "https://meet.google.com"},
+        {"titulo": "Twitch", "tipo": "site", "url": "https://www.twitch.tv"}
+      ]
+    },
+    {
+      "nome": "Mídia",
+      "icone": "play",
+      "botoes": [
+        {"titulo": "Tocar/Pausar", "tipo": "midia", "midia": "play", "icone": "⏯️"},
+        {"titulo": "Anterior", "tipo": "midia", "midia": "anterior", "icone": "⏮️"},
+        {"titulo": "Próxima", "tipo": "midia", "midia": "proxima", "icone": "⏭️"},
+        {"titulo": "Volume +", "tipo": "volume", "volume": "subir", "icone": "🔊"},
+        {"titulo": "Volume −", "tipo": "volume", "volume": "descer", "icone": "🔉"},
+        {"titulo": "Mudo", "tipo": "volume", "volume": "mudo", "icone": "🔇"},
+        {"titulo": "Microfone", "tipo": "microfone", "icone": "🎙️"},
+        {"titulo": "Spotify", "tipo": "app", "app": "Spotify"}
+      ]
+    },
+    {
+      "nome": "Produtividade",
+      "icone": "raio",
+      "botoes": [
+        {"titulo": "Copiar", "tipo": "teclas", "teclas": "cmd+c", "icone": "📋"},
+        {"titulo": "Colar", "tipo": "teclas", "teclas": "cmd+v", "icone": "📥"},
+        {"titulo": "Desfazer", "tipo": "teclas", "teclas": "cmd+z", "icone": "↩️"},
+        {"titulo": "Captura", "tipo": "teclas", "teclas": {"mac": "cmd+shift+4", "windows": "win+shift+s", "linux": "print"}, "icone": "📸"},
+        {"titulo": "Nova aba", "tipo": "teclas", "teclas": "cmd+t", "icone": "🆕"},
+        {"titulo": "Fechar aba", "tipo": "teclas", "teclas": "cmd+w", "icone": "❌"},
+        {"titulo": "Trocar app", "tipo": "teclas", "teclas": {"mac": "cmd+tab", "windows": "alt+tab", "linux": "alt+tab"}, "icone": "🔀"},
+        {"titulo": "Já volto", "tipo": "texto", "texto": "Já te respondo!", "icone": "💬"}
+      ]
+    },
+    {
+      "nome": "Sistema",
+      "icone": "engrenagem",
+      "botoes": [
+        {"titulo": "Bloquear", "tipo": "energia", "energia": "bloquear", "icone": "🔒"},
+        {"titulo": "Suspender", "tipo": "energia", "energia": "suspender", "icone": "🌙", "confirmar": true},
+        {"titulo": "Reiniciar", "tipo": "energia", "energia": "reiniciar", "icone": "🔄", "confirmar": true},
+        {"titulo": "Desligar", "tipo": "energia", "energia": "desligar", "icone": "⏻", "confirmar": true, "cor": "#ef4444"},
+        {"titulo": "Área de trabalho", "tipo": "teclas", "teclas": {"mac": "cmd+f3", "windows": "win+d", "linux": "win+d"}, "icone": "🖥️"},
+        null,
+        null,
+        null
+      ]
+    }
+  ]
+}

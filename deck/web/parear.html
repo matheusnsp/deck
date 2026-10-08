@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conectar o celular — Deck</title>
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="stylesheet" href="conectar.css">
+<style>
+  :root {
+    --fundo: #000;
+    --tecla: #1b1c20;
+    --vidro: #2a2c32;
+    --papel: #eef0f3;
+    --apagado: #8d9099;
+    --ambar: #ffb000;
+    --verde: #32d74b;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 48px 24px;
+    background: var(--fundo);
+    color: var(--papel);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { width: min(900px, 100%); }
+  .corpo-parear { margin-top: 36px; }
+  .corpo-parear .con-passos li { font-size: 17px; }
+  .corpo-parear .qr { width: 300px; border-radius: 34px; padding: 18px; }
+  .corpo-parear .con-corpo { grid-template-columns: 300px 1fr; gap: 44px; }
+  .corpo-parear .modo-nota, .corpo-parear .con-detectado { max-width: 300px; }
+  @media (max-width: 720px) { .corpo-parear .con-corpo { grid-template-columns: 1fr; } .corpo-parear .qr { width: min(300px, 100%); } }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 700;
+    line-height: .95;
+    letter-spacing: -0.02em;
+  }
+  .sub { margin: 10px 0 0; color: var(--apagado); font-size: 22px; }
+
+  .editar {
+    position: fixed;
+    top: 22px;
+    right: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: var(--tecla);
+    color: var(--papel);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .editar:hover { background: var(--vidro); }
+
+  button:focus-visible, .editar:focus-visible { outline: 2px solid var(--papel); outline-offset: 2px; }
+
+</style>
+</head>
+<body>
+<a class="editar" href="/editar">Escolher os botões →</a>
+<main>
+  <h1>Conectar o celular</h1>
+  <p class="sub" id="sub">a este computador</p>
+  <div id="conectar-ui" class="corpo-parear"></div>
+</main>
+<script src="qrcode.js"></script>
+<script src="conectar.js"></script>
+<script src="parear.js"></script>
+</body>
+</html>

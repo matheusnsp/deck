@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck — seu celular vira um painel de botões para o computador</title>
+<meta name="description" content="Deck transforma o iPhone ou Android num painel de botões para Mac, Windows e Linux. Abra apps e sites, aperte atalhos, controle mídia e volume, desligue o computador. Grátis, sem instalar nada no sistema.">
+<meta property="og:title" content="Deck — seu celular vira um painel de botões para o computador">
+<meta property="og:description" content="Grátis. Mac, Windows e Linux. iPhone, Android e tablets. Baixe, ligue e escaneie o QR code.">
+<meta property="og:image" content="img/editor.webp">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#04060a">
+<link rel="icon" href="favicon.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root {
+    --fundo: #04060a;
+    --tecla: #0f131a;
+    --vidro: #171d27;
+    --borda: #222a36;
+    --linha: #161c26;
+    --papel: #f3f5f8;
+    --texto: #c6cdd8;
+    --apagado: #8b93a1;
+    --azul: #3b82f6;
+    --verde: #22c55e;
+    --ambar: #f59e0b;
+    --vermelho: #ef4444;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Inter, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: #93c5fd; }
+  img { max-width: 100%; height: auto; display: block; }
+  b { color: var(--papel); font-weight: 600; }
+  code, kbd { padding: 2px 6px; border-radius: 6px; background: var(--vidro); color: var(--papel); font: 500 .92em ui-monospace, "SF Mono", Consolas, Menlo, monospace; }
+  .largura { width: min(1040px, 100%); margin: 0 auto; padding: 0 24px; }
+
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid var(--linha);
+    background: rgba(4, 6, 10, .84);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .topo .largura { display: flex; align-items: center; gap: 12px; height: 62px; }
+  .topo img { width: 32px; height: 32px; border-radius: 9px; }
+  .topo b { font-size: 17px; }
+  .topo nav { display: flex; gap: 4px; margin-left: auto; }
+  .topo nav a { padding: 8px 12px; border-radius: 999px; color: var(--apagado); font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .topo nav a:hover { background: var(--vidro); color: var(--papel); }
+  .topo nav a.cta { background: var(--azul); color: #fff; }
+
+  .heroi { padding: 72px 0 40px; text-align: center; }
+  .selo { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border: 1px solid var(--borda); border-radius: 999px; background: var(--tecla); color: var(--apagado); font-size: 13px; font-weight: 600; }
+  .selo i { width: 8px; height: 8px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 8px var(--verde); }
+  h1 { margin: 22px auto 0; max-width: 16ch; font-size: clamp(38px, 6.4vw, 72px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.02; color: var(--papel); }
+  .lead { margin: 20px auto 0; max-width: 58ch; color: var(--apagado); font-size: clamp(17px, 2vw, 20px); }
+  .acoes { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 30px; }
+  .botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 24px;
+    border-radius: 14px;
+    background: var(--azul);
+    color: #fff;
+    font-size: 16.5px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 10px 30px -12px rgba(59, 130, 246, .9);
+    transition: transform .15s, background-color .15s;
+  }
+  .botao:hover { background: #2f6fe0; transform: translateY(-1px); }
+  .botao.fraco { background: var(--tecla); color: var(--papel); box-shadow: inset 0 0 0 1px var(--borda); }
+  .botao.fraco:hover { background: var(--vidro); }
+  .botao svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .miudo { margin: 14px 0 0; color: var(--apagado); font-size: 13.5px; }
+  .so-celular { margin: 28px auto 0; max-width: 520px; padding: 20px 20px 16px; border: 1px solid var(--borda); border-radius: 20px; background: var(--tecla); text-align: left; }
+  .so-celular p { margin: 0 0 12px; font-size: 15px; }
+  .so-celular .acoes { justify-content: flex-start; margin-top: 4px; }
+  .so-celular .botao { height: 46px; padding: 0 18px; font-size: 15px; }
+  .so-celular .miudo { margin-top: 12px; }
+  .so-celular .miudo a { color: var(--apagado); }
+  .vitrine { position: relative; margin-top: 48px; }
+  .vitrine::before { content: ""; position: absolute; inset: 20% 10% -10%; background: radial-gradient(ellipse at center, rgba(59, 130, 246, .22), rgba(59, 130, 246, 0) 70%); filter: blur(30px); pointer-events: none; }
+  .vitrine img { position: relative; margin: 0 auto; border-radius: 18px; box-shadow: 0 50px 120px -40px rgba(0, 0, 0, .95), 0 0 0 1px var(--linha); }
+  .vitrine .celular { width: min(560px, 82%); margin: -8% auto 0; border-radius: 24px; }
+
+  section { padding: 72px 0 0; scroll-margin-top: 70px; }
+  h2 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 38px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; color: var(--papel); }
+  .sub { margin: 0 0 28px; max-width: 60ch; color: var(--apagado); font-size: 17px; }
+  .tres { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .cartao { padding: 22px 22px 24px; border: 1px solid var(--borda); border-radius: 20px; background: var(--tecla); }
+  .cartao .n { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 14px; border-radius: 11px; background: rgba(59, 130, 246, .14); color: #93c5fd; font-size: 17px; font-weight: 700; }
+  .cartao h3 { margin: 0 0 6px; font-size: 19px; font-weight: 700; color: var(--papel); }
+  .cartao p { margin: 0; color: var(--apagado); font-size: 15px; }
+
+  .grade-recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .recurso { padding: 16px 18px; border: 1px solid var(--linha); border-radius: 16px; background: rgba(255, 255, 255, .02); font-size: 15px; }
+  .recurso b { display: block; margin-bottom: 3px; }
+  .recurso span { color: var(--apagado); font-size: 14px; }
+
+  .baixar { padding: 40px; border: 1px solid var(--borda); border-radius: 26px; background: linear-gradient(160deg, #0c1220, #080b11); text-align: center; }
+  .baixar h2 { margin-bottom: 8px; }
+  .baixar .botao { height: 58px; padding: 0 30px; font-size: 18px; }
+  .baixar table { width: 100%; max-width: 760px; margin: 28px auto 0; border-collapse: collapse; text-align: left; font-size: 15px; }
+  .baixar th, .baixar td { padding: 11px 12px; border-bottom: 1px solid var(--linha); vertical-align: top; }
+  .baixar th { color: var(--apagado); font-size: 12.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+  .baixar td:first-child { color: var(--papel); font-weight: 600; white-space: nowrap; }
+  .abas-so { display: inline-flex; gap: 4px; margin: 4px 0 22px; padding: 4px; border: 1px solid var(--borda); border-radius: 999px; background: var(--tecla); }
+  .abas-so button { height: 38px; padding: 0 18px; border: 0; border-radius: 999px; background: none; color: var(--apagado); font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer; }
+  .abas-so button.ativa { background: var(--vidro); color: var(--papel); }
+  .painel-so { max-width: 760px; margin: 0 auto; text-align: left; }
+  .painel-so h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 24px 0 8px; font-size: 18px; font-weight: 700; color: var(--papel); }
+  .painel-so h3:first-child { margin-top: 0; }
+  .painel-so p { margin: 0 0 10px; font-size: 15px; }
+  .painel-so ol { margin: 0 0 10px; padding-left: 22px; font-size: 15px; }
+  .painel-so li { margin: 6px 0; }
+  .painel-so .miudo { margin-top: 0; }
+  .tag { padding: 3px 9px; border-radius: 999px; background: rgba(34, 197, 94, .14); color: #86efac; font-size: 12px; font-weight: 600; letter-spacing: .02em; }
+  .comando { display: flex; align-items: stretch; gap: 8px; margin: 8px 0 10px; }
+  .comando code { flex: 1; min-width: 0; padding: 12px 14px; border: 1px solid var(--borda); border-radius: 12px; background: #05080d; color: #d2f4df; font-size: 13.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-all; -webkit-user-select: all; user-select: all; }
+  .comando button { flex: none; padding: 0 16px; border: 0; border-radius: 12px; background: var(--azul); color: #fff; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .comando button:hover { background: #2f6fe0; }
+
+  .guia h2 { display: flex; align-items: center; gap: 14px; font-size: 26px; }
+  .guia h2 .n { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 10px; background: rgba(59, 130, 246, .14); color: #93c5fd; font-size: 16px; }
+  .guia section { padding: 44px 0 0; }
+  .guia h3 { margin: 24px 0 8px; font-size: 18px; font-weight: 700; color: var(--papel); }
+  .guia p { margin: 0 0 12px; }
+  .guia ol, .guia ul { margin: 0 0 12px; padding-left: 22px; }
+  .guia li { margin: 6px 0; }
+  .guia li::marker { color: var(--apagado); }
+  .guia table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 15px; }
+  .guia th, .guia td { padding: 10px 12px; border-bottom: 1px solid var(--linha); text-align: left; vertical-align: top; }
+  .guia th { color: var(--apagado); font-weight: 600; font-size: 12.5px; letter-spacing: .05em; text-transform: uppercase; }
+  .guia td:first-child { color: var(--papel); font-weight: 600; white-space: nowrap; }
+  .nota { margin: 14px 0; padding: 14px 18px; border-radius: 14px; background: rgba(59, 130, 246, .1); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, .35); color: var(--papel); font-size: 15px; }
+  .nota.aviso { background: rgba(245, 158, 11, .1); box-shadow: inset 0 0 0 1px rgba(245, 158, 11, .4); }
+  .figura { margin: 18px 0 6px; border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px var(--linha), 0 30px 60px -30px #000; }
+  .legenda { margin: 0 0 14px; color: var(--apagado); font-size: 13.5px; }
+  .tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px 18px; margin: 8px 0 16px; padding: 0; list-style: none; }
+  .tipos li { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--linha); font-size: 15px; }
+  .tipos li b { display: block; }
+  .tipos li span { color: var(--apagado); font-size: 14px; }
+
+  .faq details { padding: 4px 0; border-bottom: 1px solid var(--linha); }
+  .faq summary { padding: 14px 0; cursor: pointer; color: var(--papel); font-size: 17px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; color: var(--apagado); font-weight: 500; }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { margin: 0 0 16px; color: var(--texto); }
+
+  footer { margin-top: 80px; padding: 28px 0 44px; border-top: 1px solid var(--linha); color: var(--apagado); font-size: 14px; }
+  footer .largura { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; }
+  footer a { color: var(--apagado); }
+
+  @media (max-width: 680px) {
+    .topo nav a:not(.cta) { display: none; }
+    .heroi { padding-top: 48px; }
+    .baixar { padding: 28px 18px; }
+    .baixar td:first-child, .guia td:first-child { white-space: normal; }
+    .largura { padding: 0 18px; }
+  }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="largura">
+    <img src="icon-192.png" alt="">
+    <b>Deck</b>
+    <nav aria-label="Seções">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#guia">Passo a passo</a>
+      <a href="#faq">Perguntas</a>
+      <a href="#baixar" class="cta">Baixar</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="largura heroi">
+    <span class="selo"><i></i>Grátis · Mac, Windows e Linux · iPhone e Android</span>
+    <h1>Seu celular vira um painel de botões para o computador.</h1>
+    <p class="lead">Abra apps e sites, aperte atalhos, controle mídia e volume, bloqueie ou desligue o computador — com um toque, na tela do celular. Sem instalar nada no sistema: é uma pasta, um clique e um QR code.</p>
+    <div class="acoes" id="acoes-pc">
+      <a class="botao" id="baixar-heroi" href="#baixar"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 19h14"/></svg>Baixar o Deck</a>
+      <a class="botao fraco" href="#guia">Ver o passo a passo</a>
+    </div>
+    <p class="miudo" id="miudo-pc">Versão 3.0 · 200 KB · para Mac, Windows e Linux</p>
+    <div class="so-celular" id="so-celular" hidden>
+      <p><b>No celular não tem o que baixar.</b> O Deck roda no computador; o celular só escaneia o QR code que aparece lá e vira app na tela inicial.</p>
+      <p>Abra esta página no computador para baixar — ou mande o link para você mesmo:</p>
+      <div class="acoes">
+        <button class="botao" type="button" id="copiar-link"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>Copiar o link</button>
+        <a class="botao fraco" id="whats-link" href="#" target="_blank" rel="noopener">Mandar pelo WhatsApp</a>
+      </div>
+      <p class="miudo"><a href="#guia">Ver o passo a passo</a> · <a href="deck.zip" download="deck.zip">baixar mesmo assim</a></p>
+    </div>
+    <div class="vitrine">
+      <img src="img/editor.webp" alt="Editor do Deck no computador, com oito botões: YouTube, Gmail, WhatsApp, Agenda, Drive, Instagram, Netflix e Spotify" width="1400" height="911">
+      <img class="celular" src="img/celular.webp" alt="Os mesmos oito botões na tela do celular, deitado" width="1400" height="646">
+    </div>
+  </div>
+
+  <section id="como-funciona" class="largura">
+    <h2>Como funciona</h2>
+    <p class="sub">Três passos. O computador roda um programinha; o celular abre uma página que vira app na tela inicial.</p>
+    <div class="tres">
+      <div class="cartao"><div class="n">1</div><h3>Ligue no computador</h3><p>Cole uma linha no Terminal (Mac e Linux) ou descompacte a pasta e dê duplo clique (Windows). O editor abre no navegador.</p></div>
+      <div class="cartao"><div class="n">2</div><h3>Escaneie com o celular</h3><p>Aponte a câmera para o QR code e salve na tela inicial. Pelo Wi-Fi, pelo cabo USB ou por Bluetooth.</p></div>
+      <div class="cartao"><div class="n">3</div><h3>Monte os botões</h3><p>Escolha apps, sites e atalhos no editor. O celular espelha na hora, com os ícones de verdade.</p></div>
+    </div>
+  </section>
+
+  <section id="recursos" class="largura">
+    <h2>O que os botões fazem</h2>
+    <p class="sub">Cada botão é uma ação no computador. Os ícones vêm sozinhos: o do app como está instalado, o oficial do site.</p>
+    <div class="grade-recursos">
+      <div class="recurso"><b>Apps</b><span>Abre qualquer programa instalado, com o mesmo ícone.</span></div>
+      <div class="recurso"><b>Sites e abas</b><span>Abre um site ou traz a aba já aberta para frente.</span></div>
+      <div class="recurso"><b>Atalhos de teclado</b><span>⌘C, Ctrl+Z, o que você gravar.</span></div>
+      <div class="recurso"><b>Texto pronto</b><span>Digita uma frase onde o cursor estiver.</span></div>
+      <div class="recurso"><b>Mídia e volume</b><span>Tocar, pausar, pular, subir, baixar, mudo.</span></div>
+      <div class="recurso"><b>Microfone</b><span>Mudo com a luz acesa no celular.</span></div>
+      <div class="recurso"><b>Energia</b><span>Bloquear, suspender, reiniciar, desligar — com confirmação.</span></div>
+      <div class="recurso"><b>Páginas</b><span>Favoritos, Apps, Sites, Mídia… quantas quiser, 4×2 até 8×8.</span></div>
+    </div>
+    <div class="figura"><img src="img/energia.webp" alt="Editor com a página Sistema e o painel do botão Desligar" width="1200" height="781" loading="lazy"></div>
+    <p class="legenda">A página Sistema, com os botões de energia e o painel de edição aberto.</p>
+  </section>
+
+  <section id="baixar" class="largura">
+    <div class="baixar">
+      <h2>Baixar o Deck</h2>
+      <p class="sub" style="margin: 0 auto 20px; text-align: center">Versão 3.0 · 200 KB. Nada é instalado no sistema: o Deck é uma pasta. Para desinstalar, apague a pasta.</p>
+      <div class="abas-so" role="tablist" aria-label="Sistema do computador">
+        <button type="button" data-so="mac" class="ativa">Mac</button>
+        <button type="button" data-so="windows">Windows</button>
+        <button type="button" data-so="linux">Linux</button>
+      </div>
+      <div class="painel-so" id="so-mac">
+        <h3>Pelo Terminal <span class="tag">recomendado · sem aviso de segurança</span></h3>
+        <p>Abra o <b>Terminal</b> (<kbd>⌘</kbd> + <kbd>espaço</kbd>, digite <i>Terminal</i>), cole a linha abaixo e aperte Enter. Ela baixa o Deck para a pasta <code>Deck</code> da sua pasta pessoal e já liga.</p>
+        <div class="comando"><code data-cmd="mac"></code><button type="button">Copiar</button></div>
+        <p class="miudo">Da próxima vez, é só dar duplo clique em <code>Iniciar no Mac.command</code> dentro da pasta. Se o Mac pedir as "ferramentas de linha de comando", aceite e rode a linha de novo. Para atualizar o Deck, rode a mesma linha: seus botões ficam.</p>
+        <h3>Ou baixe o zip</h3>
+        <p>Baixe o <a href="deck.zip" download="deck.zip">deck.zip</a>, descompacte e dê duplo clique em <code>Iniciar no Mac.command</code>. Na primeira vez o macOS bloqueia ("A Apple não pôde verificar…"): clique em <b>OK</b>, abra <b>Ajustes do Sistema › Privacidade e Segurança</b>, role até o fim e clique em <b>Abrir Mesmo Assim</b>. É uma vez só. No macOS 14 ou anterior, basta botão direito › <b>Abrir</b>.</p>
+      </div>
+      <div class="painel-so" id="so-windows" hidden>
+        <h3>Pelo zip</h3>
+        <ol>
+          <li>Instale o <b>Python 3</b> pelo <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a> — no instalador, marque <b>Add python.exe to PATH</b>.</li>
+          <li>Baixe o <a href="deck.zip" download="deck.zip">deck.zip</a>, clique nele com o botão direito › <b>Extrair tudo</b>.</li>
+          <li>Dê duplo clique em <code>Iniciar no Windows.bat</code>. Se o Windows perguntar se quer mesmo executar, desmarque <b>Sempre perguntar antes de abrir este arquivo</b> e clique em <b>Executar</b> (ou <b>Mais informações › Executar assim mesmo</b>) — assim ele não pergunta de novo. Se o Firewall perguntar, <b>Permitir acesso</b>.</li>
+        </ol>
+        <h3>Ou pelo PowerShell</h3>
+        <p>Com o Python instalado, abra o <b>Terminal</b> (botão direito no menu Iniciar › Terminal), cole a linha e aperte Enter. Ela baixa o Deck para a pasta <code>Deck</code> da sua pasta de usuário e já liga; para atualizar, rode de novo.</p>
+        <div class="comando"><code data-cmd="windows"></code><button type="button">Copiar</button></div>
+      </div>
+      <div class="painel-so" id="so-linux" hidden>
+        <h3>Pelo terminal <span class="tag">recomendado</span></h3>
+        <p>Cole a linha e aperte Enter (precisa do <code>python3</code>, que já vem na maioria das distros). Ela baixa o Deck para a pasta <code>Deck</code> da sua home e já liga; para atualizar, rode de novo.</p>
+        <div class="comando"><code data-cmd="linux"></code><button type="button">Copiar</button></div>
+        <h3>Ou baixe o zip</h3>
+        <p>Baixe o <a href="deck.zip" download="deck.zip">deck.zip</a>, descompacte e rode <code>./iniciar-linux.sh</code> (ou <code>python3 server.py</code>) dentro da pasta.</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="guia" class="guia largura">
+    <section style="padding-top: 72px">
+      <h2 style="font-size: clamp(28px, 4vw, 38px)">Passo a passo</h2>
+      <p class="sub">Do download ao primeiro botão, em qualquer computador e qualquer celular. O mesmo guia fica dentro do Deck, em <b>Como usar</b>, na lateral do editor.</p>
+    </section>
+
+    <section id="g-baixar">
+      <h2><span class="n">1</span>Baixar</h2>
+      <ol>
+        <li><b>Mac e Linux:</b> o jeito mais fácil é a linha do Terminal da seção <a href="#baixar">Baixar</a> — ela cria a pasta <code>Deck</code> na sua pasta pessoal, já liberada pelo sistema, e liga o deck. <b>Windows:</b> instale o Python 3 (<a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a>, marcando <b>Add python.exe to PATH</b>), baixe o <a href="deck.zip" download="deck.zip">deck.zip</a> e extraia numa pasta sua.</li>
+        <li>Prefere o zip no Mac ou no Linux? Também funciona: baixe, descompacte numa pasta sua (por exemplo <code>Documentos/Deck</code>) e siga o passo 2.</li>
+        <li>A pasta tem <code>server.py</code>, a pasta <code>web</code> e os arquivos de iniciar (<code>Iniciar no Mac.command</code>, <code>Iniciar no Windows.bat</code>, <code>iniciar-linux.sh</code>).</li>
+      </ol>
+    </section>
+
+    <section id="g-ligar">
+      <h2><span class="n">2</span>Ligar no computador</h2>
+      <table>
+        <tr><th>Computador</th><th>Como ligar</th></tr>
+        <tr><td>Mac</td><td>Duplo clique em <code>Iniciar no Mac.command</code>. Se instalou pela linha do Terminal, abre direto. Se baixou o zip, na primeira vez o macOS bloqueia ("A Apple não pôde verificar…"): clique em <b>OK</b>, vá em <b>Ajustes do Sistema › Privacidade e Segurança</b>, role até o fim e clique em <b>Abrir Mesmo Assim</b> — uma vez só. No macOS 14 ou anterior, botão direito › <b>Abrir</b>.</td></tr>
+        <tr><td>Windows</td><td>Duplo clique em <code>Iniciar no Windows.bat</code>. Se o Windows perguntar se quer mesmo executar, desmarque <b>Sempre perguntar antes de abrir este arquivo</b> e clique em <b>Executar</b> (ou <b>Mais informações › Executar assim mesmo</b>) — assim ele não pergunta de novo. Se o Firewall perguntar, <b>Permitir acesso</b> (redes privadas).</td></tr>
+        <tr><td>Linux</td><td>Na pasta, rode <code>./iniciar-linux.sh</code> (ou <code>python3 server.py</code>).</td></tr>
+      </table>
+      <p>Abre uma janela de terminal com o endereço do deck e, em seguida, o <b>editor</b> no navegador (<code>http://localhost:8787/editar</code>). Deixe a janela do terminal aberta enquanto usa: é ela que está rodando o deck. Para desligar, feche a janela ou aperte <kbd>Ctrl</kbd>+<kbd>C</kbd> nela.</p>
+      <h3>Permissões (só na primeira vez)</h3>
+      <ul>
+        <li><b>Mac:</b> para botões que apertam teclas, o macOS pede <b>Acessibilidade</b> (Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ligue o Terminal). Para ver as abas abertas do navegador, pede <b>Automação</b>. Se o Firewall do Mac estiver ligado, clique em <b>Permitir</b> quando ele perguntar sobre o Python.</li>
+        <li><b>Windows:</b> só o aviso do Firewall acima.</li>
+        <li><b>Linux:</b> no Wayland, teclas e texto usam <code>wtype</code> ou <code>ydotool</code>; no X11, <code>xdotool</code>. O deck avisa no terminal se faltar algum.</li>
+      </ul>
+      <div class="nota">Quer o editor como um app com janela própria? No Safari: <b>Arquivo › Adicionar ao Dock</b>. No Chrome ou Edge: menu <b>⋮ › Transmitir, salvar e compartilhar › Instalar página como app</b>.</div>
+    </section>
+
+    <section id="g-conectar">
+      <h2><span class="n">3</span>Conectar o celular</h2>
+      <p>No editor, clique em <b>Conectar celular</b>. Aparece um QR code: abra a <b>câmera</b> do celular, aponte e toque no link. Depois salve na tela inicial para abrir como app — <b>iPhone:</b> Compartilhar › Adicionar à Tela de Início; <b>Android:</b> menu ⋮ › Adicionar à tela inicial.</p>
+      <div class="figura"><img src="img/conectar.webp" alt="Janela Conectar celular com as abas Wi-Fi, Cabo USB, Bluetooth e Rede do computador" width="1200" height="781" loading="lazy"></div>
+      <p class="legenda">Quatro formas de conectar; o deck detecta sozinho quando o celular aparece por cada caminho.</p>
+      <div class="tres">
+        <div class="cartao"><h3>Wi-Fi</h3><p>Os dois na mesma rede. No Mac o link vem <b>pelo nome</b> (<code>SeuMac.local</code>), que não muda quando o roteador troca o IP; Android não abre por nome, então nele use <b>Pelo IP</b>.</p></div>
+        <div class="cartao"><h3>Cabo USB</h3><p>Zero atraso e carrega o celular. iPhone: Ajustes › <b>Hotspot Pessoal</b> › Permitir que Outros se Conectem, e ligue o cabo. Android: <b>Ancoragem USB</b> (no Mac, só Android 14+).</p></div>
+        <div class="cartao"><h3>Bluetooth</h3><p>Sem cabo e sem roteador. Hotspot Pessoal (ou Ancoragem Bluetooth) ligado, pareie os dois e, no Mac, menu Bluetooth › celular › <b>Conectar à Rede</b>.</p></div>
+        <div class="cartao"><h3>Rede do computador</h3><p>Quando não há Wi-Fi nenhum. Mac: <b>Compartilhamento de Internet</b> por Bluetooth PAN. Windows: <b>Ponto de acesso móvel</b>. Linux: ponto de acesso Wi-Fi.</p></div>
+      </div>
+      <div class="nota aviso">Cabo USB e Bluetooth usam o Hotspot Pessoal do celular, que precisa estar liberado no plano da operadora (quase todos liberam). Com o cabo ligado, o computador pode passar a usar a internet do celular — no Mac, Ajustes do Sistema › Rede › ⋯ › <b>Definir Ordem de Serviço</b> e deixe o Wi-Fi acima de "iPhone USB".</div>
+    </section>
+
+    <section id="g-botoes">
+      <h2><span class="n">4</span>Montar os botões</h2>
+      <p>Tudo é feito no editor, no computador; o celular espelha na hora. Cada <b>página</b> da lateral é uma tela do celular (4×2 por padrão). Clique num espaço vazio para criar um botão, ou use <b>＋ Apps</b> e <b>＋ Sites</b> no topo.</p>
+      <ul class="tipos">
+        <li><b>App</b><span>Escolha na lista dos programas instalados — o botão ganha o mesmo ícone do app.</span></li>
+        <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial.</span></li>
+        <li><b>Atalho de teclado</b><span>Grave uma combinação, como ⌘C ou Ctrl+Z.</span></li>
+        <li><b>Texto</b><span>Digita uma frase pronta onde o cursor estiver.</span></li>
+        <li><b>Mídia e Volume</b><span>Tocar/pausar, pular, subir, baixar, mudo.</span></li>
+        <li><b>Microfone</b><span>Liga e desliga o mudo; a luz acende no celular.</span></li>
+        <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear. Pede um segundo toque.</span></li>
+        <li><b>Ir para página</b><span>Pula para outra página do celular.</span></li>
+      </ul>
+      <p>Arraste os botões para reorganizar, clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> para o tema, o tamanho da grade e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta, que você pode copiar para outro computador.</p>
+      <div class="figura"><img src="img/editor-normal.webp" alt="Editor no tema normal, sem LEDs" width="1200" height="781" loading="lazy"></div>
+      <p class="legenda">Dois temas: o preto, com LED nos cards, e o normal, mais discreto.</p>
+      <div class="nota"><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular.</div>
+    </section>
+
+    <section id="g-celular">
+      <h2><span class="n">5</span>Usar no celular</h2>
+      <ul>
+        <li>Abra pelo ícone da tela inicial, <b>deitado</b>: é assim que a grade 4×2 encaixa.</li>
+        <li><b>Deslize</b> para o lado para trocar de página.</li>
+        <li>Toque num botão e ele executa na hora; o card pisca em branco quando deu certo e em vermelho quando falhou (com a explicação). Botões com confirmação pedem um <b>segundo toque</b>.</li>
+        <li>Botões de estado (mudo, microfone) ficam com a luz acesa enquanto estiverem ativos.</li>
+        <li>A tela não apaga enquanto o app está aberto. No Android, use o botão de <b>tela cheia</b> no canto.</li>
+        <li>Mudou algo no editor? O celular atualiza sozinho em até dois segundos.</li>
+      </ul>
+    </section>
+
+    <section id="g-aparelhos">
+      <h2><span class="n">6</span>Outros aparelhos</h2>
+      <table>
+        <tr><th>Aparelho</th><th>Como</th></tr>
+        <tr><td>iPhone / iPad</td><td>Câmera no QR code › link › Compartilhar › Adicionar à Tela de Início. Pelo nome ou pelo IP, os dois funcionam.</td></tr>
+        <tr><td>Samsung / Android</td><td>Câmera (ou o app de QR) › link no Chrome › ⋮ › Adicionar à tela inicial. Use o link <b>Pelo IP</b>.</td></tr>
+        <tr><td>Tablet</td><td>Igual ao celular. Com mais tela, aumente a grade em Configurações (até 8×8).</td></tr>
+        <tr><td>Outro computador</td><td>Abra o link do celular (botão <b>Copiar link</b>) em qualquer navegador — vira um painel de botões no segundo computador.</td></tr>
+        <tr><td>Vários ao mesmo tempo</td><td>Pode: todos usam o mesmo link e veem os mesmos botões. Em Conectar celular dá para desconectar um aparelho ou gerar um link novo para todos.</td></tr>
+      </table>
+    </section>
+
+    <section id="g-problemas">
+      <h2><span class="n">7</span>Se algo der errado</h2>
+      <ul>
+        <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo.</li>
+        <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
+        <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só) — ou instale pela linha do Terminal, que não tem esse aviso.</li>
+        <li><b>Botão de teclas não faz nada no Mac:</b> falta a permissão de Acessibilidade para o Terminal (passo 2).</li>
+        <li><b>Abas abertas não aparecem no Mac:</b> falta a permissão de Automação para o Safari/Chrome.</li>
+        <li><b>"A porta já está em uso":</b> o deck já está aberto em outra janela. Feche a outra, ou ligue com <code>--porta 8788</code>.</li>
+        <li><b>Perdeu o celular ou quer desconectar todos:</b> Conectar celular › <b>Gerar link novo</b> (ou ligue com <code>--novo-link</code>) e escaneie de novo.</li>
+      </ul>
+    </section>
+  </div>
+
+  <section id="faq" class="largura faq">
+    <h2>Perguntas frequentes</h2>
+    <details><summary>Precisa de internet?</summary><p>Não. O celular e o computador conversam direto, pela rede local (Wi-Fi, cabo ou Bluetooth). Nada passa por servidor nenhum.</p></details>
+    <details><summary>Funciona com Samsung e outros Android?</summary><p>Sim — qualquer celular com navegador. No Android use o link "Pelo IP" e o botão de tela cheia. Para cabo USB com Mac, precisa de Android 14 ou mais novo; no Windows e no Linux funciona com qualquer versão.</p></details>
+    <details><summary>Dá para ligar o computador pelo celular?</summary><p>Um computador desligado não tem nada rodando para receber o pedido, então não. Use o botão Suspender: o computador acorda com qualquer tecla e, no Mac com um Apple TV ou HomePod na rede, acorda sozinho quando o Deck abre no celular.</p></details>
+    <details><summary>É seguro? Alguém na mesma rede consegue apertar meus botões?</summary><p>Só quem tem o link do celular, que carrega uma chave secreta — e mesmo assim só os botões que você criou; o celular nunca manda comandos livres. O editor só abre no próprio computador. Para cortar o acesso de alguém, é só gerar um link novo.</p></details>
+    <details><summary>Quanto custa?</summary><p>Nada. Baixe, descompacte e use.</p></details>
+    <details><summary>Preciso instalar alguma coisa?</summary><p>No Mac e no Linux, não. No Windows, só o Python (instalador oficial, um clique). O Deck em si é uma pasta: para desinstalar, apague.</p></details>
+    <details><summary>O Mac disse que "não pôde verificar se está livre de malware". É vírus?</summary><p>Não — é o aviso padrão do macOS para qualquer programa que não passou pela Apple (assinar exige uma conta de desenvolvedor paga). O Deck é uma pasta de arquivos abertos: dá para ler o <code>server.py</code> inteiro. Para liberar: OK › Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b>, uma vez só. Ou instale pela linha do Terminal, que não mostra o aviso.</p></details>
+    <details><summary>E no Windows, "não é possível verificar o editor"?</summary><p>Mesmo motivo: o Windows avisa sobre qualquer arquivo baixado da internet que não tenha assinatura. Clique em <b>Executar</b> (ou <b>Mais informações › Executar assim mesmo</b>). Para ele não perguntar de novo, desmarque <b>Sempre perguntar antes de abrir este arquivo</b> nesse aviso — ou botão direito no <code>Iniciar no Windows.bat</code> › Propriedades › <b>Desbloquear</b>. A linha do PowerShell já faz isso sozinha.</p></details>
+  </section>
+</main>
+
+<footer>
+  <div class="largura">
+    <span>Deck · versão 3.0</span>
+    <a href="#baixar">Baixar</a>
+    <a href="#guia">Passo a passo</a>
+  </div>
+</footer>
+<script>
+(function () {
+  var ua = navigator.userAgent;
+  var celular = /iPhone|iPad|iPod|Android/i.test(ua) || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches && innerWidth < 900);
+  var site = (location.origin + location.pathname.replace(/[^\/]*$/, '')).replace(/\/$/, '');
+  var comandos = {
+    mac: 'curl -fsSL ' + site + '/instalar.sh | bash -s -- ' + site,
+    linux: 'curl -fsSL ' + site + '/instalar.sh | bash -s -- ' + site,
+    windows: '$env:DECK="' + site + '"; irm ' + site + '/instalar-windows.ps1 | iex'
+  };
+  function copiar(botao, texto, rotulo, feito) {
+    var alvo = botao.lastChild;
+    var pronto = function () { alvo.textContent = feito; setTimeout(function () { alvo.textContent = rotulo; }, 1800); };
+    if (navigator.clipboard) navigator.clipboard.writeText(texto).then(pronto, function () { prompt('Copie:', texto); });
+    else prompt('Copie:', texto);
+  }
+  var caixas = document.querySelectorAll('[data-cmd]');
+  for (var i = 0; i < caixas.length; i++) {
+    caixas[i].textContent = comandos[caixas[i].getAttribute('data-cmd')];
+    (function (caixa) {
+      caixa.nextElementSibling.addEventListener('click', function () { copiar(this, caixa.textContent, 'Copiar', 'Copiado'); });
+    })(caixas[i]);
+  }
+  var abas = document.querySelectorAll('.abas-so button');
+  var paineis = document.querySelectorAll('.painel-so');
+  function mostrar(qual) {
+    for (var a = 0; a < abas.length; a++) abas[a].classList.toggle('ativa', abas[a].getAttribute('data-so') === qual);
+    for (var p = 0; p < paineis.length; p++) paineis[p].hidden = paineis[p].id !== 'so-' + qual;
+  }
+  for (var b = 0; b < abas.length; b++) {
+    abas[b].addEventListener('click', function () { mostrar(this.getAttribute('data-so')); });
+  }
+  var so = /Windows/.test(ua) ? 'windows' : /Linux|X11|CrOS/.test(ua) && !/Android/.test(ua) ? 'linux' : 'mac';
+  mostrar(so);
+  if (!celular) {
+    var heroi = document.getElementById('baixar-heroi');
+    if (so === 'windows') {
+      heroi.href = 'deck.zip';
+      heroi.setAttribute('download', 'deck.zip');
+    } else {
+      heroi.lastChild.textContent = so === 'mac' ? 'Instalar no Mac' : 'Instalar no Linux';
+    }
+    return;
+  }
+  document.getElementById('acoes-pc').hidden = true;
+  document.getElementById('miudo-pc').hidden = true;
+  document.getElementById('so-celular').hidden = false;
+  var link = location.origin + location.pathname;
+  document.getElementById('whats-link').href = 'https://wa.me/?text=' + encodeURIComponent('Baixar o Deck no computador: ' + link);
+  document.getElementById('copiar-link').addEventListener('click', function () { copiar(this, link, 'Copiar o link', 'Link copiado'); });
+})();
+</script>
+</body>
+</html>
