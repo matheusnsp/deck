@@ -13,6 +13,17 @@
     vazio: $('#vazio'), rodape: $('#rodape'), bancos: $('#bancos'), toast: $('#toast'), dica: $('#dica'),
     dicaTexto: $('#dica-texto'), folha: $('#folha'), folhaLista: $('#folha-lista'),
     telaCheia: document.querySelectorAll('.tela-cheia'),
+    minis: document.querySelectorAll('.mini-player'), fichas: document.querySelectorAll('.ficha-foco'),
+    foco: $('#foco'), chamada: $('#chamada'),
+  };
+  var SVG_P = {
+    anterior: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="5" y="5" width="2.4" height="14" rx="1"/><path d="M19 6.3v11.4a1 1 0 0 1-1.5.86l-8.4-5.7a1.1 1.1 0 0 1 0-1.72l8.4-5.7a1 1 0 0 1 1.5.86z"/></svg>',
+    proxima: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="16.6" y="5" width="2.4" height="14" rx="1"/><path d="M5 6.3v11.4a1 1 0 0 0 1.5.86l8.4-5.7a1.1 1.1 0 0 0 0-1.72l-8.4-5.7A1 1 0 0 0 5 6.3z"/></svg>',
+    tocar: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M8 5.7v12.6a1 1 0 0 0 1.53.85l10-6.3a1 1 0 0 0 0-1.7l-10-6.3A1 1 0 0 0 8 5.7z"/></svg>',
+    pausar: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><rect x="6" y="5" width="4.4" height="14" rx="1.2"/><rect x="13.6" y="5" width="4.4" height="14" rx="1.2"/></svg>',
+    som: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+    mudo: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></svg>',
+    nota: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
   };
 
   var busca = new URLSearchParams(location.search);
@@ -31,6 +42,18 @@
   var avisosAtuais = [];
   var erroConfig = null;
   var appVersao = null;
+  var pl = null;
+  var tocando = null;
+  var tocandoEm = 0;
+  var timerTocando = null;
+  var pedindoTocando = false;
+  var arrastandoBarra = null;
+  var quadroTempo = null;
+  var modoAtual = null;
+  var modoEm = 0;
+  var focoMinimizado = null;
+  var timerFoco = null;
+  var chamadaAtual = null;
 
   function api(caminho, opcoes, limiteMs) {
     opcoes = opcoes || {};
@@ -65,6 +88,7 @@
     carregandoDeck = api('/api/deck', {}, 6000).then(function (d) {
       var nomeAnterior = paginas[atual] && paginas[atual].nome;
       deck = d;
+      if (d.idioma && window.IDIOMA && d.idioma !== window.IDIOMA) { location.reload(); return; }
       erroConfig = d.erroConfig || null;
       if (!appVersao) appVersao = d.app;
       el.nome.textContent = d.nome || 'Deck';
@@ -76,7 +100,7 @@
       atual = idx >= 0 ? idx : Math.min(atual, Math.max(0, paginas.length - 1));
       mostrarAvisos(d.avisos || []);
       desenhar();
-      definirStatus('ok', d.computador || 'Conectado');
+      definirStatus('ok', d.computador || tr('Conectado'));
       falhas = 0;
     }).finally(function () { carregandoDeck = null; });
     return carregandoDeck;
@@ -113,6 +137,11 @@
     var porPagina = Math.max(1, deck.grade.colunas * deck.grade.linhas);
     paginas = [];
     deck.paginas.forEach(function (pg, real) {
+      if (pg.oculta) return;
+      if (pg.tipo === 'player') {
+        paginas.push({ nome: pg.nome, icone: pg.icone || 'musica', real: real, tipo: 'player', botoes: [] });
+        return;
+      }
       var partes = Math.max(1, Math.ceil(pg.botoes.length / porPagina));
       for (var k = 0; k < partes; k++) {
         paginas.push({
@@ -127,18 +156,32 @@
 
   function desenhar() {
     el.grade.textContent = '';
+    if (deck && !paginas.length && deck.paginas.length) {
+      mostrarVazio('🙈', tr('Todas as páginas estão ocultas'), tr('No editor do computador, clique no olho ao lado de uma página para ela voltar a aparecer aqui.'));
+      desenharBancos();
+      return;
+    }
     if (!deck || !paginas.length) {
-      mostrarVazio('📭', 'Nenhum botão ainda', 'No computador, abra o editor do deck e escolha os apps e sites — eles aparecem aqui na hora.');
+      mostrarVazio('📭', tr('Nenhum botão ainda'), tr('No computador, abra o editor do deck e escolha os apps e sites — eles aparecem aqui na hora.'));
       desenharBancos();
       return;
     }
     el.vazio.hidden = true;
     var pg = paginas[atual];
-    var total = deck.grade.colunas * deck.grade.linhas;
-    for (var n = 0; n < total; n++) el.grade.appendChild(criarTecla(pg.botoes[n] || null));
+    el.grade.classList.toggle('modo-player', pg.tipo === 'player');
+    pl = null;
+    if (pg.tipo === 'player') {
+      el.grade.appendChild(criarPlayer());
+      desenharTocando();
+      agendarTocando(0);
+    } else {
+      var total = deck.grade.colunas * deck.grade.linhas;
+      for (var n = 0; n < total; n++) el.grade.appendChild(criarTecla(pg.botoes[n] || null));
+    }
     desenharBancos();
     medir();
     aplicarEstados();
+    atualizarMinis();
   }
 
   function desenharBancos() {
@@ -273,6 +316,13 @@
 
   function medir() {
     if (!deck) return;
+    if (el.grade.classList.contains('modo-player')) {
+      var caixa = el.palco.getBoundingClientRect();
+      var est = getComputedStyle(el.palco);
+      el.grade.style.setProperty('--pw', Math.floor(caixa.width - parseFloat(est.paddingLeft) - parseFloat(est.paddingRight)) + 'px');
+      el.grade.style.setProperty('--ph', Math.floor(caixa.height - parseFloat(est.paddingTop) - parseFloat(est.paddingBottom)) + 'px');
+      return;
+    }
     var deitado = innerWidth > innerHeight;
     var cols = deitado ? deck.grade.colunas : deck.grade.linhas;
     var lins = deitado ? deck.grade.linhas : deck.grade.colunas;
@@ -322,13 +372,15 @@
         erroConfig = r.erroConfig || null;
         if (deck && !recarregar) mostrarAvisos(deck.avisos || []);
       }
+      aplicarModo(r.modo);
+      aplicarChamada(r.chamada);
       if (recarregar) return carregarDeck();
-      definirStatus('ok', deck.computador || 'Conectado');
+      definirStatus('ok', deck.computador || tr('Conectado'));
       aplicarEstados();
     }).catch(function (e) {
       falhas++;
       if (e.status === 401) return semAcesso(e.erro);
-      definirStatus(falhas > 2 ? 'off' : 'tentando', falhas > 2 ? 'Sem conexão com o computador' : 'Reconectando…');
+      definirStatus(falhas > 2 ? 'off' : 'tentando', falhas > 2 ? tr('Sem conexão com o computador') : tr('Reconectando…'));
     }).finally(function () {
       consultando = false;
       if (!semAcessoAtivo) agendarEstado(falhas ? Math.min(1000 * Math.pow(2, falhas - 1), 8000) : 2000);
@@ -336,7 +388,7 @@
   }
 
   document.addEventListener('visibilitychange', function () {
-    if (!document.hidden) { agendarEstado(0); pedirTelaLigada(); vigiar(); }
+    if (!document.hidden) { agendarEstado(0); agendarTocando(0); pedirTelaLigada(); vigiar(); }
   });
   window.addEventListener('pageshow', function () { agendarEstado(0); });
   window.addEventListener('online', function () { agendarEstado(0); });
@@ -346,10 +398,19 @@
   el.grade.addEventListener('pointerdown', function (e) {
     if (e.pointerType === 'mouse' && e.button !== 0) return;
     var t = e.target.closest('.tecla');
-    var g = { x: e.clientX, y: e.clientY, t0: performance.now(), modo: 'toque', tecla: t && t._b ? t : null };
+    var ctl = e.target.closest('[data-ctl]');
+    var g = { x: e.clientX, y: e.clientY, t0: performance.now(), modo: 'toque', tecla: t && t._b ? t : null, ctl: ctl };
     gestos.set(e.pointerId, g);
     try { el.grade.setPointerCapture(e.pointerId); } catch (err) { g.semCaptura = true; }
     if (g.tecla) g.tecla.classList.add('pressionada');
+    if (ctl && ctl.classList.contains('barra')) {
+      if (ctl.classList.contains('travada')) { g.ctl = null; return; }
+      g.modo = 'barra';
+      arrastandoBarra = ctl;
+      moverBarra(ctl, e.clientX);
+    } else if (ctl) {
+      ctl.classList.add('pressionado');
+    }
   });
 
   el.grade.addEventListener('pointermove', function (e) {
@@ -357,6 +418,7 @@
     if (!g) return;
     var dx = e.clientX - g.x;
     var dy = e.clientY - g.y;
+    if (g.modo === 'barra') { moverBarra(g.ctl, e.clientX); return; }
     if (g.modo === 'toque') {
       if (gestos.size === 1 && paginas.length > 1 && Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy) * 1.3) {
         g.modo = 'arraste';
@@ -381,7 +443,9 @@
       return;
     }
     soltar(g);
+    if (g.modo === 'barra') { soltarBarra(g.ctl, e.clientX); return; }
     if (g.modo === 'toque' && g.tecla) acionar(g.tecla);
+    else if (g.modo === 'toque' && g.ctl) controlarPlayer(g.ctl.getAttribute('data-ctl'));
   });
 
   el.grade.addEventListener('pointercancel', function (e) {
@@ -389,13 +453,16 @@
     if (!g) return;
     gestos.delete(e.pointerId);
     soltar(g);
+    if (g.modo === 'barra') { arrastandoBarra = null; desenharTocando(); }
     if (g.modo === 'arraste') voltarArraste();
   });
 
   el.grade.addEventListener('click', function (e) {
     if (e.detail !== 0) return;
     var t = e.target.closest('.tecla');
-    if (t && t._b) acionar(t);
+    if (t && t._b) { acionar(t); return; }
+    var ctl = e.target.closest('button[data-ctl]');
+    if (ctl) controlarPlayer(ctl.getAttribute('data-ctl'));
   });
 
   el.grade.addEventListener('contextmenu', function (e) { e.preventDefault(); });
@@ -404,7 +471,10 @@
     if (!e.target.closest('.rolavel, .bancos')) e.preventDefault();
   }, { passive: false });
 
-  function soltar(g) { if (g.tecla) g.tecla.classList.remove('pressionada'); }
+  function soltar(g) {
+    if (g.tecla) g.tecla.classList.remove('pressionada');
+    if (g.ctl) g.ctl.classList.remove('pressionado');
+  }
 
   function arrastar(dx) {
     var borda = (atual === 0 && dx > 0) || (atual === paginas.length - 1 && dx < 0);
@@ -446,12 +516,14 @@
         });
       });
       agendarEstado(0);
+      agendarTocando(0);
     }, 150);
   }
 
   function irParaReal(indiceReal) {
     var n = paginas.findIndex(function (p) { return p.real === indiceReal; });
     if (n >= 0) irPara(n);
+    else if (deck && deck.paginas[indiceReal] && deck.paginas[indiceReal].oculta) toast(tr('Essa página está oculta no celular.'), 'info');
   }
 
   function vibrar(ms) {
@@ -468,7 +540,7 @@
       limparConfirmacoes();
       var c = document.createElement('span');
       c.className = 'confirma';
-      c.textContent = 'Toque de novo';
+      c.textContent = tr('Toque de novo');
       t.appendChild(c);
       t._confirma = setTimeout(function () { limparConfirmacao(t); }, 2600);
       return;
@@ -480,14 +552,17 @@
       if (typeof b.destino === 'number') irParaReal(b.destino);
       return;
     }
+    if (b.tipo === 'modo') prepararSom();
 
     t.classList.add('rodando');
     api('/api/apertar', { method: 'POST', body: JSON.stringify({ p: b.p, i: b.i, versao: deck.versao }) }, 9000)
       .then(function (r) {
         if (r.recarregar) {
-          toast(r.mensagem || 'Os botões mudaram no computador.', 'aviso');
+          toast(r.mensagem || tr('Os botões mudaram no computador.'), 'aviso');
           return carregarDeck();
         }
+        if (r.modo !== undefined) aplicarModo(r.modo);
+        if (r.ok && b.tipo === 'modo' && r.ativo && typeof b.destino === 'number') irParaReal(b.destino);
         if (r.ok) {
           piscar(t, r.pendente ? 'pendente' : 'ok');
           if (r.info && !(b.selo && typeof r.ativo === 'boolean')) mostrarInfo(t, r.info);
@@ -495,7 +570,7 @@
         } else {
           vibrar([20, 40, 20]);
           piscar(t, 'erro');
-          toast(r.mensagem || 'Não funcionou.', 'erro');
+          toast(r.mensagem || tr('Não funcionou.'), 'erro');
         }
         if (typeof r.ativo === 'boolean') {
           if (r.ativo) ativos.add(t.dataset.id); else ativos.delete(t.dataset.id);
@@ -505,8 +580,8 @@
       .catch(function (e) {
         piscar(t, 'erro');
         if (e.status === 401) return semAcesso(e.erro);
-        toast('Sem resposta do computador. Ele está ligado, na mesma rede e com o deck aberto?', 'erro');
-        definirStatus('tentando', 'Reconectando…');
+        toast(tr('Sem resposta do computador. Ele está ligado, na mesma rede e com o deck aberto?'), 'erro');
+        definirStatus('tentando', tr('Reconectando…'));
       })
       .finally(function () {
         t.classList.remove('rodando');
@@ -556,9 +631,9 @@
   el.toast.addEventListener('click', function () { el.toast.className = 'toast'; });
 
   function mostrarAvisos(lista) {
-    avisosAtuais = (erroConfig ? [erroConfig + ' — o deck segue com a última versão que funcionava.'] : []).concat(lista);
+    avisosAtuais = (erroConfig ? [erroConfig + tr(' — o deck segue com a última versão que funcionava.')] : []).concat(lista);
     el.avisos.hidden = !avisosAtuais.length;
-    el.avisos.textContent = avisosAtuais.length === 1 ? '1 aviso' : avisosAtuais.length + ' avisos';
+    el.avisos.textContent = avisosAtuais.length === 1 ? tr('1 aviso') : tr('{n} avisos', { n: avisosAtuais.length });
   }
   el.avisos.addEventListener('click', function () {
     el.folhaLista.textContent = '';
@@ -594,13 +669,431 @@
     el.bancos.textContent = '';
     el.rodape.hidden = true;
     if (erro === 'bloqueado') {
-      definirStatus('off', 'Desconectado');
-      mostrarVazio('⛔', 'Desconectado pelo computador', 'Este aparelho foi desconectado em Conectar celular. Para voltar, peça para liberar lá — e abra o app de novo.');
+      definirStatus('off', tr('Desconectado'));
+      mostrarVazio('⛔', tr('Desconectado pelo computador'), tr('Este aparelho foi desconectado em Conectar celular. Para voltar, peça para liberar lá — e abra o app de novo.'));
       return;
     }
-    definirStatus('off', 'Link inválido');
-    mostrarVazio('🔑', 'Link antigo', 'Este link não vale mais. No computador, abra a página do QR code e escaneie de novo com a câmera do celular.');
+    definirStatus('off', tr('Link inválido'));
+    mostrarVazio('🔑', tr('Link antigo'), tr('Este link não vale mais. No computador, abra a página do QR code e escaneie de novo com a câmera do celular.'));
   }
+
+  function el2(tag, classe, texto) {
+    var e = document.createElement(tag);
+    if (classe) e.className = classe;
+    if (texto !== undefined && texto !== null) e.textContent = texto;
+    return e;
+  }
+
+  function botaoCtl(acao, rotulo, svg, classe) {
+    var b = el2('button', 'ctl' + (classe ? ' ' + classe : ''));
+    b.type = 'button';
+    b.setAttribute('data-ctl', acao);
+    b.setAttribute('aria-label', rotulo);
+    b.innerHTML = svg;
+    return b;
+  }
+
+  function criarPlayer() {
+    var raiz = el2('div', 'player sem-midia');
+    var fundo = el2('div', 'player-fundo');
+    var capa = el2('div', 'player-capa');
+    var img = new Image();
+    img.alt = '';
+    img.draggable = false;
+    var nota = el2('span', 'player-nota');
+    nota.innerHTML = SVG_P.nota;
+    capa.append(img, nota);
+    var info = el2('div', 'player-info');
+    var app = el2('div', 'player-app');
+    var eq = el2('span', 'eq');
+    eq.append(el2('i'), el2('i'), el2('i'));
+    var appNome = el2('span', 'player-app-nome');
+    app.append(eq, appNome);
+    var titulo = el2('div', 'player-titulo');
+    var artista = el2('div', 'player-artista');
+    var barra = el2('div', 'barra posicao');
+    barra.setAttribute('data-ctl', 'posicao');
+    barra.setAttribute('role', 'slider');
+    barra.setAttribute('aria-label', tr('Posição'));
+    var cheio = el2('div', 'cheio');
+    var bolinha = el2('div', 'bolinha');
+    barra.append(cheio, bolinha);
+    var tempos = el2('div', 'tempos');
+    var ja = el2('span', null, '0:00');
+    var total = el2('span', null, '');
+    tempos.append(ja, total);
+    var controles = el2('div', 'player-controles');
+    var alternar = botaoCtl('alternar', tr('Tocar ou pausar'), SVG_P.tocar, 'grande');
+    controles.append(botaoCtl('anterior', tr('Anterior'), SVG_P.anterior), alternar, botaoCtl('proxima', tr('Próxima'), SVG_P.proxima));
+    var volume = el2('div', 'player-volume');
+    var mudo = botaoCtl('mudo', tr('Mudo'), SVG_P.som, 'pequeno');
+    var vbarra = el2('div', 'barra volume');
+    vbarra.setAttribute('data-ctl', 'volume');
+    vbarra.setAttribute('role', 'slider');
+    vbarra.setAttribute('aria-label', tr('Volume'));
+    var vcheio = el2('div', 'cheio');
+    var vbola = el2('div', 'bolinha');
+    vbarra.append(vcheio, vbola);
+    var vnum = el2('span', 'vol-num', '');
+    volume.append(mudo, vbarra, vnum);
+    var vazio = el2('div', 'player-vazio');
+    vazio.append(el2('b', null, tr('Nada tocando agora')), el2('span', null, tr('Dê play no Spotify, no YouTube ou em qualquer player do computador — aparece aqui.')));
+    info.append(vazio, app, titulo, artista, barra, tempos, controles, volume);
+    raiz.append(fundo, capa, info);
+    img.addEventListener('load', function () {
+      capa.classList.add('com-capa');
+      capa.classList.toggle('larga', img.naturalWidth > img.naturalHeight * 1.3);
+      if (window.tomDaImagem) tomDaImagem(img, function (tom) {
+        raiz.style.setProperty('--tom', tripla(tom));
+        if (window.tomClaro) raiz.style.setProperty('--tom-texto', tripla(tomClaro(tom, 0.72)));
+      });
+    });
+    img.addEventListener('error', function () { capa.classList.remove('com-capa'); });
+    pl = { raiz: raiz, fundo: fundo, img: img, capa: capa, appNome: appNome, titulo: titulo, artista: artista, barra: barra,
+      cheio: cheio, bolinha: bolinha, ja: ja, total: total, alternar: alternar, mudo: mudo, vbarra: vbarra, vcheio: vcheio,
+      vbola: vbola, vnum: vnum, capaUrl: null };
+    return raiz;
+  }
+
+  function relogio(seg) {
+    if (!(seg >= 0) || !isFinite(seg)) return '';
+    seg = Math.floor(seg);
+    var h = Math.floor(seg / 3600), m = Math.floor((seg % 3600) / 60), s2 = seg % 60;
+    return (h ? h + ':' + (m < 10 ? '0' : '') : '') + m + ':' + (s2 < 10 ? '0' : '') + s2;
+  }
+
+  function posicaoAgora() {
+    if (!tocando || !tocando.tem || tocando.posicao === null || tocando.posicao === undefined) return null;
+    var p = tocando.posicao + (tocando.tocando ? (performance.now() - tocandoEm) / 1000 : 0);
+    return tocando.duracao ? Math.min(p, tocando.duracao) : p;
+  }
+
+  function pintarBarra(cheio, bolinha, fracao) {
+    var f = Math.max(0, Math.min(1, fracao || 0));
+    cheio.style.transform = 'scaleX(' + f + ')';
+    bolinha.style.left = (f * 100) + '%';
+  }
+
+  function desenharTempo() {
+    if (!pl || !tocando || !tocando.tem) return;
+    if (arrastandoBarra === pl.barra) return;
+    var p = posicaoAgora();
+    var d = tocando.duracao;
+    pl.ja.textContent = p === null ? '' : relogio(p);
+    pl.total.textContent = d ? relogio(d) : '';
+    pintarBarra(pl.cheio, pl.bolinha, d && p !== null ? p / d : 0);
+  }
+
+  function animarTempo() {
+    cancelAnimationFrame(quadroTempo);
+    if (!pl || !tocando || !tocando.tem || !tocando.tocando) return;
+    var passo = function () {
+      desenharTempo();
+      if (pl && tocando && tocando.tocando) quadroTempo = requestAnimationFrame(passo);
+    };
+    quadroTempo = requestAnimationFrame(passo);
+  }
+
+  function desenharTocando() {
+    atualizarMinis();
+    if (!pl) return;
+    var t = tocando || {};
+    pl.raiz.classList.toggle('sem-midia', !t.tem);
+    pl.raiz.classList.toggle('tocando', !!(t.tem && t.tocando));
+    if (t.tem) {
+      pl.appNome.textContent = t.app || '';
+      pl.titulo.textContent = t.titulo || tr('Sem título');
+      pl.artista.textContent = [t.artista, t.album && t.album !== t.titulo ? t.album : ''].filter(Boolean).join(' · ');
+      pl.alternar.innerHTML = t.tocando ? SVG_P.pausar : SVG_P.tocar;
+      pl.alternar.setAttribute('aria-label', t.tocando ? tr('Pausar') : tr('Tocar'));
+      var pode = t.pode || {};
+      pl.barra.classList.toggle('travada', !pode.posicao);
+      pl.raiz.querySelector('[data-ctl="anterior"]').disabled = pode.anterior === false;
+      pl.raiz.querySelector('[data-ctl="proxima"]').disabled = pode.proxima === false;
+      var url = t.capa ? t.capa + (t.capa.indexOf('?') < 0 ? '?' : '&') + 'k=' + encodeURIComponent(token || '') : null;
+      if (url !== pl.capaUrl) {
+        pl.capaUrl = url;
+        pl.capa.classList.remove('com-capa', 'larga');
+        pl.raiz.style.removeProperty('--tom');
+        pl.raiz.style.removeProperty('--tom-texto');
+        if (url) { pl.img.src = url; pl.fundo.style.backgroundImage = 'url("' + url + '")'; }
+        else { pl.img.removeAttribute('src'); pl.fundo.style.backgroundImage = ''; }
+      }
+    } else {
+      pl.alternar.innerHTML = SVG_P.tocar;
+    }
+    var temVol = typeof t.volume === 'number';
+    pl.raiz.classList.toggle('sem-volume', !temVol);
+    if (temVol && arrastandoBarra !== pl.vbarra) {
+      pintarBarra(pl.vcheio, pl.vbola, (t.mudo ? 0 : t.volume) / 100);
+      pl.vnum.textContent = t.mudo ? tr('Mudo') : t.volume + '%';
+    }
+    pl.mudo.innerHTML = t.mudo ? SVG_P.mudo : SVG_P.som;
+    pl.mudo.classList.toggle('ativo', !!t.mudo);
+    desenharTempo();
+    animarTempo();
+  }
+
+  function temPaginaPlayer() {
+    for (var i = 0; i < paginas.length; i++) if (paginas[i].tipo === 'player') return i;
+    return -1;
+  }
+
+  function naPaginaPlayer() { return !!(paginas[atual] && paginas[atual].tipo === 'player'); }
+
+  function agendarTocando(ms) {
+    clearTimeout(timerTocando);
+    timerTocando = setTimeout(atualizarTocando, ms);
+  }
+
+  function atualizarTocando() {
+    if (!token || document.hidden || semAcessoAtivo || !deck || temPaginaPlayer() < 0) return;
+    if (pedindoTocando) { agendarTocando(500); return; }
+    pedindoTocando = true;
+    api('/api/tocando', {}, 7000).then(function (r) {
+      tocando = r;
+      tocandoEm = performance.now();
+      desenharTocando();
+    }).catch(function (e) {
+      if (e.status === 401) semAcesso(e.erro);
+    }).finally(function () {
+      pedindoTocando = false;
+      if (!semAcessoAtivo) agendarTocando(naPaginaPlayer() ? 1000 : 4000);
+    });
+  }
+
+  function atualizarMinis() {
+    var idx = temPaginaPlayer();
+    var t = tocando || {};
+    var mostrar = idx >= 0 && !naPaginaPlayer() && !!t.tem;
+    Array.prototype.forEach.call(el.minis, function (m) {
+      m.hidden = !mostrar;
+      if (!mostrar) return;
+      m.classList.toggle('tocando', !!t.tocando);
+      m.setAttribute('aria-label', tr('Tocando agora: {t}', { t: t.titulo || '' }));
+      var img = m.querySelector('img');
+      var url = t.capa ? t.capa + (t.capa.indexOf('?') < 0 ? '?' : '&') + 'k=' + encodeURIComponent(token || '') : '';
+      if (img.getAttribute('src') !== url) { if (url) img.src = url; else img.removeAttribute('src'); }
+      m.classList.toggle('sem-capa', !url);
+      var rot = m.querySelector('.mini-titulo');
+      if (rot) rot.textContent = t.titulo || '';
+    });
+  }
+
+  Array.prototype.forEach.call(el.minis, function (m) {
+    m.addEventListener('click', function () {
+      var idx = temPaginaPlayer();
+      if (idx >= 0) irPara(idx);
+    });
+  });
+
+  function fracaoDaBarra(barra, x) {
+    var r = barra.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (x - r.left) / Math.max(1, r.width)));
+  }
+
+  function moverBarra(barra, x) {
+    if (!pl || !barra) return;
+    var f = fracaoDaBarra(barra, x);
+    if (barra === pl.barra) {
+      pintarBarra(pl.cheio, pl.bolinha, f);
+      if (tocando && tocando.duracao) pl.ja.textContent = relogio(f * tocando.duracao);
+    } else {
+      pintarBarra(pl.vcheio, pl.vbola, f);
+      pl.vnum.textContent = Math.round(f * 100) + '%';
+    }
+    barra.classList.add('mexendo');
+  }
+
+  function soltarBarra(barra, x) {
+    arrastandoBarra = null;
+    if (!pl || !barra) return;
+    barra.classList.remove('mexendo');
+    var f = fracaoDaBarra(barra, x);
+    if (barra === pl.barra) {
+      if (!tocando || !tocando.duracao) return;
+      var alvo = Math.round(f * tocando.duracao * 10) / 10;
+      tocando.posicao = alvo;
+      tocandoEm = performance.now();
+      desenharTempo();
+      enviarPlayer('posicao', alvo);
+    } else {
+      var v = Math.round(f * 100);
+      if (tocando) { tocando.volume = v; tocando.mudo = false; }
+      desenharTocando();
+      enviarPlayer('volume', v);
+    }
+  }
+
+  function enviarPlayer(acao, valor) {
+    vibrar(10);
+    return api('/api/tocando', { method: 'POST', body: JSON.stringify({ acao: acao, valor: valor }) }, 9000).then(function (r) {
+      if (!r.ok) toast(r.mensagem || tr('Não funcionou.'), 'erro');
+    }).catch(function (e) {
+      if (e.status === 401) return semAcesso(e.erro);
+      toast(tr('Sem resposta do computador. Ele está ligado, na mesma rede e com o deck aberto?'), 'erro');
+    }).finally(function () { agendarTocando(350); });
+  }
+
+  function controlarPlayer(acao) {
+    if (!acao || acao === 'posicao' || acao === 'volume') return;
+    if (acao === 'alternar' && tocando && tocando.tem) {
+      tocando.posicao = posicaoAgora();
+      tocandoEm = performance.now();
+      tocando.tocando = !tocando.tocando;
+      desenharTocando();
+    }
+    if (acao === 'mudo' && tocando) { tocando.mudo = !tocando.mudo; desenharTocando(); }
+    enviarPlayer(acao);
+  }
+
+  function restanteFoco() {
+    if (!modoAtual || modoAtual.restante === undefined) return 0;
+    if (modoAtual.concluido) return 0;
+    if (modoAtual.pausado) return modoAtual.restante;
+    return Math.max(0, modoAtual.restante - (performance.now() - modoEm) / 1000);
+  }
+
+  var somFoco = null;
+  function prepararSom() {
+    try {
+      if (!somFoco && (window.AudioContext || window.webkitAudioContext)) somFoco = new (window.AudioContext || window.webkitAudioContext)();
+      if (somFoco && somFoco.state === 'suspended') somFoco.resume();
+    } catch (e) { somFoco = null; }
+  }
+  function tocarAviso() {
+    vibrar([60, 80, 60, 80, 120]);
+    if (!somFoco) return;
+    try {
+      [0, 0.22, 0.44].forEach(function (atraso, n) {
+        var o = somFoco.createOscillator();
+        var g = somFoco.createGain();
+        o.type = 'sine';
+        o.frequency.value = [660, 880, 1046][n];
+        g.gain.setValueAtTime(0.0001, somFoco.currentTime + atraso);
+        g.gain.exponentialRampToValueAtTime(0.25, somFoco.currentTime + atraso + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, somFoco.currentTime + atraso + 0.5);
+        o.connect(g);
+        g.connect(somFoco.destination);
+        o.start(somFoco.currentTime + atraso);
+        o.stop(somFoco.currentTime + atraso + 0.55);
+      });
+    } catch (e) { return; }
+  }
+
+  function aplicarModo(m) {
+    var antes = modoAtual;
+    modoAtual = m && m.total ? m : null;
+    modoEm = performance.now();
+    if (!modoAtual) {
+      el.foco.hidden = true;
+      clearInterval(timerFoco);
+      timerFoco = null;
+      atualizarFichas();
+      return;
+    }
+    if (!antes || antes.id !== modoAtual.id) focoMinimizado = null;
+    if (modoAtual.concluido && !(antes && antes.concluido && antes.id === modoAtual.id)) {
+      focoMinimizado = null;
+      tocarAviso();
+    }
+    var f = el.foco;
+    f.style.setProperty('--c', modoAtual.cor || '#5e5ce6');
+    if (window.triplaDoHex) f.style.setProperty('--tom', triplaDoHex(modoAtual.cor || '#5e5ce6') || '94, 92, 230');
+    f.querySelector('.foco-icone').textContent = modoAtual.icone || '⏱';
+    f.querySelector('.foco-titulo').textContent = modoAtual.concluido ? tr('{t}: tempo encerrado', { t: modoAtual.titulo }) : modoAtual.titulo;
+    f.classList.toggle('concluido', !!modoAtual.concluido);
+    f.classList.toggle('pausado', !!modoAtual.pausado);
+    var pausa = f.querySelector('[data-foco="pausar"]');
+    pausa.hidden = !!modoAtual.concluido;
+    pausa.textContent = modoAtual.pausado ? tr('Retomar') : tr('Pausar');
+    pausa.setAttribute('data-acao', modoAtual.pausado ? 'retomar' : 'pausar');
+    f.querySelector('[data-foco="encerrar"]').textContent = modoAtual.concluido ? tr('Fechar') : tr('Encerrar');
+    f.hidden = focoMinimizado === modoAtual.id + (modoAtual.concluido ? 'c' : '');
+    tickFoco();
+    if (!timerFoco) timerFoco = setInterval(tickFoco, 250);
+  }
+
+  function tickFoco() {
+    if (!modoAtual) return;
+    var r = restanteFoco();
+    var txt = relogio(Math.ceil(r));
+    el.foco.querySelector('.foco-tempo').textContent = modoAtual.concluido ? '0:00' : txt;
+    var anel = el.foco.querySelector('.foco-progresso');
+    var total = modoAtual.total || 1;
+    var feito = modoAtual.concluido ? 1 : 1 - r / total;
+    anel.style.strokeDashoffset = String(Math.max(0, Math.min(1, 1 - feito)) * 100);
+    atualizarFichas(txt);
+    if (r <= 0 && !modoAtual.concluido && !modoAtual.pausado) agendarEstado(400);
+  }
+
+  function atualizarFichas(txt) {
+    var mostrar = !!modoAtual && el.foco.hidden;
+    Array.prototype.forEach.call(el.fichas, function (fc) {
+      fc.hidden = !mostrar;
+      if (!mostrar) return;
+      fc.style.setProperty('--c', modoAtual.cor || '#5e5ce6');
+      fc.querySelector('.ficha-icone').textContent = modoAtual.icone || '⏱';
+      fc.querySelector('.ficha-tempo').textContent = modoAtual.concluido ? tr('Fim') : (txt || relogio(Math.ceil(restanteFoco())));
+      fc.setAttribute('aria-label', tr('Mostrar o cronômetro de {t}', { t: modoAtual.titulo || '' }));
+      fc.classList.toggle('pausado', !!modoAtual.pausado);
+    });
+  }
+
+  Array.prototype.forEach.call(el.fichas, function (fc) {
+    fc.addEventListener('click', function () {
+      focoMinimizado = null;
+      el.foco.hidden = false;
+      atualizarFichas();
+    });
+  });
+
+  el.foco.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    prepararSom();
+    if (b.classList.contains('foco-minimizar')) {
+      focoMinimizado = modoAtual ? modoAtual.id + (modoAtual.concluido ? 'c' : '') : null;
+      el.foco.hidden = true;
+      atualizarFichas();
+      return;
+    }
+    var acao = b.getAttribute('data-acao') || b.getAttribute('data-foco');
+    if (acao === 'encerrar' && modoAtual && modoAtual.concluido) acao = 'fechar';
+    vibrar(10);
+    api('/api/modo', { method: 'POST', body: JSON.stringify({ acao: acao }) }, 8000).then(function (r) {
+      if (r.ok) aplicarModo(r.modo); else toast(r.mensagem || tr('Não funcionou.'), 'erro');
+      agendarEstado(300);
+    }).catch(function (e2) {
+      if (e2.status === 401) return semAcesso(e2.erro);
+      toast(tr('Sem resposta do computador. Ele está ligado, na mesma rede e com o deck aberto?'), 'erro');
+    });
+  });
+
+  function aplicarChamada(c) {
+    var antes = chamadaAtual;
+    chamadaAtual = c || null;
+    if (!chamadaAtual) { el.chamada.hidden = true; return; }
+    el.chamada.querySelector('.chamada-quem').textContent = chamadaAtual.quem || tr('Chamada');
+    el.chamada.querySelector('.chamada-detalhe').textContent = chamadaAtual.detalhe || tr('Chamada chegando no computador');
+    el.chamada.querySelector('[data-chamada="recusar"]').hidden = !chamadaAtual.recusar;
+    if (el.chamada.hidden || !antes) vibrar([200, 100, 200]);
+    el.chamada.hidden = false;
+  }
+
+  el.chamada.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-chamada]');
+    if (!b) return;
+    var acao = b.getAttribute('data-chamada');
+    b.disabled = true;
+    api('/api/chamada', { method: 'POST', body: JSON.stringify({ acao: acao }) }, 9000).then(function (r) {
+      if (r.ok) { el.chamada.hidden = true; chamadaAtual = null; toast(acao === 'atender' ? tr('Atendendo no computador…') : tr('Chamada recusada.'), 'ok'); }
+      else { toast(r.mensagem || tr('Não funcionou.'), 'erro'); el.chamada.hidden = true; }
+    }).catch(function (e2) {
+      if (e2.status === 401) return semAcesso(e2.erro);
+      toast(tr('Sem resposta do computador. Ele está ligado, na mesma rede e com o deck aberto?'), 'erro');
+    }).finally(function () { b.disabled = false; agendarEstado(500); });
+  });
 
   var ua = navigator.userAgent;
   var ehIPhone = /iPhone|iPod/.test(ua);
@@ -634,8 +1127,8 @@
 
   if (!noApp && !guardado.get('deck.dica') && (ehIOS || ehAndroid)) {
     el.dicaTexto.innerHTML = ehIOS
-      ? 'Para usar como app em tela cheia: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.'
-      : 'Para ter um atalho: menu <b>⋮</b> e depois <b>Adicionar à tela inicial</b>. O botão de tela cheia esconde as barras e deixa deitado.';
+      ? tr('Para usar como app em tela cheia: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.')
+      : tr('Para ter um atalho: menu <b>⋮</b> e depois <b>Adicionar à tela inicial</b>. O botão de tela cheia esconde as barras e deixa deitado.');
     el.dica.hidden = false;
   }
   $('#dica-fechar').addEventListener('click', function () {
@@ -659,20 +1152,21 @@
   });
 
   if (!token) {
-    definirStatus('off', 'Sem link');
-    mostrarVazio('📷', 'Conecte ao computador', 'No computador, rode o deck e escaneie o QR code com a câmera do celular.');
+    definirStatus('off', tr('Sem link'));
+    mostrarVazio('📷', tr('Conecte ao computador'), tr('No computador, rode o deck e escaneie o QR code com a câmera do celular.'));
     return;
   }
 
-  definirStatus('tentando', 'Conectando…');
+  definirStatus('tentando', tr('Conectando…'));
   carregarDeck().then(function () {
     agendarEstado(0);
+    agendarTocando(0);
     pedirTelaLigada();
     vigiar();
   }).catch(function (e) {
     if (e.status === 401) return semAcesso(e.erro);
-    definirStatus('off', 'Sem conexão com o computador');
-    mostrarVazio('📡', 'Computador fora do alcance', 'Confira se o computador está ligado, na mesma rede e com o deck aberto. Tentando de novo…');
+    definirStatus('off', tr('Sem conexão com o computador'));
+    mostrarVazio('📡', tr('Computador fora do alcance'), tr('Confira se o computador está ligado, na mesma rede e com o deck aberto. Tentando de novo…'));
     falhas = 1;
     var tentar = function () {
       carregarDeck().then(function () { agendarEstado(0); vigiar(); }).catch(function (err) {

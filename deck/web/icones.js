@@ -20,6 +20,7 @@
     video: '<rect x="3.5" y="6.5" width="12" height="11" rx="2.5"/><path d="m15.5 10.5 5-2.5v8l-5-2.5"/>',
     lampada: '<path d="M9 18h6M10 21h4M8 12a4 4 0 1 1 8 0c0 1.6-1 2.6-1.6 3.4-.4.6-.4 1.1-.4 1.6h-4c0-.5 0-1-.4-1.6C9 14.6 8 13.6 8 12z"/>',
     sino: '<path d="M6.5 16V11a5.5 5.5 0 0 1 11 0v5l1.5 1.5h-14z"/><path d="M10 19.5a2 2 0 0 0 4 0"/>',
+    lua: '<path d="M20.5 12.75A8.5 8.5 0 1 1 11.25 3.5a6.6 6.6 0 0 0 9.25 9.25z"/>',
   };
   var PALAVRAS = [
     ['estrela', ['favorit', 'principal', 'inicio', 'início', 'home', 'main', 'top']],
@@ -27,6 +28,8 @@
     ['globo', ['site', 'web', 'aba', 'link', 'internet', 'navega']],
     ['play', ['midia', 'mídia', 'media', 'filme', 'video', 'vídeo', 'netflix', 'youtube', 'tv']],
     ['musica', ['music', 'música', 'musica', 'spotify', 'som', 'audio', 'áudio', 'podcast']],
+    ['lua', ['modo', 'mode', 'foco', 'focus', 'concentr']],
+    ['video', ['chamada', 'call', 'reuniao', 'reunião', 'meeting', 'zoom', 'meet']],
     ['raio', ['produtiv', 'atalho', 'rapid', 'rápid', 'acao', 'ação', 'macro']],
     ['engrenagem', ['config', 'ajuste', 'sistema', 'setting']],
     ['chat', ['chat', 'conversa', 'mensag', 'whatsapp', 'zap', 'telegram', 'discord', 'slack', 'teams', 'reuni']],

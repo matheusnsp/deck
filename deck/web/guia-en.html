@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to use Deck</title>
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+<style>
+  :root {
+    --fundo: #04060a;
+    --tecla: #0f131a;
+    --vidro: #171d27;
+    --borda: #222a36;
+    --papel: #f3f5f8;
+    --texto: #c6cdd8;
+    --apagado: #8b93a1;
+    --azul: #3b82f6;
+    --verde: #22c55e;
+    --ambar: #f59e0b;
+    --vermelho: #ef4444;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Inter, system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: #93c5fd; }
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 24px;
+    border-bottom: 1px solid #161c26;
+    background: rgba(4, 6, 10, .86);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+  .topo img { width: 32px; height: 32px; border-radius: 9px; }
+  .topo b { color: var(--papel); font-size: 16px; }
+  .topo nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  .topo nav a { padding: 7px 11px; border-radius: 999px; color: var(--apagado); font-size: 13.5px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .topo nav a:hover { background: var(--vidro); color: var(--papel); }
+  .topo nav a.destaque { background: var(--azul); color: #fff; }
+  main { width: min(920px, 100%); margin: 0 auto; padding: 48px 24px 90px; }
+  h1 { margin: 0; font-size: clamp(36px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; color: var(--papel); }
+  .lead { margin: 14px 0 0; max-width: 60ch; color: var(--apagado); font-size: 19px; }
+  .trilha { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 30px; }
+  .trilha a {
+    display: grid;
+    gap: 4px;
+    padding: 14px 16px;
+    border: 1px solid var(--borda);
+    border-radius: 16px;
+    background: var(--tecla);
+    color: var(--papel);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .trilha a small { color: var(--apagado); font-weight: 500; font-size: 13px; }
+  .trilha a:hover { border-color: var(--azul); }
+  section { margin-top: 64px; scroll-margin-top: 80px; }
+  h2 { display: flex; align-items: center; gap: 14px; margin: 0 0 18px; font-size: 28px; font-weight: 700; letter-spacing: -0.015em; color: var(--papel); }
+  h2 .n { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: rgba(59, 130, 246, .14); color: #93c5fd; font-size: 17px; }
+  h3 { margin: 26px 0 8px; font-size: 18px; font-weight: 700; color: var(--papel); }
+  p { margin: 0 0 12px; }
+  ol, ul { margin: 0 0 12px; padding-left: 22px; }
+  li { margin: 6px 0; }
+  li::marker { color: var(--apagado); }
+  b { color: var(--papel); font-weight: 600; }
+  code, kbd { padding: 2px 6px; border-radius: 6px; background: var(--vidro); color: var(--papel); font: 500 .92em ui-monospace, "SF Mono", Consolas, Menlo, monospace; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 16px; font-size: 15px; }
+  th, td { padding: 11px 12px; border-bottom: 1px solid #161c26; text-align: left; vertical-align: top; }
+  th { color: var(--apagado); font-weight: 600; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  td:first-child { color: var(--papel); font-weight: 600; white-space: nowrap; }
+  .cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 14px 0 18px; }
+  .cartao { padding: 16px 18px; border: 1px solid var(--borda); border-radius: 16px; background: var(--tecla); }
+  .cartao b { display: block; margin-bottom: 6px; font-size: 16px; }
+  .cartao p { margin: 0; color: var(--apagado); font-size: 14.5px; }
+  .nota { padding: 14px 18px; border-radius: 14px; background: rgba(59, 130, 246, .1); box-shadow: inset 0 0 0 1px rgba(59, 130, 246, .35); color: var(--papel); font-size: 15px; }
+  .nota.aviso { background: rgba(245, 158, 11, .1); box-shadow: inset 0 0 0 1px rgba(245, 158, 11, .4); }
+  .nota p:last-child { margin: 0; }
+  .tipos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 18px; margin: 8px 0 16px; padding: 0; list-style: none; }
+  .tipos li { margin: 0; padding: 8px 0; border-bottom: 1px solid #161c26; font-size: 15px; }
+  .tipos li b { display: block; }
+  .tipos li span { color: var(--apagado); font-size: 14px; }
+  .rodape { margin-top: 70px; padding-top: 22px; border-top: 1px solid #161c26; color: var(--apagado); font-size: 14px; }
+  @media (max-width: 640px) {
+    .topo { padding: 10px 14px; }
+    .topo b { display: none; }
+    main { padding: 32px 16px 70px; }
+    td:first-child { white-space: normal; }
+  }
+</style>
+</head>
+<body>
+<header class="topo">
+  <img src="icon-192.png" alt="">
+  <b>How to use Deck</b>
+  <nav aria-label="Sections">
+    <a href="#baixar">Download</a>
+    <a href="#ligar">Start</a>
+    <a href="#conectar">Connect</a>
+    <a href="#botoes">Buttons</a>
+    <a href="#celular">Phone</a>
+    <a href="#modos">DJ and modes</a>
+    <a href="#aparelhos">Devices</a>
+    <a href="#problemas">Problems</a>
+    <a href="/guia?idioma=pt" title="Versão em português">PT</a>
+    <a href="/editar" class="destaque">Open the editor →</a>
+  </nav>
+</header>
+<main>
+  <h1>From download to the first button.</h1>
+  <p class="lead">Deck turns any phone into a button panel for your computer. It works on Mac, Windows and Linux; the panel opens on iPhone, Android, a tablet or another computer. This guide takes you from zero to using it.</p>
+  <div class="trilha">
+    <a href="#baixar"><span>1 · Download</span><small>2 minutes</small></a>
+    <a href="#ligar"><span>2 · Start on the computer</span><small>double-click</small></a>
+    <a href="#conectar"><span>3 · Connect the phone</span><small>QR code</small></a>
+    <a href="#botoes"><span>4 · Build the buttons</span><small>in the editor</small></a>
+    <a href="#celular"><span>5 · Use it on the phone</span><small>landscape, as an app</small></a>
+  </div>
+
+  <section id="baixar">
+    <h2><span class="n">1</span>Download</h2>
+    <ol>
+      <li>On Mac and Linux, the easiest way is the <b>Terminal line</b> on the Deck website: it creates a <code>Deck</code> folder in your home folder, already cleared by the system, and starts the deck. Running the same line again updates Deck without losing your buttons.</li>
+      <li>Or download the <b>deck.zip</b> file and unzip it into a folder of yours — for example <code>Documents/Deck</code>. That's it: nothing is installed in the system, and to uninstall just delete the folder.</li>
+      <li>Check that the folder has <code>server.py</code>, the <code>web</code> folder and the start files (<code>Iniciar no Mac.command</code>, <code>Iniciar no Windows.bat</code>, <code>iniciar-linux.sh</code> — "Iniciar" means Start).</li>
+    </ol>
+    <table>
+      <tr><th>Computer</th><th>Needs</th></tr>
+      <tr><td>Mac</td><td>Nothing. If the Mac asks to install the "command line developer tools" the first time, accept (it's the Python that ships with it).</td></tr>
+      <tr><td>Windows</td><td>Python 3 — download it from <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a> and, in the installer, check <b>Add python.exe to PATH</b>.</td></tr>
+      <tr><td>Linux</td><td>Python 3 (already included in practically every distribution).</td></tr>
+    </table>
+  </section>
+
+  <section id="ligar">
+    <h2><span class="n">2</span>Start on the computer</h2>
+    <table>
+      <tr><th>Computer</th><th>How to start</th></tr>
+      <tr><td>Mac</td><td>Double-click <code>Iniciar no Mac.command</code>. If you installed with the Terminal line from the site, it opens right away. If you downloaded the zip, macOS blocks it the first time ("Apple could not verify…"): click <b>Done</b>, go to <b>System Settings › Privacy &amp; Security</b>, scroll to the bottom and click <b>Open Anyway</b> — once only. On macOS 14 or earlier, right-click › <b>Open</b>. With no warning at all: Terminal in the folder and <code>python3 server.py</code>.</td></tr>
+      <tr><td>Windows</td><td>Double-click <code>Iniciar no Windows.bat</code>. If Windows asks whether you really want to run it, untick <b>Always ask before opening this file</b> and click <b>Run</b> (or <b>More info › Run anyway</b>) — that way it won't ask again. If the Firewall asks, <b>Allow access</b> (private networks).</td></tr>
+      <tr><td>Linux</td><td>In the folder, run <code>./iniciar-linux.sh</code> (or <code>python3 server.py</code>).</td></tr>
+    </table>
+    <p>A terminal window opens with the deck's address and then the <b>editor</b> opens in the browser (<code>http://localhost:8787/editar</code>). Keep the terminal window open while you use it: it's the one running the deck. To turn it off, close the window or press <kbd>Ctrl</kbd>+<kbd>C</kbd> in it.</p>
+    <h3>Permissions (first time only)</h3>
+    <ul>
+      <li><b>Mac:</b> for buttons that press keys, macOS asks for <b>Accessibility</b> (System Settings › Privacy &amp; Security › Accessibility › turn on Terminal) — the same permission lets the deck see incoming calls. To see the browser's open tabs and to control Spotify and Music in the DJ, it asks for <b>Automation</b>: click <b>Allow</b>. If the Mac's Firewall is on, click <b>Allow</b> when it asks about Python.</li>
+      <li><b>Windows:</b> only the Firewall prompt above.</li>
+      <li><b>Linux:</b> on Wayland, keys and text use <code>wtype</code> or <code>ydotool</code>; on X11, <code>xdotool</code>. The deck tells you in the terminal if one is missing.</li>
+    </ul>
+    <div class="nota"><p>Want the editor as an app with its own window? In Safari: <b>File › Add to Dock</b>. In Chrome or Edge: menu <b>⋮ › Cast, save and share › Install page as app</b>.</p></div>
+  </section>
+
+  <section id="conectar">
+    <h2><span class="n">3</span>Connect the phone</h2>
+    <p>In the editor, click <b>Connect phone</b>. A QR code appears: open the phone's <b>camera</b>, point it and tap the link. Then save it to the home screen to open it as an app — <b>iPhone:</b> Share › Add to Home Screen; <b>Android:</b> menu ⋮ › Add to Home screen.</p>
+    <p>The deck only needs a network path between the phone and the computer. There are four, and the Connect phone window has a tab for each:</p>
+    <div class="cartoes">
+      <div class="cartao"><b>Wi-Fi</b><p>Both on the same network. The usual way — just scan. On a Mac the link comes <b>by name</b> (<code>YourMac.local</code>), which doesn't change when the router changes the IP; Android doesn't open by name, so there use <b>By IP</b>.</p></div>
+      <div class="cartao"><b>USB cable</b><p>At the desk, no router needed: zero lag and it charges the phone. iPhone: Settings › <b>Personal Hotspot</b> › Allow Others to Join, then plug in the cable. Android: <b>USB tethering</b> (on a Mac, only Android 14 or newer).</p></div>
+      <div class="cartao"><b>Bluetooth</b><p>No cable and no router. Personal Hotspot (or Bluetooth tethering) on, pair the two and, on the Mac, Bluetooth menu › phone › <b>Connect to Network</b>. Slower, but more than enough for pressing buttons.</p></div>
+      <div class="cartao"><b>Computer's network</b><p>When there's no Wi-Fi at all, or the phone plan has no hotspot. Mac: <b>Internet Sharing</b> over Bluetooth PAN. Windows: <b>Mobile hotspot</b>. Linux: Wi-Fi hotspot.</p></div>
+    </div>
+    <p>On each tab the deck detects by itself when the phone shows up through that path and shows the right QR code. USB cable and Bluetooth use the phone's Personal Hotspot, which has to be enabled on your carrier plan (almost all are).</p>
+    <div class="nota aviso"><p>With the cable connected, the computer may start using the phone's internet. On a Mac: System Settings › Network › ⋯ › <b>Set Service Order</b> and keep Wi-Fi above "iPhone USB".</p></div>
+  </section>
+
+  <section id="botoes">
+    <h2><span class="n">4</span>Build the buttons</h2>
+    <p>Everything is done in the editor, on the computer; the phone mirrors it instantly. Each <b>page</b> in the sidebar is a screen on the phone (4×2 by default). Click an empty space to create a button, or use <b>＋ Apps</b> and <b>＋ Sites</b> at the top.</p>
+    <ul class="tipos">
+      <li><b>App</b><span>Pick from the list of installed programs — the button gets the app's own icon.</span></li>
+      <li><b>Site</b><span>Type an address or pick from open tabs, bookmarks and most visited. It gets the site's official icon.</span></li>
+      <li><b>Keyboard shortcut</b><span>Record a combination, like ⌘C or Ctrl+Z, to press it remotely.</span></li>
+      <li><b>Text</b><span>Types a ready-made phrase wherever the cursor is.</span></li>
+      <li><b>Media and Volume</b><span>Play/pause, skip, up, down, mute.</span></li>
+      <li><b>Microphone</b><span>Mutes and unmutes; the light stays on on the phone while muted.</span></li>
+      <li><b>Power</b><span>Shut down, restart, sleep or lock the computer. Asks for a second tap for safety.</span></li>
+      <li><b>Go to page</b><span>Jumps to another page on the phone.</span></li>
+      <li><b>Mode</b><span>Focus, work, study: turns on Do Not Disturb, opens and closes apps, sets the volume and shows a timer (section 6).</span></li>
+      <li><b>Call</b><span>Answer, decline, mute, camera and hang up in Zoom, Teams, Meet and others (section 6).</span></li>
+    </ul>
+    <p>Drag the buttons to rearrange and the <b>pages</b> in the sidebar to change their order (or <kbd>⌥</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>). The <b>eye</b> next to a page's name hides it from the phone without deleting it — click again to bring it back. Click the card's <b>···</b> to edit (name, icon, color, confirmation), and use <b>Settings</b> (gear) for the theme, the grid size, the language and the QR code. <kbd>⌘Z</kbd> undoes. Everything is saved automatically to the folder's <code>config.json</code> file — which you can copy to another computer.</p>
+    <div class="nota"><p><b>Turn the computer on from the phone?</b> A computer that's off can't be turned on — nothing is running on it to receive the request. The way out is <b>Sleep</b> instead of shutting down: it wakes with any key or the mouse and, on a Mac with "Wake for network access" on and an Apple TV, HomePod or Apple router on the network, it wakes by itself when Deck opens on the phone.</p></div>
+  </section>
+
+  <section id="celular">
+    <h2><span class="n">5</span>Use it on the phone</h2>
+    <ul>
+      <li>Open it from the home screen icon, <b>in landscape</b>: that's how the 4×2 grid fits.</li>
+      <li><b>Swipe</b> sideways to change pages.</li>
+      <li>Tap a button and it runs right away; the card flashes white when it worked and red when it failed (with the explanation). Buttons with confirmation ask for a <b>second tap</b>.</li>
+      <li>State buttons (mute, microphone) keep their light on while active.</li>
+      <li>The screen doesn't dim while the app is open. On Android, use the <b>full screen</b> button in the corner to hide the bars.</li>
+      <li>Changed something in the editor? The phone updates by itself within two seconds.</li>
+    </ul>
+  </section>
+
+  <section id="modos">
+    <h2><span class="n">6</span>DJ, modes and calls</h2>
+    <div class="cartoes">
+      <div class="cartao"><b>🎵 DJ</b><p>The <b>DJ</b> page becomes a full-screen player with whatever is playing on the computer — Spotify, Music, YouTube in the browser, any player — with artwork, time, back, play/pause, skip and volume. YouTube videos show up with the video's thumbnail, in full (16:9). Tap the bar to jump to another point. On the other pages a mini player shows up in the corner: tap it to open the DJ. Any page can become a player in <b>Page › Page type › Player</b>.</p></div>
+      <div class="cartao"><b>🎯 Modes</b><p>One tap gets the computer ready for the moment: turns on <b>Do Not Disturb</b>, opens apps and sites, closes distractions, sets the volume, switches page and shows a big <b>timer</b> on the phone (pause, +5 min, end — it can be minimized). Another tap turns it off and undoes Do Not Disturb. Only one mode is on at a time. Focus, Work, Study, Home and Break come ready.</p></div>
+      <div class="cartao"><b>📞 Calls</b><p>The deck brings the call window to the front and presses the app's own shortcut. In automatic, it uses the call app that is in front on the computer (WhatsApp, Zoom, Teams, Meet…) and, if none is, the open meeting. With no call open, mute silences the computer's microphone.</p></div>
+    </div>
+    <h3>Do Not Disturb on each system</h3>
+    <table>
+      <tr><th>Computer</th><th>How it works</th></tr>
+      <tr><td>Mac</td><td>Through the <b>Shortcuts</b> app (macOS 12 or newer). Create two shortcuts once, with the <b>Set Focus</b> action: <b>Deck Focus On</b> (Do Not Disturb › On) and <b>Deck Focus Off</b> (Do Not Disturb › Off). The names must be exactly these (the Portuguese “Deck Foco Ligar” and “Deck Foco Desligar” also work). Without the shortcuts, the mode does everything else and tells you on the phone what's missing.</td></tr>
+      <tr><td>Windows</td><td>Windows doesn't let programs turn on Do Not Disturb: the mode does the rest and reminds you on the phone to turn it on with <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
+      <tr><td>Linux</td><td>On GNOME, it turns on and off by itself (hides on-screen notifications).</td></tr>
+    </table>
+    <h3>Calls in each app</h3>
+    <table>
+      <tr><th>App</th><th>Mute</th><th>Camera</th><th>Hang up</th><th>Answer and decline</th></tr>
+      <tr><td>Zoom</td><td>✓</td><td>✓</td><td>✓ (Zoom asks to confirm)</td><td>✓ (Zoom Phone)</td></tr>
+      <tr><td>Microsoft Teams</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Google Meet</td><td>✓</td><td>✓</td><td>✓ (closes the tab)</td><td>—</td></tr>
+      <tr><td>Webex</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+      <tr><td>Discord</td><td>✓</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Slack (huddle)</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+      <tr><td>WhatsApp</td><td>✓ (only during the call)</td><td>✓</td><td>✓</td><td>✓ from the alert on the phone (Mac)</td></tr>
+      <tr><td>FaceTime and iPhone (Mac)</td><td>Mac's microphone</td><td>—</td><td>—</td><td>✓ from the alert on the phone</td></tr>
+    </table>
+    <div class="nota"><p><b>WhatsApp:</b> mute (⌘⇧M / Ctrl+Shift+M) only works with the call open — outside a call, the same shortcut mutes the open chat. WhatsApp has no answer shortcut: on a Mac, use the alert that shows up on the phone.</p></div>
+    <p><b>Incoming calls on the Mac:</b> when the deck has any Call button, FaceTime, iPhone (via Continuity) and WhatsApp calls show up at the top of the phone with <b>Answer</b> and <b>Decline</b>. The deck reads the Notification Center alert (and WhatsApp's small call window) — it works with the Accessibility permission and may fail if macOS changes that alert; in that case, answer on the Mac.</p>
+  </section>
+
+  <section id="aparelhos">
+    <h2><span class="n">7</span>Other devices</h2>
+    <table>
+      <tr><th>Device</th><th>How</th></tr>
+      <tr><td>iPhone / iPad</td><td>Camera on the QR code › link › Share › Add to Home Screen. By name or by IP, both work.</td></tr>
+      <tr><td>Samsung / Android</td><td>Camera (or the QR app) › link in Chrome › ⋮ › Add to Home screen. Use the <b>By IP</b> link. For the USB cable, USB tethering works directly on Windows and Linux; on a Mac, from Android 14.</td></tr>
+      <tr><td>Tablet</td><td>Same as the phone. With more screen, enlarge the grid in Settings (up to 8×8).</td></tr>
+      <tr><td>Another computer</td><td>Open the phone's link (<b>Copy link</b> button) in any browser — it becomes a button panel on the second computer.</td></tr>
+      <tr><td>Several at once</td><td>Yes: they all use the same link and see the same buttons.</td></tr>
+    </table>
+  </section>
+
+  <section id="problemas">
+    <h2><span class="n">8</span>If something goes wrong</h2>
+    <ul>
+      <li><b>The app opens with a black screen</b> (or "could not connect"): the phone isn't finding the computer at the saved address. Close the app (swipe up) and open it again with the deck on. If it persists, the address changed: open <b>Connect phone</b> — it warns when the computer's IP or name changed and shows the new QR code. To avoid repeating it, use the link by name (default on a Mac) or the USB cable.</li>
+      <li><b>Doesn't connect over Wi-Fi:</b> guest and company networks isolate devices from each other. Use the USB cable or Bluetooth.</li>
+      <li><b>"Apple could not verify…" when opening <code>Iniciar no Mac.command</code>:</b> that's the macOS warning for programs that didn't go through Apple. System Settings › Privacy &amp; Security › <b>Open Anyway</b> (once only), or install with the Terminal line from the site, which has no such warning.</li>
+      <li><b>Key button does nothing on the Mac:</b> Terminal is missing the Accessibility permission (section 2).</li>
+      <li><b>Open tabs don't show up on the Mac:</b> Safari/Chrome is missing the Automation permission.</li>
+      <li><b>The DJ doesn't show what plays in the browser (Mac):</b> some macOS versions hide what's playing from programs; Spotify and Music still show up. The play, skip and back buttons work the same.</li>
+      <li><b>The mode doesn't turn on Do Not Disturb on the Mac:</b> check the two shortcuts in the Shortcuts app (section 6) — the names must be exactly “Deck Focus On” and “Deck Focus Off”.</li>
+      <li><b>"The port is already in use":</b> the deck is already open in another window. Close the other one, or start with <code>--porta 8788</code>.</li>
+      <li><b>Lost the phone or want to disconnect everyone:</b> start with <code>--novo-link</code> and scan again.</li>
+    </ul>
+  </section>
+
+  <section id="seguranca">
+    <h2><span class="n">9</span>Security</h2>
+    <p>The editor and the QR code only open on the computer itself. Only whoever has the phone link (with the secret key inside) can press the buttons — and even then only the buttons you created; the phone never sends free-form commands. Nothing is sent outside: bookmarks, history and addresses stay on the computer. Use it on a trusted network: the local connection is not encrypted.</p>
+  </section>
+
+  <p class="rodape">Deck · documentation also in the folder's README.en.md file.</p>
+</main>
+</body>
+</html>

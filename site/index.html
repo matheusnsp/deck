@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deck — seu celular vira um painel de botões para o computador</title>
-<meta name="description" content="Deck transforma o iPhone ou Android num painel de botões para Mac, Windows e Linux. Abra apps e sites, aperte atalhos, controle mídia e volume, desligue o computador. Grátis, sem instalar nada no sistema.">
+<meta name="description" content="Deck transforma o iPhone ou Android num painel de botões para Mac, Windows e Linux. Abra apps e sites, aperte atalhos, veja e controle o que está tocando, entre em modo foco, atenda e mute chamadas, desligue o computador. Grátis, sem instalar nada no sistema.">
 <meta property="og:title" content="Deck — seu celular vira um painel de botões para o computador">
 <meta property="og:description" content="Grátis. Mac, Windows e Linux. iPhone, Android e tablets. Baixe, ligue e escaneie o QR code.">
 <meta property="og:image" content="img/editor.webp">
@@ -13,6 +13,9 @@
 <link rel="icon" href="favicon.png" sizes="32x32">
 <link rel="icon" href="icon-192.png" sizes="192x192">
 <link rel="apple-touch-icon" href="icon-192.png">
+<link rel="alternate" hreflang="pt-BR" href="./">
+<link rel="alternate" hreflang="en" href="en">
+<link rel="alternate" hreflang="x-default" href="./">
 <style>
   :root {
     --fundo: #04060a;
@@ -44,7 +47,7 @@
   img { max-width: 100%; height: auto; display: block; }
   b { color: var(--papel); font-weight: 600; }
   code, kbd { padding: 2px 6px; border-radius: 6px; background: var(--vidro); color: var(--papel); font: 500 .92em ui-monospace, "SF Mono", Consolas, Menlo, monospace; }
-  .largura { width: min(1040px, 100%); margin: 0 auto; padding: 0 24px; }
+  .largura { width: min(1040px, 100%); margin: 0 auto; padding-left: 24px; padding-right: 24px; }
 
   .topo {
     position: sticky;
@@ -62,6 +65,7 @@
   .topo nav a { padding: 8px 12px; border-radius: 999px; color: var(--apagado); font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; }
   .topo nav a:hover { background: var(--vidro); color: var(--papel); }
   .topo nav a.cta { background: var(--azul); color: #fff; }
+  .topo nav a#trocar-idioma { display: inline-block !important; padding: 8px 10px; border: 1px solid var(--borda); font-size: 12.5px; letter-spacing: .04em; }
 
   .heroi { padding: 72px 0 40px; text-align: center; }
   .selo { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 8px; border: 1px solid var(--borda); border-radius: 999px; background: var(--tecla); color: var(--apagado); font-size: 13px; font-weight: 600; }
@@ -108,6 +112,7 @@
   .cartao .n { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: 14px; border-radius: 11px; background: rgba(59, 130, 246, .14); color: #93c5fd; font-size: 17px; font-weight: 700; }
   .cartao h3 { margin: 0 0 6px; font-size: 19px; font-weight: 700; color: var(--papel); }
   .cartao p { margin: 0; color: var(--apagado); font-size: 15px; }
+  .cartao .foto { display: block; width: 100%; height: auto; margin: 0 0 18px; border-radius: 14px; box-shadow: 0 0 0 1px var(--linha), 0 18px 40px -24px #000; }
 
   .grade-recursos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
   .recurso { padding: 16px 18px; border: 1px solid var(--linha); border-radius: 16px; background: rgba(255, 255, 255, .02); font-size: 15px; }
@@ -174,7 +179,7 @@
     .heroi { padding-top: 48px; }
     .baixar { padding: 28px 18px; }
     .baixar td:first-child, .guia td:first-child { white-space: normal; }
-    .largura { padding: 0 18px; }
+    .largura { padding-left: 18px; padding-right: 18px; }
   }
 </style>
 </head>
@@ -188,6 +193,7 @@
       <a href="#recursos">Recursos</a>
       <a href="#guia">Passo a passo</a>
       <a href="#faq">Perguntas</a>
+      <a href="en" id="trocar-idioma" hreflang="en" lang="en" title="English">EN</a>
       <a href="#baixar" class="cta">Baixar</a>
     </nav>
   </div>
@@ -197,12 +203,12 @@
   <div class="largura heroi">
     <span class="selo"><i></i>Grátis · Mac, Windows e Linux · iPhone e Android</span>
     <h1>Seu celular vira um painel de botões para o computador.</h1>
-    <p class="lead">Abra apps e sites, aperte atalhos, controle mídia e volume, bloqueie ou desligue o computador — com um toque, na tela do celular. Sem instalar nada no sistema: é uma pasta, um clique e um QR code.</p>
+    <p class="lead">Abra apps e sites, aperte atalhos, controle a música que está tocando, entre em modo foco, mute a chamada, bloqueie ou desligue o computador — com um toque, na tela do celular. Sem instalar nada no sistema: é uma pasta, um clique e um QR code.</p>
     <div class="acoes" id="acoes-pc">
       <a class="botao" id="baixar-heroi" href="#baixar"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 19h14"/></svg>Baixar o Deck</a>
       <a class="botao fraco" href="#guia">Ver o passo a passo</a>
     </div>
-    <p class="miudo" id="miudo-pc">Versão 3.0 · 200 KB · para Mac, Windows e Linux</p>
+    <p class="miudo" id="miudo-pc">Versão 3.2 · 270 KB · para Mac, Windows e Linux</p>
     <div class="so-celular" id="so-celular" hidden>
       <p><b>No celular não tem o que baixar.</b> O Deck roda no computador; o celular só escaneia o QR code que aparece lá e vira app na tela inicial.</p>
       <p>Abra esta página no computador para baixar — ou mande o link para você mesmo:</p>
@@ -240,15 +246,29 @@
       <div class="recurso"><b>Microfone</b><span>Mudo com a luz acesa no celular.</span></div>
       <div class="recurso"><b>Energia</b><span>Bloquear, suspender, reiniciar, desligar — com confirmação.</span></div>
       <div class="recurso"><b>Páginas</b><span>Favoritos, Apps, Sites, Mídia… quantas quiser, 4×2 até 8×8.</span></div>
+      <div class="recurso"><b>DJ</b><span>O que está tocando no computador, com capa e controles.</span></div>
+      <div class="recurso"><b>Modos</b><span>Foco, trabalho, estudo: um toque arruma o computador.</span></div>
+      <div class="recurso"><b>Chamadas</b><span>Mudo, câmera e sair no WhatsApp, Zoom, Teams e Meet.</span></div>
+      <div class="recurso"><b>Ligações</b><span>Atenda FaceTime, iPhone e WhatsApp pelo celular (Mac).</span></div>
     </div>
     <div class="figura"><img src="img/energia.webp" alt="Editor com a página Sistema e o painel do botão Desligar" width="1200" height="781" loading="lazy"></div>
     <p class="legenda">A página Sistema, com os botões de energia e o painel de edição aberto.</p>
   </section>
 
+  <section id="dj-modos" class="largura">
+    <h2>DJ, foco e chamadas</h2>
+    <p class="sub">O celular também mostra o que está tocando, segura o seu foco e cuida das chamadas.</p>
+    <div class="tres">
+      <div class="cartao"><img class="foto" src="img/dj.webp" alt="Página DJ no celular: capa, nome da música, tempo, voltar, pausar, pular e volume" width="852" height="393" loading="lazy"><h3>DJ</h3><p>O que está tocando no computador — Spotify, Música, YouTube, qualquer player — com capa ou miniatura do vídeo, tempo e controles. Nas outras páginas, um mini player fica no canto.</p></div>
+      <div class="cartao"><img class="foto" src="img/foco.webp" alt="Cronômetro do modo Foco no celular, com 18:02 restantes e os botões Pausar, +5 min e Encerrar" width="852" height="393" loading="lazy"><h3>Modos</h3><p>Foco, Trabalho, Estudos: um toque liga o Não perturbe, abre e fecha apps, ajusta o volume e põe um cronômetro grande na tela. Outro toque desfaz.</p></div>
+      <div class="cartao"><img class="foto" src="img/chamada.webp" alt="Aviso de ligação chegando no celular, com Recusar e Atender, sobre a página Chamadas" width="852" height="393" loading="lazy"><h3>Chamadas</h3><p>Mudo, câmera e sair no WhatsApp, Zoom, Teams, Meet e outros, sem procurar a janela. No Mac, ligações do FaceTime, do iPhone e do WhatsApp aparecem no celular para atender.</p></div>
+    </div>
+  </section>
+
   <section id="baixar" class="largura">
     <div class="baixar">
       <h2>Baixar o Deck</h2>
-      <p class="sub" style="margin: 0 auto 20px; text-align: center">Versão 3.0 · 200 KB. Nada é instalado no sistema: o Deck é uma pasta. Para desinstalar, apague a pasta.</p>
+      <p class="sub" style="margin: 0 auto 20px; text-align: center">Versão 3.2 · 270 KB. Nada é instalado no sistema: o Deck é uma pasta. Para desinstalar, apague a pasta.</p>
       <div class="abas-so" role="tablist" aria-label="Sistema do computador">
         <button type="button" data-so="mac" class="ativa">Mac</button>
         <button type="button" data-so="windows">Windows</button>
@@ -342,8 +362,10 @@
         <li><b>Microfone</b><span>Liga e desliga o mudo; a luz acende no celular.</span></li>
         <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear. Pede um segundo toque.</span></li>
         <li><b>Ir para página</b><span>Pula para outra página do celular.</span></li>
+        <li><b>Modo</b><span>Liga o Não perturbe, abre e fecha apps, ajusta o volume e mostra um cronômetro.</span></li>
+        <li><b>Chamada</b><span>Atender, recusar, mudo, câmera e encerrar no app da chamada (WhatsApp, Zoom, Teams, Meet…).</span></li>
       </ul>
-      <p>Arraste os botões para reorganizar, clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> para o tema, o tamanho da grade e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta, que você pode copiar para outro computador.</p>
+      <p>Arraste os botões para reorganizar e as <b>páginas</b> na lateral para mudar a ordem delas; o <b>olho</b> ao lado do nome esconde a página do celular sem apagar. Clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação) e use <b>Configurações</b> para o tema, o tamanho da grade, o idioma e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta, que você pode copiar para outro computador.</p>
       <div class="figura"><img src="img/editor-normal.webp" alt="Editor no tema normal, sem LEDs" width="1200" height="781" loading="lazy"></div>
       <p class="legenda">Dois temas: o preto, com LED nos cards, e o normal, mais discreto.</p>
       <div class="nota"><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular.</div>
@@ -361,8 +383,24 @@
       </ul>
     </section>
 
+    <section id="g-modos">
+      <h2><span class="n">6</span>DJ, modos e chamadas</h2>
+      <ul>
+        <li><b>DJ:</b> a página DJ mostra em tela cheia o que está tocando no computador, com capa, tempo, voltar, tocar/pausar, pular e volume; toque na barra para ir a outro ponto. Vídeos do YouTube aparecem com a miniatura do vídeo, inteira (16:9). Qualquer página vira player no editor (Página › Tipo da página › Player).</li>
+        <li><b>Modos:</b> Foco (25 min), Trabalho, Estudos (50 min), Casa e Pausa vêm prontos. Cada um pode ligar o Não perturbe, abrir apps e sites, fechar o que distrai, ajustar o volume, trocar de página e mostrar um cronômetro. Outro toque desliga.</li>
+        <li><b>Chamadas:</b> o deck traz a janela da chamada para frente e aperta o atalho do próprio app (WhatsApp, Zoom, Teams, Meet, Webex, Discord, Slack). No automático, usa o app de chamada que estiver na frente no computador. Sem chamada aberta, o mudo silencia o microfone do computador. No WhatsApp, o mudo só vale durante a chamada (fora dela, o atalho silencia a conversa aberta).</li>
+      </ul>
+      <table>
+        <tr><th>Não perturbe</th><th>Como funciona</th></tr>
+        <tr><td>Mac</td><td>Pelo app <b>Atalhos</b>: crie uma vez <b>Deck Foco Ligar</b> e <b>Deck Foco Desligar</b>, com a ação <b>Definir Foco</b> › Não Perturbe › Ligado/Desligado.</td></tr>
+        <tr><td>Windows</td><td>Não dá por programa: o modo faz o resto e lembra no celular de ligar em <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
+        <tr><td>Linux</td><td>No GNOME, sozinho.</td></tr>
+      </table>
+      <p>No Mac, ligações do FaceTime, do iPhone e do WhatsApp chegam no celular com <b>Atender</b> e <b>Recusar</b> quando o deck tem algum botão de Chamada. O deck lê o aviso da Central de Notificações e a janelinha de ligação do WhatsApp (com a permissão de Acessibilidade) — é experimental e pode falhar se o macOS ou o WhatsApp mudarem esse aviso.</p>
+    </section>
+
     <section id="g-aparelhos">
-      <h2><span class="n">6</span>Outros aparelhos</h2>
+      <h2><span class="n">7</span>Outros aparelhos</h2>
       <table>
         <tr><th>Aparelho</th><th>Como</th></tr>
         <tr><td>iPhone / iPad</td><td>Câmera no QR code › link › Compartilhar › Adicionar à Tela de Início. Pelo nome ou pelo IP, os dois funcionam.</td></tr>
@@ -374,13 +412,15 @@
     </section>
 
     <section id="g-problemas">
-      <h2><span class="n">7</span>Se algo der errado</h2>
+      <h2><span class="n">8</span>Se algo der errado</h2>
       <ul>
         <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo.</li>
         <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
         <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só) — ou instale pela linha do Terminal, que não tem esse aviso.</li>
         <li><b>Botão de teclas não faz nada no Mac:</b> falta a permissão de Acessibilidade para o Terminal (passo 2).</li>
         <li><b>Abas abertas não aparecem no Mac:</b> falta a permissão de Automação para o Safari/Chrome.</li>
+        <li><b>O modo não liga o Não perturbe no Mac:</b> confira os atalhos “Deck Foco Ligar” e “Deck Foco Desligar” no app Atalhos (passo 6).</li>
+        <li><b>O DJ não mostra o que toca no navegador (Mac):</b> algumas versões do macOS escondem isso dos programas; Spotify e Música continuam aparecendo, e os botões de tocar, pular e voltar funcionam do mesmo jeito.</li>
         <li><b>"A porta já está em uso":</b> o deck já está aberto em outra janela. Feche a outra, ou ligue com <code>--porta 8788</code>.</li>
         <li><b>Perdeu o celular ou quer desconectar todos:</b> Conectar celular › <b>Gerar link novo</b> (ou ligue com <code>--novo-link</code>) e escaneie de novo.</li>
       </ul>
@@ -393,8 +433,11 @@
     <details><summary>Funciona com Samsung e outros Android?</summary><p>Sim — qualquer celular com navegador. No Android use o link "Pelo IP" e o botão de tela cheia. Para cabo USB com Mac, precisa de Android 14 ou mais novo; no Windows e no Linux funciona com qualquer versão.</p></details>
     <details><summary>Dá para ligar o computador pelo celular?</summary><p>Um computador desligado não tem nada rodando para receber o pedido, então não. Use o botão Suspender: o computador acorda com qualquer tecla e, no Mac com um Apple TV ou HomePod na rede, acorda sozinho quando o Deck abre no celular.</p></details>
     <details><summary>É seguro? Alguém na mesma rede consegue apertar meus botões?</summary><p>Só quem tem o link do celular, que carrega uma chave secreta — e mesmo assim só os botões que você criou; o celular nunca manda comandos livres. O editor só abre no próprio computador. Para cortar o acesso de alguém, é só gerar um link novo.</p></details>
+    <details><summary>Funciona com Spotify, YouTube e Apple Music?</summary><p>Sim. A página DJ mostra o que estiver tocando no computador, em qualquer app ou aba do navegador, com capa (no YouTube, a miniatura do vídeo) e controles. No Mac, ela usa o mesmo "Tocando agora" da Central de Controle; no Windows, os controles de mídia do sistema; no Linux, o <code>playerctl</code>.</p></details>
+    <details><summary>Dá para atender ligação e mutar a reunião pelo celular?</summary><p>Dá. Os botões de Chamada mutam, ligam a câmera e saem do WhatsApp, Zoom, Teams, Meet, Webex, Discord e Slack. No Mac, ligações do FaceTime, do iPhone e do WhatsApp aparecem no celular com Atender e Recusar (experimental).</p></details>
     <details><summary>Quanto custa?</summary><p>Nada. Baixe, descompacte e use.</p></details>
     <details><summary>Preciso instalar alguma coisa?</summary><p>No Mac e no Linux, não. No Windows, só o Python (instalador oficial, um clique). O Deck em si é uma pasta: para desinstalar, apague.</p></details>
+    <details><summary>Tem em inglês?</summary><p>Tem. O editor, o celular e o guia seguem o idioma do computador (português ou inglês), e dá para trocar em <b>Configurações › Idioma</b>. Este site também tem versão em inglês: <a href="en" hreflang="en" lang="en">English</a>.</p></details>
     <details><summary>O Mac disse que "não pôde verificar se está livre de malware". É vírus?</summary><p>Não — é o aviso padrão do macOS para qualquer programa que não passou pela Apple (assinar exige uma conta de desenvolvedor paga). O Deck é uma pasta de arquivos abertos: dá para ler o <code>server.py</code> inteiro. Para liberar: OK › Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b>, uma vez só. Ou instale pela linha do Terminal, que não mostra o aviso.</p></details>
     <details><summary>E no Windows, "não é possível verificar o editor"?</summary><p>Mesmo motivo: o Windows avisa sobre qualquer arquivo baixado da internet que não tenha assinatura. Clique em <b>Executar</b> (ou <b>Mais informações › Executar assim mesmo</b>). Para ele não perguntar de novo, desmarque <b>Sempre perguntar antes de abrir este arquivo</b> nesse aviso — ou botão direito no <code>Iniciar no Windows.bat</code> › Propriedades › <b>Desbloquear</b>. A linha do PowerShell já faz isso sozinha.</p></details>
   </section>
@@ -402,13 +445,21 @@
 
 <footer>
   <div class="largura">
-    <span>Deck · versão 3.0</span>
+    <span>Deck · versão 3.2</span>
     <a href="#baixar">Baixar</a>
     <a href="#guia">Passo a passo</a>
+    <a href="en" hreflang="en" lang="en">English</a>
   </div>
 </footer>
 <script>
 (function () {
+  var escolha = null;
+  try { escolha = localStorage.getItem('deck.idioma'); } catch (e) { escolha = null; }
+  if (escolha === 'en' || (!escolha && !/^pt/i.test(navigator.language || ''))) { location.replace('en' + location.hash); return; }
+  var paraEn = document.querySelectorAll('a[hreflang="en"]');
+  for (var k = 0; k < paraEn.length; k++) {
+    paraEn[k].addEventListener('click', function () { try { localStorage.setItem('deck.idioma', 'en'); } catch (e) { return; } });
+  }
   var ua = navigator.userAgent;
   var celular = /iPhone|iPad|iPod|Android/i.test(ua) || (navigator.maxTouchPoints > 1 && matchMedia('(pointer: coarse)').matches && innerWidth < 900);
   var site = (location.origin + location.pathname.replace(/[^\/]*$/, '')).replace(/\/$/, '');

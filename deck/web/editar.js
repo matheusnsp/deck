@@ -40,6 +40,9 @@
     microfone: '<svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>',
     pagina: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M10 9.5 13 12l-3 2.5"/></svg>',
     energia: '<svg viewBox="0 0 24 24"><path d="M12 3.5v8"/><path d="M7.2 6.6a7 7 0 1 0 9.6 0"/></svg>',
+    modo: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.2"/></svg>',
+    chamada: '<svg viewBox="0 0 24 24"><path d="M5.2 4h3l1.7 4.3-2.2 1.4a11 11 0 0 0 6.6 6.6l1.4-2.2L20 15.8v3a1.6 1.6 0 0 1-1.7 1.6A16 16 0 0 1 3.6 5.7 1.6 1.6 0 0 1 5.2 4z"/></svg>',
+    musica: '<svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
     livro: '<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 18V5.5M8 7h8M8 10.5h5"/></svg>',
     outro: '<svg viewBox="0 0 24 24"><path d="M8 4H6.5A2.5 2.5 0 0 0 4 6.5v3L2.5 12 4 14.5v3A2.5 2.5 0 0 0 6.5 20H8M16 4h1.5A2.5 2.5 0 0 1 20 6.5v3l1.5 2.5-1.5 2.5v3a2.5 2.5 0 0 1-2.5 2.5H16"/></svg>',
     voltar: '<svg viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg>',
@@ -48,6 +51,8 @@
     lapis: '<svg viewBox="0 0 24 24"><path d="M4 20h4.5L19 9.5a2.1 2.1 0 0 0-3-3L5.5 17z"/><path d="m13.5 8 3 3"/></svg>',
     telefone: '<svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>',
     grade: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></svg>',
+    olho: '<svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>',
+    olhoFechado: '<svg viewBox="0 0 24 24"><path d="M10.6 5.6A9.7 9.7 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.4 3.2M6.6 6.6C3.9 8.3 2.5 12 2.5 12s3.5 6.5 9.5 6.5a9 9 0 0 0 5.4-1.8"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2M3.5 3.5l17 17"/></svg>',
   };
   function icone(nome) {
     var t = document.createElement('template');
@@ -56,27 +61,37 @@
   }
 
   var TIPOS_INFO = {
-    app: { nome: 'App', desc: 'Abre um programa', icone: 'app' },
-    site: { nome: 'Site', desc: 'Abre uma aba no navegador', icone: 'site' },
-    teclas: { nome: 'Atalho de teclado', desc: 'Aperta teclas, ex.: copiar', icone: 'teclas' },
-    texto: { nome: 'Texto', desc: 'Digita uma frase pronta', icone: 'texto' },
-    midia: { nome: 'Mídia', desc: 'Tocar, pausar e pular', icone: 'midia' },
-    volume: { nome: 'Volume', desc: 'Subir, baixar ou mudo', icone: 'volume' },
-    microfone: { nome: 'Microfone', desc: 'Liga e desliga o mudo', icone: 'microfone' },
-    energia: { nome: 'Energia', desc: 'Desligar, reiniciar, suspender, bloquear', icone: 'energia' },
-    pagina: { nome: 'Ir para página', desc: 'Troca a página no celular', icone: 'pagina' },
+    app: { nome: 'App', desc: tr('Abre um programa'), icone: 'app' },
+    site: { nome: 'Site', desc: tr('Abre uma aba no navegador'), icone: 'site' },
+    teclas: { nome: tr('Atalho de teclado'), desc: tr('Aperta teclas, ex.: copiar'), icone: 'teclas' },
+    texto: { nome: tr('Texto'), desc: tr('Digita uma frase pronta'), icone: 'texto' },
+    midia: { nome: tr('Mídia'), desc: tr('Tocar, pausar e pular'), icone: 'midia' },
+    volume: { nome: 'Volume', desc: tr('Subir, baixar ou mudo'), icone: 'volume' },
+    microfone: { nome: tr('Microfone'), desc: tr('Liga e desliga o mudo'), icone: 'microfone' },
+    energia: { nome: tr('Energia'), desc: tr('Desligar, reiniciar, suspender, bloquear'), icone: 'energia' },
+    modo: { nome: tr('Modo'), desc: tr('Foco, trabalho, estudo: abre, fecha e silencia'), icone: 'modo' },
+    chamada: { nome: tr('Chamada'), desc: tr('Atender, mudo, câmera, encerrar'), icone: 'chamada' },
+    pagina: { nome: tr('Ir para página'), desc: tr('Troca a página no celular'), icone: 'pagina' },
   };
-  var ORDEM_TIPOS = ['app', 'site', 'teclas', 'texto', 'midia', 'volume', 'microfone', 'energia', 'pagina'];
-  var ROTULO_PADRAO = { teclas: 'Teclas', texto: 'Texto', app: 'App', link: 'Link', atalho: 'Atalho', comando: 'Comando',
-    applescript: 'Script', midia: 'Mídia', volume: 'Volume', microfone: 'Microfone', energia: 'Energia', pagina: 'Página', sequencia: 'Sequência', esperar: 'Esperar' };
-  var NOMES_OUTROS = { comando: 'comando do terminal', applescript: 'AppleScript', atalho: 'atalho do app Atalhos',
-    sequencia: 'sequência de ações', esperar: 'espera' };
-  var MIDIA = [['anterior', 'Anterior', '⏮️'], ['play', 'Tocar/Pausar', '⏯️'], ['proxima', 'Próxima', '⏭️']];
+  var ORDEM_TIPOS = ['app', 'site', 'teclas', 'texto', 'midia', 'volume', 'microfone', 'modo', 'chamada', 'energia', 'pagina'];
+  var CHAMADA = [['atender', tr('Atender'), '📞'], ['recusar', tr('Recusar'), '📵'], ['mudo', tr('Mudo'), '🔇'], ['camera', tr('Câmera'), '📷'], ['encerrar', tr('Encerrar'), '☎️']];
+  var ALIAS_CHAMADA = { atender: 'atender', aceitar: 'atender', answer: 'atender', accept: 'atender', recusar: 'recusar', rejeitar: 'recusar',
+    decline: 'recusar', reject: 'recusar', mudo: 'mudo', mutar: 'mudo', mute: 'mudo', unmute: 'mudo', desmutar: 'mudo', silenciar: 'mudo',
+    microfone: 'mudo', camera: 'camera', video: 'camera', webcam: 'camera', cam: 'camera', encerrar: 'encerrar', desligar: 'encerrar',
+    sair: 'encerrar', end: 'encerrar', leave: 'encerrar', hangup: 'encerrar', endcall: 'encerrar', leavecall: 'encerrar' };
+  var APPS_CHAMADA = [['auto', tr('Automático (a chamada que estiver na frente)')], ['whatsapp', 'WhatsApp'], ['zoom', 'Zoom'], ['teams', 'Microsoft Teams'],
+    ['meet', 'Google Meet'], ['facetime', 'FaceTime'], ['webex', 'Webex'], ['discord', 'Discord'], ['slack', 'Slack']];
+  function chamadaDe(b) { var c = ALIAS_CHAMADA[simples(ler(b, 'chamada') || '').replace(/[^a-z]/g, '')]; return CHAMADA.filter(function (x) { return x[0] === c; })[0] || CHAMADA[2]; }
+  var ROTULO_PADRAO = { teclas: tr('Teclas'), texto: tr('Texto'), app: 'App', link: 'Link', atalho: tr('Atalho'), comando: tr('Comando'),
+    applescript: 'Script', midia: tr('Mídia'), volume: 'Volume', microfone: tr('Microfone'), energia: tr('Energia'), pagina: tr('Página'), sequencia: tr('Sequência'), esperar: tr('Esperar') };
+  var NOMES_OUTROS = { comando: tr('comando do terminal'), applescript: 'AppleScript', atalho: tr('atalho do app Atalhos'),
+    sequencia: tr('sequência de ações'), esperar: tr('espera') };
+  var MIDIA = [['anterior', tr('Anterior'), '⏮️'], ['play', tr('Tocar/Pausar'), '⏯️'], ['proxima', tr('Próxima'), '⏭️']];
   var ALIAS_MIDIA = { play: 'play', pause: 'play', playpause: 'play', 'play/pause': 'play', play_pause: 'play', tocar: 'play', pausar: 'play',
     tocar_pausar: 'play', 'tocar/pausar': 'play', proxima: 'proxima', proximo: 'proxima', next: 'proxima', avancar: 'proxima', seguinte: 'proxima',
     anterior: 'anterior', previous: 'anterior', prev: 'anterior', voltar: 'anterior' };
-  var VOLUME = [['subir', 'Subir', '🔊', 'Volume +'], ['descer', 'Baixar', '🔉', 'Volume −'], ['mudo', 'Mudo', '🔇', 'Mudo']];
-  var ENERGIA = [['desligar', 'Desligar', '⏻'], ['reiniciar', 'Reiniciar', '🔄'], ['suspender', 'Suspender', '🌙'], ['bloquear', 'Bloquear', '🔒']];
+  var VOLUME = [['subir', tr('Subir'), '🔊', 'Volume +'], ['descer', tr('Baixar'), '🔉', 'Volume −'], ['mudo', tr('Mudo'), '🔇', tr('Mudo')]];
+  var ENERGIA = [['desligar', tr('Desligar'), '⏻'], ['reiniciar', tr('Reiniciar'), '🔄'], ['suspender', tr('Suspender'), '🌙'], ['bloquear', tr('Bloquear'), '🔒']];
   var ALIAS_ENERGIA = { desligar: 'desligar', shutdown: 'desligar', poweroff: 'desligar', apagar: 'desligar', off: 'desligar',
     reiniciar: 'reiniciar', restart: 'reiniciar', reboot: 'reiniciar', suspender: 'suspender', dormir: 'suspender', sleep: 'suspender',
     repouso: 'suspender', hibernar: 'suspender', bloquear: 'bloquear', lock: 'bloquear', travar: 'bloquear', tela: 'bloquear', bloquear_tela: 'bloquear' };
@@ -99,6 +114,11 @@
     navegador: ['navegador', 'browser'],
     aba: ['aba', 'reaproveitar'],
     tipo: ['tipo'],
+    abrir: ['abrir', 'open'],
+    fechar: ['fechar', 'close'],
+    nao_perturbe: ['nao_perturbe', 'não_perturbe', 'naoPerturbe', 'dnd'],
+    minutos: ['minutos', 'timer', 'cronometro', 'cronômetro'],
+    chamada: ['chamada'],
   };
   var GRADES = [[3, 2], [4, 2], [5, 2], [6, 2], [3, 3], [4, 3], [5, 3], [6, 3], [4, 4], [5, 4]];
   var CORES_ORDEM = ['vermelho', 'laranja', 'amarelo', 'verde', 'menta', 'ciano', 'azul', 'anil', 'roxo', 'rosa', 'marrom', 'cinza', 'preto', 'branco'];
@@ -115,18 +135,20 @@
     online: true, status: null, tela: null, filtro: '', iconesPagina: [], ultimoAdd: 'app',
   };
   var SUBTITULOS = {
-    estrela: 'Seus atalhos mais usados, sempre à mão.',
-    grade: 'Os programas que você mais abre.',
-    globo: 'Suas abas e sites, com o ícone de cada um.',
-    play: 'Tocar, pausar e controlar o som.',
-    raio: 'Atalhos que aceleram o seu dia.',
-    musica: 'Suas músicas e players, num toque.',
-    chat: 'Conversas e reuniões, sem procurar a aba.',
-    maleta: 'O que você usa no trabalho.',
-    camera: 'Captura, câmera e transmissão.',
-    codigo: 'Ferramentas de quem programa.',
-    jogo: 'Jogos e lançadores.',
-    casa: 'Suas coisas de casa.',
+    estrela: tr('Seus atalhos mais usados, sempre à mão.'),
+    grade: tr('Os programas que você mais abre.'),
+    globo: tr('Suas abas e sites, com o ícone de cada um.'),
+    play: tr('Tocar, pausar e controlar o som.'),
+    raio: tr('Atalhos que aceleram o seu dia.'),
+    musica: tr('Suas músicas e players, num toque.'),
+    chat: tr('Conversas e reuniões, sem procurar a aba.'),
+    maleta: tr('O que você usa no trabalho.'),
+    camera: tr('Captura, câmera e transmissão.'),
+    codigo: tr('Ferramentas de quem programa.'),
+    jogo: tr('Jogos e lançadores.'),
+    casa: tr('Suas coisas de casa.'),
+    lua: tr('Um toque deixa o computador do jeito certo para cada momento.'),
+    video: tr('Atender, mutar e sair das chamadas sem procurar a janela.'),
   };
 
   function api(caminho, opcoes) {
@@ -364,7 +386,7 @@
     ic = (ic === undefined || ic === null || ic === '') ? '' : String(ic).slice(0, 16);
     var img = info.img;
     var auto = tipo === 'app' || tipo === 'link';
-    if (!titulo && !ic && !ler(b, 'imagem')) titulo = ROTULO_PADRAO[tipo] || 'Botão';
+    if (!titulo && !ic && !ler(b, 'imagem')) titulo = ROTULO_PADRAO[tipo] || tr('Botão');
     var ico = null;
     if (img) {
       var figura = h('img', { src: comToken(img), alt: '', draggable: 'false' });
@@ -448,7 +470,7 @@
   function mostrarSalvo(estado, msg) {
     var e = $('#salvo');
     e.className = 'salvo' + (estado === 'salvo' ? ' ok' : estado === 'erro' ? ' erro' : '');
-    e.textContent = estado === 'salvando' ? 'Salvando…' : estado === 'salvo' ? 'Salvo' : estado === 'erro' ? (msg || 'Não salvou') : '';
+    e.textContent = estado === 'salvando' ? tr('Salvando…') : estado === 'salvo' ? tr('Salvo') : estado === 'erro' ? (msg || tr('Não salvou')) : '';
   }
 
   function agendarSalvar() {
@@ -471,6 +493,7 @@
       if (JSON.stringify(S.cfg) === enviado && !S.deNovo) {
         S.sujo = false;
         mostrarSalvo('salvo');
+        if (r.idioma && window.IDIOMA && r.idioma !== window.IDIOMA) { location.reload(); return; }
       }
       aplicarVisao(r.visao);
       mostrarFaixa();
@@ -481,11 +504,11 @@
         S.undo = [];
         S.redo = [];
         aplicarDados(e.dados);
-        toast(e.dados.mensagem || 'O config.json mudou fora do editor — carreguei a versão nova.');
+        toast(e.dados.mensagem || tr('O config.json mudou fora do editor — carreguei a versão nova.'));
         return;
       }
       S.erroSalvar = e.message;
-      mostrarSalvo('erro', e.status === 400 ? 'Não salvou' : 'Sem conexão');
+      mostrarSalvo('erro', e.status === 400 ? tr('Não salvou') : tr('Sem conexão'));
       if (e.status === 400) toast(e.message, null, null, 'erro');
       else setTimeout(function () { if (S.sujo) salvar(); }, 2500);
     }).finally(function () {
@@ -568,11 +591,11 @@
     var f = $('#faixa');
     if (!S.online) {
       f.className = 'faixa grave';
-      f.textContent = 'Sem conexão com o deck. Ele foi desligado? Ligue de novo no computador — o que você mudar aqui é salvo quando ele voltar.';
+      f.textContent = tr('Sem conexão com o deck. Ele foi desligado? Ligue de novo no computador — o que você mudar aqui é salvo quando ele voltar.');
       f.hidden = false;
     } else if (S.erroConfig) {
       f.className = 'faixa';
-      f.textContent = 'O config.json tem um erro (' + S.erroConfig.replace(/^config\.json\s*/, '') + '). Aqui aparece a última versão que funcionava; se você mudar algo no editor, o arquivo é corrigido.';
+      f.textContent = tr('O config.json tem um erro ({e}). Aqui aparece a última versão que funcionava; se você mudar algo no editor, o arquivo é corrigido.', { e: S.erroConfig.replace(/^config\.json\s*/, '') });
       f.hidden = false;
     } else {
       f.hidden = true;
@@ -603,20 +626,57 @@
   }
 
   function usadosNa(p) {
+    if (ehPlayer(p)) return 0;
     return botoes(p).filter(function (b) { return !vazioB(b); }).length;
+  }
+
+  function ehOculta(p) {
+    var pg = paginas()[p];
+    return !!pg && pg.oculta === true;
+  }
+
+  function alternarOculta(p) {
+    var ocultar = !ehOculta(p);
+    var nome = nomePagina(p);
+    mudar(function () {
+      if (ocultar) paginas()[p].oculta = true;
+      else delete paginas()[p].oculta;
+    });
+    var visiveis = paginas().filter(function (pg) { return pg.oculta !== true; }).length;
+    var msg = !ocultar ? tr('“{p}” voltou para o celular.', { p: nome })
+      : visiveis ? tr('“{p}” não aparece mais no celular. Continua aqui no editor.', { p: nome })
+        : tr('Todas as páginas estão ocultas: o celular fica vazio.');
+    toast(msg, tr('Desfazer'), desfazer);
+  }
+
+  function ehPlayer(p) {
+    var pg = paginas()[p];
+    return !!pg && typeof pg.tipo === 'string' && ['player', 'dj', 'musica', 'tocando'].indexOf(simples(pg.tipo)) >= 0;
+  }
+
+  function arrastandoPagina() {
+    return !!(arraste && arraste.ativo && (arraste.tipo === 'aba' || arraste.tipo === 'pilula'));
   }
 
   function desenharAbas() {
     var c = $('#abas');
     if (S.renomeando !== undefined && S.renomeando !== null) return;
+    if (arrastandoPagina()) { S.redesenharDepois = true; return; }
     c.textContent = '';
     paginas().forEach(function (pg, p) {
-      var a = h('button', { type: 'button', class: 'aba', role: 'tab', 'aria-selected': String(p === S.pag), title: 'Clique duas vezes para renomear' },
+      var oculta = ehOculta(p);
+      var a = h('button', { type: 'button', class: 'aba' + (oculta ? ' oculta' : ''), role: 'tab', 'aria-selected': String(p === S.pag),
+        title: oculta ? tr('Oculta no celular · arraste para mudar a ordem') : tr('Arraste para mudar a ordem · clique duas vezes para renomear') },
         window.iconePagina ? iconePagina(iconeDaPagina(p)) : null,
         h('span', { class: 'nome', text: nomePagina(p) }),
         h('span', { class: 'qtd', text: String(usadosNa(p)) }));
       a.dataset.p = p;
-      c.appendChild(a);
+      var rotulo = oculta ? tr('Mostrar “{p}” no celular', { p: nomePagina(p) }) : tr('Ocultar “{p}” do celular', { p: nomePagina(p) });
+      var olho = h('button', { type: 'button', class: 'olho', title: rotulo, 'aria-label': rotulo, 'aria-pressed': String(oculta) }, icone(oculta ? 'olhoFechado' : 'olho'));
+      olho.dataset.p = p;
+      var linha = h('div', { class: 'aba-linha' + (oculta ? ' oculta' : ''), role: 'presentation' }, a, olho);
+      linha.dataset.p = p;
+      c.appendChild(linha);
     });
   }
 
@@ -631,31 +691,40 @@
       tile.appendChild(ic);
     }
     $('#titulo-pagina').textContent = nomePagina(p);
+    var selo = $('#pagina-oculta');
+    if (selo) selo.hidden = !ehOculta(p);
+    document.querySelectorAll('.segmentos-add button').forEach(function (b) {
+      b.disabled = ehPlayer(p);
+      if (b.disabled) b.setAttribute('aria-pressed', 'false');
+    });
+    if (ehPlayer(p)) {
+      $('#sub-pagina').textContent = tr('Player (modo DJ): mostra o que está tocando no computador, com capa e controles.');
+      document.title = S.cfg.nome || 'Deck';
+      return;
+    }
     var usados = usadosNa(p);
     var livres = Math.max(0, cap() - usados);
     $('#sub-pagina').textContent = SUBTITULOS[chave] || (usados === 0
-      ? 'Página vazia — adicione um app ou um site.'
-      : usados + (usados === 1 ? ' botão' : ' botões') + ' · ' + (livres ? livres + (livres === 1 ? ' espaço livre' : ' espaços livres') : 'página cheia'));
+      ? tr('Página vazia — adicione um app ou um site.')
+      : (usados === 1 ? tr('1 botão') : tr('{n} botões', { n: usados })) + ' · ' + (livres ? (livres === 1 ? tr('1 espaço livre') : tr('{n} espaços livres', { n: livres })) : tr('página cheia')));
     document.title = S.cfg.nome || 'Deck';
     document.querySelectorAll('.segmentos-add button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.add === S.ultimoAdd)); });
   }
 
   function desenharPilulas() {
+    if (arrastandoPagina()) { S.redesenharDepois = true; return; }
     var capacidade = cap();
     ['#pilulas', '#pilulas-topo'].forEach(function (id) {
       var c = $(id);
       c.textContent = '';
       paginas().forEach(function (pg, p) {
-        var partes = Math.max(1, Math.ceil(botoes(p).length / capacidade));
+        var partes = ehPlayer(p) ? 1 : Math.max(1, Math.ceil(botoes(p).length / capacidade));
         for (var k = 0; k < partes; k++) {
-          var b = h('button', { type: 'button', role: 'tab', 'aria-selected': String(p === S.pag && k === 0) },
+          var b = h('button', { type: 'button', role: 'tab', class: ehOculta(p) ? 'oculta' : null, 'aria-selected': String(p === S.pag && k === 0),
+            title: ehOculta(p) ? tr('Oculta no celular · arraste para mudar a ordem') : tr('Arraste para mudar a ordem') },
             window.iconePagina ? iconePagina(iconeDaPagina(p)) : null,
             h('span', { text: partes > 1 ? nomePagina(p) + ' ' + (k + 1) : nomePagina(p) }));
           b.dataset.p = p;
-          b.addEventListener('click', function (ev) {
-            var alvo = parseInt(ev.currentTarget.dataset.p, 10);
-            if (S.pag !== alvo) { S.pag = alvo; S.sel = null; S.tela = null; S.tipoNovo = null; desenhar(); }
-          });
           c.appendChild(b);
         }
       });
@@ -677,6 +746,7 @@
 
   function desenharPalco() {
     var cont = $('#aparelhos');
+    if (ehPlayer(S.pag)) { desenharPrevisaoPlayer(cont); return; }
     var g = grade();
     var capacidade = g.c * g.l;
     var arr = botoes(S.pag);
@@ -697,7 +767,7 @@
       }
       if (cheia) grid.classList.add('cheia');
       if (tl > 0) {
-        cont.appendChild(h('p', { class: 'continua-nota', text: 'Continuação — no celular vira a página “' + nomePagina(S.pag) + ' ' + (tl + 1) + '” (tem mais botões do que cabem na grade).' }));
+        cont.appendChild(h('p', { class: 'continua-nota', text: tr('Continuação — no celular vira a página “{p}” (tem mais botões do que cabem na grade).', { p: nomePagina(S.pag) + ' ' + (tl + 1) }) }));
       }
       cont.appendChild(grid);
     }
@@ -708,9 +778,9 @@
         botoes(p).forEach(function (b, i) { if (!vazioB(b) && bate(b, termo)) fora.push({ p: p, i: i, b: b }); });
       });
       if (fora.length) {
-        var lista = h('div', { class: 'achados' }, h('span', { class: 'rotulo', style: 'margin:0 6px 0 0', text: 'Em outras páginas' }));
+        var lista = h('div', { class: 'achados' }, h('span', { class: 'rotulo', style: 'margin:0 6px 0 0', text: tr('Em outras páginas') }));
         fora.slice(0, 12).forEach(function (x) {
-          var chip = h('button', { type: 'button', class: 'achado' }, h('b', { text: tituloDe(x.b) || 'Botão' }), h('span', { text: nomePagina(x.p) }));
+          var chip = h('button', { type: 'button', class: 'achado' }, h('b', { text: tituloDe(x.b) || tr('Botão') }), h('span', { text: nomePagina(x.p) }));
           chip.addEventListener('click', function () { S.pag = x.p; S.sel = { p: x.p, i: x.i }; S.tela = null; S.tipoNovo = null; desenhar(); });
           lista.appendChild(chip);
         });
@@ -720,16 +790,85 @@
     medirTeclas();
   }
 
+  var previa = { el: null, timer: null, dados: null, em: 0 };
+  function desenharPrevisaoPlayer(cont) {
+    cont.textContent = '';
+    var capa = h('div', { class: 'pp-capa' }, icone('musica'));
+    var app = h('div', { class: 'pp-app' });
+    var titulo = h('div', { class: 'pp-titulo' });
+    var artista = h('div', { class: 'pp-artista' });
+    var cheio = h('div', { class: 'pp-cheio' });
+    var barra = h('div', { class: 'pp-barra' }, cheio);
+    var tempos = h('div', { class: 'pp-tempos' }, h('span'), h('span'));
+    var caixa = h('div', { class: 'previa-player' },
+      h('div', { class: 'pp-fundo' }), capa,
+      h('div', { class: 'pp-info' }, app, titulo, artista, barra, tempos));
+    var nota = h('p', { class: 'continua-nota', text: tr('No celular, esta página vira um player em tela cheia com capa, tempo, pular, voltar e volume. Ela aparece quando você desliza até ela ou toca no mini player do canto.') });
+    cont.append(caixa, nota);
+    previa.el = { caixa: caixa, capa: capa, app: app, titulo: titulo, artista: artista, cheio: cheio, tempos: tempos };
+    pintarPrevia();
+    pedirPrevia();
+  }
+
+  function pintarPrevia() {
+    var e = previa.el;
+    if (!e || !document.body.contains(e.caixa)) return;
+    var t = previa.dados || {};
+    e.caixa.classList.toggle('sem-midia', !t.tem);
+    e.app.textContent = t.tem ? (t.app || '') : tr('Nada tocando agora');
+    e.titulo.textContent = t.tem ? (t.titulo || '') : tr('Dê play em qualquer player do computador para ver aqui.');
+    e.artista.textContent = t.tem ? [t.artista, t.album].filter(Boolean).join(' · ') : '';
+    var url = t.tem && t.capa ? comToken(t.capa) : null;
+    var img = e.capa.querySelector('img');
+    if (url) {
+      if (!img) {
+        img = h('img', { alt: '' });
+        img.addEventListener('load', function () { e.capa.classList.toggle('larga', img.naturalWidth > img.naturalHeight * 1.3); });
+        e.capa.appendChild(img);
+      }
+      if (img.getAttribute('src') !== url) img.src = url;
+      e.caixa.querySelector('.pp-fundo').style.backgroundImage = 'url("' + url + '")';
+    } else if (img) {
+      e.capa.classList.remove('larga');
+      img.remove();
+      e.caixa.querySelector('.pp-fundo').style.backgroundImage = '';
+    }
+    var pos = t.posicao !== null && t.posicao !== undefined ? t.posicao + (t.tocando ? (performance.now() - previa.em) / 1000 : 0) : null;
+    var dur = t.duracao || 0;
+    e.cheio.style.transform = 'scaleX(' + (dur && pos !== null ? Math.min(1, pos / dur) : 0) + ')';
+    var spans = e.tempos.querySelectorAll('span');
+    spans[0].textContent = pos !== null && t.tem ? relogioEd(pos) : '';
+    spans[1].textContent = dur ? relogioEd(dur) : '';
+  }
+
+  function relogioEd(seg) {
+    seg = Math.max(0, Math.floor(seg));
+    return Math.floor(seg / 60) + ':' + ('0' + (seg % 60)).slice(-2);
+  }
+
+  function pedirPrevia() {
+    clearTimeout(previa.timer);
+    if (!ehPlayer(S.pag) || document.hidden) return;
+    api('/api/editor/tocando', { limite: 8000 }).then(function (r) {
+      previa.dados = r;
+      previa.em = performance.now();
+      pintarPrevia();
+    }).catch(function () { return null; }).finally(function () {
+      previa.timer = setTimeout(function () { if (ehPlayer(S.pag)) pedirPrevia(); }, 2000);
+    });
+  }
+  setInterval(function () { if (previa.dados && previa.dados.tocando) pintarPrevia(); }, 500);
+
   function slotEl(p, i) {
     var b = botaoEm(p, i);
     var sel = S.sel && S.sel.p === p && S.sel.i === i;
     var s;
     if (!b) {
-      s = h('button', { type: 'button', class: 'slot vazio' + (sel && S.sel.novo ? ' novo' : ''), 'aria-label': 'Espaço vazio ' + (i + 1) + ': adicionar botão' }, icone('mais'));
+      s = h('button', { type: 'button', class: 'slot vazio' + (sel && S.sel.novo ? ' novo' : ''), 'aria-label': tr('Espaço vazio {n}: adicionar botão', { n: i + 1 }) }, icone('mais'));
     } else {
       var info = infoDe(p, i, b);
       info.card = true;
-      s = h('button', { type: 'button', class: 'slot' + (sel && !S.sel.novo ? ' selecionado' : ''), 'aria-label': (tituloDe(b) || 'Botão') + ' — editar' }, teclaEl(b, info));
+      s = h('button', { type: 'button', class: 'slot' + (sel && !S.sel.novo ? ' selecionado' : ''), 'aria-label': (tituloDe(b) || tr('Botão')) + tr(' — editar') }, teclaEl(b, info));
     }
     s.dataset.p = p;
     s.dataset.i = i;
@@ -778,18 +917,27 @@
 
   function desenharPainel() {
     var pn = $('#painel');
+    montarPainel(pn);
+    var chave = S.sel ? (S.sel.novo ? 'novo:' : 'botao:') + S.sel.p + '.' + S.sel.i : (S.tela || '') + ':' + S.pag;
+    if (chave !== S.chavePainel) {
+      S.chavePainel = chave;
+      pn.scrollTop = 0;
+    }
+  }
+
+  function montarPainel(pn) {
     pn.textContent = '';
     S.seletor = null;
     if (!S.cfg) return;
     corrigirSelecao();
     if (S.sel) {
-      if (S.sel.novo) { abrirGaveta('Novo botão'); painelNovo(pn); return; }
-      abrirGaveta('Botão');
+      if (S.sel.novo) { abrirGaveta(tr('Novo botão')); painelNovo(pn); return; }
+      abrirGaveta(tr('Botão'));
       painelBotao(pn, botaoEm(S.sel.p, S.sel.i));
       return;
     }
-    if (S.tela === 'pagina') { abrirGaveta('Página'); painelPagina(pn); return; }
-    if (S.tela === 'config') { abrirGaveta('Configurações'); painelConfig(pn); return; }
+    if (S.tela === 'pagina') { abrirGaveta(tr('Página')); painelPagina(pn); return; }
+    if (S.tela === 'config') { abrirGaveta(tr('Configurações')); painelConfig(pn); return; }
     fecharGaveta();
   }
 
@@ -802,7 +950,7 @@
     pv.textContent = '';
     pv.appendChild(teclaEl(b, infoDe(S.sel.p, S.sel.i, b)));
     var t = $('#painel .cabeca h2');
-    if (t) t.textContent = tituloDe(b) || TIPOS_INFO[tipoEditor(b)] && TIPOS_INFO[tipoEditor(b)].nome || 'Botão';
+    if (t) t.textContent = tituloDe(b) || TIPOS_INFO[tipoEditor(b)] && TIPOS_INFO[tipoEditor(b)].nome || tr('Botão');
     var erro = $('#painel .erro-botao');
     var v = visaoDe(S.sel.p, S.sel.i);
     if (erro) {
@@ -824,30 +972,47 @@
     var nome = h('input', { class: 'campo', id: 'nome-pagina', maxlength: '24', value: nomePagina(p), spellcheck: 'false', autocomplete: 'off' });
     nome.addEventListener('change', function () { renomearPagina(p, nome.value); });
     nome.addEventListener('keydown', function (e) { if (e.key === 'Enter') nome.blur(); });
-    var icones = h('div', { class: 'icones-pagina', role: 'group', 'aria-label': 'Ícone da página' });
+    var icones = h('div', { class: 'icones-pagina', role: 'group', 'aria-label': tr('Ícone da página') });
     var atual = iconeDaPagina(p);
     (S.iconesPagina.length ? S.iconesPagina : Object.keys(window.ICONES_PAGINA || {})).forEach(function (chave) {
       var b = h('button', { type: 'button', 'aria-pressed': String(chave === atual), title: chave }, window.iconePagina ? iconePagina(chave) : chave);
       b.addEventListener('click', function () { mudar(function () { paginas()[p].icone = chave; }); });
       icones.appendChild(b);
     });
+    var tipoSeg = segmentos([['botoes', tr('Botões')], ['player', tr('Player (modo DJ)')]], ehPlayer(p) ? 'player' : 'botoes', function (v) {
+      mudar(function () {
+        if (v === 'player') { paginas()[p].tipo = 'player'; if (!paginas()[p].icone) paginas()[p].icone = 'musica'; }
+        else delete paginas()[p].tipo;
+      });
+    });
+    var mostrar = h('input', { type: 'checkbox', checked: !ehOculta(p) });
+    mostrar.addEventListener('change', function () { if (mostrar.checked === ehOculta(p)) alternarOculta(p); });
+    var ordem = h('div', { class: 'ordem-pagina' },
+      h('button', { type: 'button', class: 'botao', disabled: p === 0, onclick: function () { moverPagina(p, p - 1); } }, '↑ ' + tr('Subir')),
+      h('button', { type: 'button', class: 'botao', disabled: p === paginas().length - 1, onclick: function () { moverPagina(p, p + 1); } }, '↓ ' + tr('Descer')));
     pn.appendChild(h('div', { class: 'vazio-painel' },
       h('h2', { text: nomePagina(p) }),
-      h('p', { class: 'onde', text: usados + ' de ' + cap() + ' espaços usados · esta é a página ' + (p + 1) + ' de ' + paginas().length }),
-      secao('Nome da página', nome),
-      secao('Ícone', icones),
+      h('p', { class: 'onde', text: ehPlayer(p) ? tr('Esta é a página {p} de {t}', { p: p + 1, t: paginas().length }) : tr('{u} de {c} espaços usados · esta é a página {p} de {t}', { u: usados, c: cap(), p: p + 1, t: paginas().length }) }),
+      secao(tr('Nome da página'), nome),
+      secao(tr('Tipo da página'), tipoSeg, h('p', { class: 'nota', text: ehPlayer(p)
+        ? tr('O player mostra o que está tocando no computador (Spotify, YouTube, Apple Music…). Os botões que a página tinha ficam guardados se você voltar para Botões.')
+        : tr('Player (modo DJ) troca os botões por um mini player do que estiver tocando no computador.') })),
+      secao(tr('Ícone'), icones),
+      secao(tr('No celular'), h('label', { class: 'chave' }, mostrar, h('span', { class: 'trilho' }), h('span', { text: tr('Mostrar esta página no celular') })),
+        h('p', { class: 'nota', text: ehOculta(p) ? tr('Oculta: o celular pula esta página, mas ela continua aqui no editor com os botões.') : tr('Desligue para esconder a página do celular sem apagar. Também dá pelo olho ao lado do nome, na lateral.') })),
+      secao(tr('Ordem'), ordem, h('p', { class: 'nota', text: tr('Ou arraste a página na lateral (ou na barra de páginas) para o lugar que quiser. No celular, a ordem muda junto.') })),
       h('div', { class: 'rodape-painel' },
         h('button', { type: 'button', class: 'botao perigo', disabled: paginas().length < 2, onclick: function () { apagarPagina(p); } },
-          paginas().length < 2 ? 'É a única página' : 'Apagar esta página'))));
+          paginas().length < 2 ? tr('É a única página') : tr('Apagar esta página')))));
   }
 
   function painelConfig(pn) {
     var g = grade();
-    var sel = h('select', { class: 'campo', id: 'grade', 'aria-label': 'Grade' });
+    var sel = h('select', { class: 'campo', id: 'grade', 'aria-label': tr('Grade') });
     var lista = GRADES.slice();
     if (!lista.some(function (x) { return x[0] === g.c && x[1] === g.l; })) lista.push([g.c, g.l]);
     lista.forEach(function (x) {
-      sel.appendChild(h('option', { value: x[0] + 'x' + x[1], text: x[0] + ' × ' + x[1] + '  (' + (x[0] * x[1]) + ' botões por página)', selected: x[0] === g.c && x[1] === g.l }));
+      sel.appendChild(h('option', { value: x[0] + 'x' + x[1], text: x[0] + ' × ' + x[1] + '  ' + tr('({n} botões por página)', { n: x[0] * x[1] }), selected: x[0] === g.c && x[1] === g.l }));
     });
     sel.addEventListener('change', function () {
       var v = sel.value.split('x');
@@ -855,20 +1020,28 @@
       mudar(function () { S.cfg.grade = { colunas: c, linhas: l }; });
     });
     var temaAtual = S.cfg.tema === 'normal' ? 'normal' : 'preto';
-    var temas = h('div', { class: 'temas', role: 'group', 'aria-label': 'Tema' });
-    [['preto', 'Preto', 'Fundo OLED, bordas e brilho na cor de cada ícone.'], ['normal', 'Normal', 'Grafite azulado, mais discreto.']].forEach(function (t) {
+    var temas = h('div', { class: 'temas', role: 'group', 'aria-label': tr('Tema') });
+    [['preto', tr('Preto'), tr('Fundo OLED, bordas e brilho na cor de cada ícone.')], ['normal', tr('Normal'), tr('Grafite azulado, mais discreto.')]].forEach(function (t) {
       var b = h('button', { type: 'button', class: 'tema-opcao ' + t[0], 'aria-pressed': String(temaAtual === t[0]), 'data-tema-opcao': t[0] },
         h('div', { class: 'amostra' }, h('span'), h('span')), h('b', { text: t[1] }), h('small', { text: t[2] }));
       b.addEventListener('click', function () { mudar(function () { S.cfg.tema = t[0]; }); });
       temas.appendChild(b);
     });
-    var conectar = h('button', { type: 'button', class: 'botao', onclick: abrirConectar }, 'Mostrar QR code');
+    var conectar = h('button', { type: 'button', class: 'botao', onclick: abrirConectar }, tr('Mostrar QR code'));
+    var idiomaSel = h('select', { class: 'campo', id: 'idioma', 'aria-label': tr('Idioma') });
+    [['auto', tr('Automático (idioma do computador)')], ['pt', 'Português'], ['en', 'English']].forEach(function (o) {
+      idiomaSel.appendChild(h('option', { value: o[0], text: o[1], selected: (S.cfg.idioma || 'auto') === o[0] }));
+    });
+    idiomaSel.addEventListener('change', function () {
+      mudar(function () { if (idiomaSel.value === 'auto') delete S.cfg.idioma; else S.cfg.idioma = idiomaSel.value; });
+    });
     pn.appendChild(h('div', { class: 'vazio-painel' },
-      h('h2', { text: 'Configurações' }),
-      h('p', { class: 'onde', text: (S.computador || 'Este computador') + ' · ' + (S.nomeSistema || '') }),
-      secao('Tema (no computador e no celular)', temas),
-      secao('Grade (celular deitado)', sel, h('p', { class: 'nota', text: 'Em pé, as colunas viram linhas. Páginas com mais botões do que a grade viram telas extras.' })),
-      secao('Celular', conectar, h('p', { class: 'nota', text: 'Os botões aparecem no celular na hora, sem precisar reconectar.' }))));
+      h('h2', { text: tr('Configurações') }),
+      h('p', { class: 'onde', text: (S.computador || tr('Este computador')) + ' · ' + (S.nomeSistema || '') }),
+      secao(tr('Tema (no computador e no celular)'), temas),
+      secao(tr('Grade (celular deitado)'), sel, h('p', { class: 'nota', text: tr('Em pé, as colunas viram linhas. Páginas com mais botões do que a grade viram telas extras.') })),
+      secao(tr('Idioma'), idiomaSel, h('p', { class: 'nota', text: tr('Vale para o editor, o celular e o guia. Automático segue o idioma do computador.') })),
+      secao(tr('Celular'), conectar, h('p', { class: 'nota', text: tr('Os botões aparecem no celular na hora, sem precisar reconectar.') }))));
   }
 
   function cabecalho(previaConteudo, titulo, onde) {
@@ -877,12 +1050,12 @@
     return h('div', { class: 'cabeca' }, pv, h('div', null, h('h2', { text: titulo }), h('p', { class: 'onde', text: onde })));
   }
 
-  function textoOnde(p, i) { return 'Página “' + nomePagina(p) + '” · espaço ' + (i + 1); }
+  function textoOnde(p, i) { return tr('Página “{p}” · espaço {n}', { p: nomePagina(p), n: i + 1 }); }
 
   function painelNovo(pn) {
     var vazioEl = h('div', { class: 'slot vazio novo' }, icone('mais'));
     vazioEl.style.setProperty('--k', '96px');
-    pn.appendChild(cabecalho(vazioEl, S.tipoNovo ? 'Novo: ' + TIPOS_INFO[S.tipoNovo].nome : 'Novo botão', textoOnde(S.sel.p, S.sel.i)));
+    pn.appendChild(cabecalho(vazioEl, S.tipoNovo ? tr('Novo: ') + TIPOS_INFO[S.tipoNovo].nome : tr('Novo botão'), textoOnde(S.sel.p, S.sel.i)));
     if (!S.tipoNovo) {
       var grid = h('div', { class: 'tipos' });
       ORDEM_TIPOS.forEach(function (t) {
@@ -892,12 +1065,12 @@
         b.addEventListener('click', function () { escolherTipoNovo(t); });
         grid.appendChild(b);
       });
-      pn.appendChild(secao('O que o botão faz?', grid));
-      pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.sel = null; desenhar(); } }, 'Cancelar')));
+      pn.appendChild(secao(tr('O que o botão faz?'), grid));
+      pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.sel = null; desenhar(); } }, tr('Cancelar'))));
       return;
     }
     pn.appendChild(formTipo(S.tipoNovo, null, function (dados, sug) { criarBotao(dados, sug); }));
-    pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.tipoNovo = null; desenharPainel(); } }, '← Outros tipos')));
+    pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.tipoNovo = null; desenharPainel(); } }, tr('← Outros tipos'))));
     focarPrimeiro(pn);
   }
 
@@ -909,10 +1082,12 @@
   }
 
   function padraoDoTipo(t) {
-    if (t === 'midia') return [{ tipo: 'midia', midia: 'play' }, { titulo: 'Tocar/Pausar', icone: '⏯️' }];
+    if (t === 'midia') return [{ tipo: 'midia', midia: 'play' }, { titulo: tr('Tocar/Pausar'), icone: '⏯️' }];
     if (t === 'volume') return [{ tipo: 'volume', volume: 'subir' }, { titulo: 'Volume +', icone: '🔊' }];
-    if (t === 'microfone') return [{ tipo: 'microfone' }, { titulo: 'Microfone', icone: '🎙️' }];
-    if (t === 'energia') return [{ tipo: 'energia', energia: 'desligar', confirmar: true }, { titulo: 'Desligar', icone: '⏻' }];
+    if (t === 'microfone') return [{ tipo: 'microfone' }, { titulo: tr('Microfone'), icone: '🎙️' }];
+    if (t === 'energia') return [{ tipo: 'energia', energia: 'desligar', confirmar: true }, { titulo: tr('Desligar'), icone: '⏻' }];
+    if (t === 'modo') return [{ tipo: 'modo', nao_perturbe: true, minutos: 25 }, { titulo: tr('Foco'), icone: '🎯' }];
+    if (t === 'chamada') return [{ tipo: 'chamada', chamada: 'mudo', app: 'auto' }, { titulo: tr('Mudo na chamada'), icone: '🔇' }];
     if (t === 'pagina') {
       var outra = paginas().length > 1 ? (S.sel && S.sel.p === 0 ? 1 : 0) : 0;
       return [{ tipo: 'pagina', pagina: nomePagina(outra) }, { titulo: nomePagina(outra), icone: '➡️' }];
@@ -959,9 +1134,10 @@
     if (t === 'texto') return resumo(ler(b, 'texto'));
     if (t === 'midia') { var m = MIDIA.filter(function (x) { return x[0] === ALIAS_MIDIA[simples(ler(b, 'midia') || 'play')]; })[0]; return m ? m[1] : null; }
     if (t === 'volume') { var vv = VOLUME.filter(function (x) { return x[0] === ALIAS_VOLUME[simples(ler(b, 'volume') || '')]; })[0]; return vv ? vv[3] : 'Volume ' + ler(b, 'volume') + '%'; }
-    if (t === 'microfone') return 'Microfone';
+    if (t === 'microfone') return tr('Microfone');
     if (t === 'energia') return energiaDe(b)[1];
     if (t === 'pagina') return String(ler(b, 'pagina') || '');
+    if (t === 'chamada') return chamadaDe(b)[0] === 'mudo' ? tr('Mudo na chamada') : chamadaDe(b)[1];
     return null;
   }
 
@@ -974,6 +1150,7 @@
     if (t === 'microfone') return '🎙️';
     if (t === 'energia') return energiaDe(b)[2];
     if (t === 'pagina') return '➡️';
+    if (t === 'chamada') return chamadaDe(b)[2];
     return null;
   }
 
@@ -995,18 +1172,18 @@
 
   function formTipo(t, b, aoConcluir) {
     if (t === 'app') {
-      return secao('Escolha o app', seletorApps(b ? listaApps(b)[0] : null, function (a) {
+      return secao(tr('Escolha o app'), seletorApps(b ? listaApps(b)[0] : null, function (a) {
         aoConcluir({ tipo: 'app', app: a.valor }, { titulo: a.nome, pedido: 'app:' + a.valor, img: a.img });
       }));
     }
     if (t === 'site') {
-      return secao('Qual site?', seletorSites(b ? ler(b, 'url') : '', b ? 'Salvar' : 'Adicionar', aoConcluir));
+      return secao(tr('Qual site?'), seletorSites(b ? ler(b, 'url') : '', b ? tr('Salvar') : tr('Adicionar'), aoConcluir));
     }
     if (t === 'teclas') {
       var atual = b ? ler(b, 'teclas') : null;
-      var usar = h('button', { type: 'button', class: 'botao primario', disabled: true }, b ? 'Salvar' : 'Adicionar');
+      var usar = h('button', { type: 'button', class: 'botao primario', disabled: true }, b ? tr('Salvar') : tr('Adicionar'));
       var combo = typeof atual === 'string' ? atual : '';
-      var campo = h('input', { class: 'campo', value: combo, placeholder: S.sistema === 'mac' ? 'ex.: cmd+shift+4' : 'ex.: ctrl+c', spellcheck: 'false', autocomplete: 'off' });
+      var campo = h('input', { class: 'campo', value: combo, placeholder: S.sistema === 'mac' ? tr('ex.: cmd+shift+4') : tr('ex.: ctrl+c'), spellcheck: 'false', autocomplete: 'off' });
       var grav = gravadorTeclas(combo, function (c) { combo = c; campo.value = c; usar.disabled = false; });
       grav.setAttribute('data-foco', '');
       campo.addEventListener('input', function () { combo = campo.value.trim(); usar.disabled = !combo; });
@@ -1014,22 +1191,22 @@
         if (!combo) return;
         aoConcluir({ tipo: 'teclas', teclas: combo }, { titulo: bonitoCombo(combo), icone: '⌨️' });
       });
-      return h('div', null, secao('Aperte o atalho', grav), secao('Ou escreva', h('div', { class: 'linha-campo' }, campo, usar)),
-        h('p', { class: 'nota', text: 'Atalhos que o navegador não deixa gravar (como ' + (S.sistema === 'mac' ? '⌘Q' : 'Alt+F4') + ') podem ser escritos à mão.' }));
+      return h('div', null, secao(tr('Aperte o atalho'), grav), secao(tr('Ou escreva'), h('div', { class: 'linha-campo' }, campo, usar)),
+        h('p', { class: 'nota', text: tr('Atalhos que o navegador não deixa gravar (como {k}) podem ser escritos à mão.', { k: S.sistema === 'mac' ? '⌘Q' : 'Alt+F4' }) }));
     }
     if (t === 'texto') {
-      var area = h('textarea', { class: 'campo', placeholder: 'ex.: Já te respondo!', 'data-foco': '' });
-      var add = h('button', { type: 'button', class: 'botao primario', disabled: true }, b ? 'Salvar' : 'Adicionar');
+      var area = h('textarea', { class: 'campo', placeholder: tr('ex.: Já te respondo!'), 'data-foco': '' });
+      var add = h('button', { type: 'button', class: 'botao primario', disabled: true }, b ? tr('Salvar') : tr('Adicionar'));
       area.addEventListener('input', function () { add.disabled = !area.value; });
       add.addEventListener('click', function () {
         if (!area.value) return;
         aoConcluir({ tipo: 'texto', texto: area.value }, { titulo: resumo(area.value), icone: '💬' });
       });
-      return h('div', null, secao('O que digitar', area), h('div', { class: 'secao' }, add));
+      return h('div', null, secao(tr('O que digitar'), area), h('div', { class: 'secao' }, add));
     }
     var padrao = padraoDoTipo(t);
     if (padrao) {
-      var ok = h('button', { type: 'button', class: 'botao primario' }, 'Usar ' + TIPOS_INFO[t].nome);
+      var ok = h('button', { type: 'button', class: 'botao primario' }, tr('Usar ') + TIPOS_INFO[t].nome);
       ok.addEventListener('click', function () { aoConcluir(padrao[0], padrao[1]); });
       return secao(null, ok);
     }
@@ -1045,22 +1222,22 @@
     var p = S.sel.p, i = S.sel.i;
     var tipo = tipoEditor(b);
     var info = TIPOS_INFO[tipo];
-    var titulo = tituloDe(b) || (info ? info.nome : 'Botão');
-    pn.appendChild(cabecalho(teclaEl(b, infoDe(p, i, b)), titulo, (info ? info.nome : 'Feito no config.json') + ' · ' + textoOnde(p, i)));
+    var titulo = tituloDe(b) || (info ? info.nome : tr('Botão'));
+    pn.appendChild(cabecalho(teclaEl(b, infoDe(p, i, b)), titulo, (info ? info.nome : tr('Feito no config.json')) + ' · ' + textoOnde(p, i)));
     var erro = h('p', { class: 'erro-campo erro-botao', hidden: true });
     pn.appendChild(erro);
 
     if (S.tipoNovo) {
       pn.appendChild(formTipo(S.tipoNovo, null, aplicarTipo));
-      pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.tipoNovo = null; desenharPainel(); } }, '← Cancelar troca')));
+      pn.appendChild(h('div', { class: 'rodape-painel' }, h('button', { type: 'button', class: 'botao fraco', onclick: function () { S.tipoNovo = null; desenharPainel(); } }, tr('← Cancelar troca'))));
       focarPrimeiro(pn);
       atualizarPrevia();
       return;
     }
 
-    var seletorTipo = h('select', { class: 'campo', 'aria-label': 'Tipo do botão' });
+    var seletorTipo = h('select', { class: 'campo', 'aria-label': tr('Tipo do botão') });
     ORDEM_TIPOS.forEach(function (t) { seletorTipo.appendChild(h('option', { value: t, text: TIPOS_INFO[t].nome, selected: t === tipo })); });
-    if (tipo === 'outro') seletorTipo.insertBefore(h('option', { value: 'outro', text: 'Outro (config.json)', selected: true }), seletorTipo.firstChild);
+    if (tipo === 'outro') seletorTipo.insertBefore(h('option', { value: 'outro', text: tr('Outro (config.json)'), selected: true }), seletorTipo.firstChild);
     seletorTipo.addEventListener('change', function () {
       var t = seletorTipo.value;
       var padrao = padraoDoTipo(t);
@@ -1068,32 +1245,34 @@
       S.tipoNovo = t;
       desenharPainel();
     });
-    pn.appendChild(secao('Tipo', seletorTipo));
+    pn.appendChild(secao(tr('Tipo'), seletorTipo));
 
-    pn.appendChild(camposDoTipo(b, tipo, p, i));
+    var campos = camposDoTipo(b, tipo, p, i);
+    if (!campos.classList.contains('secao')) campos.classList.add('campos-tipo');
+    pn.appendChild(campos);
 
     var campoTitulo = h('input', { class: 'campo', value: tituloDe(b), maxlength: '40', placeholder: titulo, spellcheck: 'false', autocomplete: 'off' });
     campoTitulo.addEventListener('input', function () {
       mudar(function () { escrever(b, 'titulo', campoTitulo.value); }, { painel: false, grupo: 'titulo:' + p + '.' + i });
     });
     campoTitulo.addEventListener('blur', function () { S.grupo = null; });
-    pn.appendChild(secao('Nome no botão', campoTitulo));
+    pn.appendChild(secao(tr('Nome no botão'), campoTitulo));
     pn.appendChild(secaoIcone(b, p, i));
     pn.appendChild(secaoCor(b, p, i));
 
     var conf = h('input', { type: 'checkbox', checked: tipo === 'energia' ? ler(b, 'confirmar') !== false : !!ler(b, 'confirmar') });
     conf.addEventListener('change', function () { mudar(function () { escrever(b, 'confirmar', conf.checked ? true : (tipo === 'energia' ? false : null)); }, { painel: false }); });
-    pn.appendChild(secao(null, h('label', { class: 'chave' }, conf, h('span', { class: 'trilho' }), h('span', { text: 'Pedir um segundo toque antes de executar' }))));
+    pn.appendChild(secao(null, h('label', { class: 'chave' }, conf, h('span', { class: 'trilho' }), h('span', { text: tr('Pedir um segundo toque antes de executar') }))));
 
     var rodape = h('div', { class: 'rodape-painel' });
     if (paginas().length > 1) {
-      var mover = h('select', { 'aria-label': 'Mover para outra página' });
-      mover.appendChild(h('option', { value: '', text: 'Mover para…', selected: true }));
-      paginas().forEach(function (pg, q) { if (q !== p) mover.appendChild(h('option', { value: String(q), text: nomePagina(q) })); });
+      var mover = h('select', { 'aria-label': tr('Mover para outra página') });
+      mover.appendChild(h('option', { value: '', text: tr('Mover para…'), selected: true }));
+      paginas().forEach(function (pg, q) { if (q !== p && !ehPlayer(q)) mover.appendChild(h('option', { value: String(q), text: nomePagina(q) })); });
       mover.addEventListener('change', function () { if (mover.value !== '') moverParaPagina(p, i, parseInt(mover.value, 10)); });
-      rodape.appendChild(h('label', { class: 'mover' }, h('span', { text: 'Página' }), mover));
+      rodape.appendChild(h('label', { class: 'mover' }, h('span', { text: tr('Página') }), mover));
     }
-    rodape.appendChild(h('button', { type: 'button', class: 'botao perigo', onclick: function () { removerBotao(p, i); } }, 'Remover botão'));
+    rodape.appendChild(h('button', { type: 'button', class: 'botao perigo', onclick: function () { removerBotao(p, i); } }, tr('Remover botão')));
     pn.appendChild(rodape);
     atualizarPrevia();
   }
@@ -1110,42 +1289,42 @@
       }));
     }
     if (tipo === 'site') {
-      var navSel = h('select', { class: 'campo', 'aria-label': 'Abrir em' });
+      var navSel = h('select', { class: 'campo', 'aria-label': tr('Abrir em') });
       var navAtual = String(ler(b, 'navegador') || '');
-      navSel.appendChild(h('option', { value: '', text: 'Navegador padrão' + padraoNome(), selected: !navAtual }));
+      navSel.appendChild(h('option', { value: '', text: tr('Navegador padrão') + padraoNome(), selected: !navAtual }));
       var achou = !navAtual;
       S.navegadores.forEach(function (n) {
         var sel = navAtual && semAcento(n.nome) === semAcento(navAtual);
         if (sel) achou = true;
         navSel.appendChild(h('option', { value: n.nome, text: n.nome, selected: sel }));
       });
-      if (!achou) navSel.appendChild(h('option', { value: navAtual, text: navAtual + ' (não achei aqui)', selected: true }));
+      if (!achou) navSel.appendChild(h('option', { value: navAtual, text: navAtual + tr(' (não achei aqui)'), selected: true }));
       navSel.addEventListener('change', function () { mudar(function () { escrever(b, 'navegador', navSel.value || null); }, { painel: false }); });
-      var partes = [secao('Endereço', seletorSites(ler(b, 'url'), 'Salvar', function (dados, sug) {
+      var partes = [secao(tr('Endereço'), seletorSites(ler(b, 'url'), tr('Salvar'), function (dados, sug) {
         if (sug.pedido && sug.img) S.mapaImg[sug.pedido] = sug.img;
         var auto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         mudar(function () {
           escrever(b, 'url', dados.url);
           if (auto && sug.titulo) escrever(b, 'titulo', sug.titulo);
         });
-      }, true)), secao('Abrir em', navSel)];
+      }, true)), secao(tr('Abrir em'), navSel)];
       if (S.sistema === 'mac') {
         var reusar = h('input', { type: 'checkbox', checked: ler(b, 'aba') !== false });
         reusar.addEventListener('change', function () { mudar(function () { escrever(b, 'aba', reusar.checked ? null : false); }, { painel: false }); });
-        partes.push(secao(null, h('label', { class: 'chave' }, reusar, h('span', { class: 'trilho' }), h('span', { text: 'Se a aba já estiver aberta, só trazer para frente' }))));
+        partes.push(secao(null, h('label', { class: 'chave' }, reusar, h('span', { class: 'trilho' }), h('span', { text: tr('Se a aba já estiver aberta, só trazer para frente') }))));
       }
       return h('div', null, partes);
     }
     if (tipo === 'teclas') {
       var atual = ler(b, 'teclas');
       if (Array.isArray(atual)) {
-        return secao('Teclas', h('p', { class: 'nota', text: 'Sequência de ' + atual.length + ' atalhos: ' + atual.join(' → ') + '. Grave um novo para trocar.' }),
+        return secao(tr('Teclas'), h('p', { class: 'nota', text: tr('Sequência de {n} atalhos: {s}. Grave um novo para trocar.', { n: atual.length, s: atual.join(' → ') }) }),
           gravadorTeclas('', function (c) { trocarTeclas(b, c); }));
       }
       var campo = h('input', { class: 'campo', value: typeof atual === 'string' ? atual : '', spellcheck: 'false', autocomplete: 'off' });
       var grav = gravadorTeclas(typeof atual === 'string' ? atual : '', function (c) { campo.value = c; trocarTeclas(b, c); });
       campo.addEventListener('change', function () { if (campo.value.trim()) trocarTeclas(b, campo.value.trim()); });
-      return h('div', null, secao('Atalho', grav), secao('Ou escreva', campo));
+      return h('div', null, secao(tr('Atalho'), grav), secao(tr('Ou escreva'), campo));
     }
     if (tipo === 'texto') {
       var area = h('textarea', { class: 'campo' });
@@ -1159,11 +1338,11 @@
         }, { painel: false, grupo: 'texto:' + p + '.' + i });
       });
       area.addEventListener('blur', function () { S.grupo = null; });
-      return secao('O que digitar', area);
+      return secao(tr('O que digitar'), area);
     }
     if (tipo === 'midia') {
       var atualM = ALIAS_MIDIA[simples(ler(b, 'midia') || 'play')] || 'play';
-      return secao('Ação', segmentos(MIDIA.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }), atualM, function (v) {
+      return secao(tr('Ação'), segmentos(MIDIA.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }), atualM, function (v) {
         var tAuto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         var iAuto = !ler(b, 'icone') || ler(b, 'icone') === iconePadrao(b);
         var m = MIDIA.filter(function (x) { return x[0] === v; })[0];
@@ -1177,14 +1356,14 @@
     if (tipo === 'volume') {
       var bruto = ler(b, 'volume');
       var atualV = ALIAS_VOLUME[simples(bruto === undefined ? '' : bruto)] || (/^\d+$/.test(String(bruto)) ? 'definir' : 'subir');
-      var numero = h('input', { class: 'campo', type: 'number', min: '0', max: '100', value: atualV === 'definir' ? String(bruto) : '50', 'aria-label': 'Volume em %' });
+      var numero = h('input', { class: 'campo', type: 'number', min: '0', max: '100', value: atualV === 'definir' ? String(bruto) : '50', 'aria-label': tr('Volume em %') });
       numero.style.width = '96px';
       numero.addEventListener('change', function () {
         var n = Math.max(0, Math.min(100, parseInt(numero.value, 10) || 0));
         mudar(function () { escrever(b, 'volume', n); }, { painel: false });
       });
-      var opcoes = VOLUME.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }).concat([['definir', '🔈 Definir']]);
-      return h('div', null, secao('Ação', segmentos(opcoes, atualV, function (v) {
+      var opcoes = VOLUME.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }).concat([['definir', '🔈 ' + tr('Definir')]]);
+      return h('div', null, secao(tr('Ação'), segmentos(opcoes, atualV, function (v) {
         var tAuto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         var iAuto = !ler(b, 'icone') || ler(b, 'icone') === iconePadrao(b);
         var x = VOLUME.filter(function (y) { return y[0] === v; })[0];
@@ -1193,22 +1372,22 @@
           if (tAuto) escrever(b, 'titulo', x ? x[3] : 'Volume ' + (parseInt(numero.value, 10) || 50) + '%');
           if (iAuto && !ler(b, 'imagem')) escrever(b, 'icone', x ? x[2] : '🔈');
         });
-      })), atualV === 'definir' ? secao('Volume (%)', numero) : null);
+      })), atualV === 'definir' ? secao(tr('Volume (%)'), numero) : null);
     }
     if (tipo === 'microfone') {
-      return secao(null, h('p', { class: 'nota', text: 'Liga e desliga o mudo do microfone do computador. No celular, a luz MUDO acende enquanto ele estiver mudo.' }));
+      return secao(null, h('p', { class: 'nota', text: tr('Liga e desliga o mudo do microfone do computador. No celular, a luz MUDO acende enquanto ele estiver mudo.') }));
     }
     if (tipo === 'energia') {
       var atualE = energiaDe(b)[0];
       var notaE = h('p', { class: 'nota' });
       var textoE = function (v) {
-        if (v === 'suspender') return 'O computador dorme na hora. Para acordar: qualquer tecla ou o mouse. No Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, ele acorda sozinho quando o Deck abre no celular.';
-        if (v === 'bloquear') return 'Vai para a tela de bloqueio; os programas continuam abertos.';
-        if (v === 'reiniciar') return 'Fecha tudo e liga de novo. Programas com trabalho não salvo podem segurar o reinício.';
-        return 'Desliga de verdade. O celular não consegue ligar um computador desligado (não há nada rodando para receber o pedido) — se quiser ligar de longe, prefira Suspender.';
+        if (v === 'suspender') return tr('O computador dorme na hora. Para acordar: qualquer tecla ou o mouse. No Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, ele acorda sozinho quando o Deck abre no celular.');
+        if (v === 'bloquear') return tr('Vai para a tela de bloqueio; os programas continuam abertos.');
+        if (v === 'reiniciar') return tr('Fecha tudo e liga de novo. Programas com trabalho não salvo podem segurar o reinício.');
+        return tr('Desliga de verdade. O celular não consegue ligar um computador desligado (não há nada rodando para receber o pedido) — se quiser ligar de longe, prefira Suspender.');
       };
       notaE.textContent = textoE(atualE);
-      return h('div', null, secao('Ação', segmentos(ENERGIA.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }), atualE, function (v) {
+      return h('div', null, secao(tr('Ação'), segmentos(ENERGIA.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }), atualE, function (v) {
         var tAuto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         var iAuto = !ler(b, 'icone') || ler(b, 'icone') === iconePadrao(b);
         var x = ENERGIA.filter(function (y) { return y[0] === v; })[0];
@@ -1228,16 +1407,142 @@
         if (igual) achou = true;
         sel.appendChild(h('option', { value: nomePagina(q), text: nomePagina(q), selected: igual }));
       });
-      if (!achou) sel.insertBefore(h('option', { value: '', text: 'Escolha a página', selected: true }), sel.firstChild);
+      if (!achou) sel.insertBefore(h('option', { value: '', text: tr('Escolha a página'), selected: true }), sel.firstChild);
       sel.addEventListener('change', function () {
         if (!sel.value) return;
         var auto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         mudar(function () { escrever(b, 'pagina', sel.value); if (auto) escrever(b, 'titulo', sel.value); });
       });
-      return secao('Ir para', sel);
+      return secao(tr('Ir para'), sel);
     }
+    if (tipo === 'modo') return camposModo(b, p, i);
+    if (tipo === 'chamada') return camposChamada(b);
     var t = tipoCanon(b);
-    return secao(null, h('p', { class: 'nota' }, 'Este botão é um ', h('b', { text: NOMES_OUTROS[t] || 'tipo especial' }), ' feito direto no config.json. Aqui dá para mudar nome, ícone, cor e lugar; o que ele faz continua igual.'));
+    return secao(null, h('p', { class: 'nota' }, tr('Este botão é um '), h('b', { text: NOMES_OUTROS[t] || tr('tipo especial') }), tr(' feito direto no config.json. Aqui dá para mudar nome, ícone, cor e lugar; o que ele faz continua igual.')));
+  }
+
+  function listaDe(b, campo) {
+    var v = ler(b, campo);
+    if (v === undefined || v === null || v === '') return [];
+    return (Array.isArray(v) ? v : [v]).filter(function (x) { return typeof x === 'string' && x.trim(); });
+  }
+
+  function editorDeLista(b, campo, dica, comSites) {
+    var itens = listaDe(b, campo);
+    var caixa = h('div', { class: 'lista-chips' });
+    itens.forEach(function (item, n) {
+      var x = h('button', { type: 'button', class: 'chip-x', 'aria-label': tr('Tirar {i}', { i: item }) }, '×');
+      x.addEventListener('click', function () {
+        mudar(function () { var nova = listaDe(b, campo).slice(); nova.splice(n, 1); escrever(b, campo, nova.length ? nova : null); });
+      });
+      caixa.appendChild(h('span', { class: 'chip' }, h('span', { text: item.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '') }), x));
+    });
+    var idLista = 'sugestoes-' + campo;
+    var campoNovo = h('input', { class: 'campo', placeholder: dica, list: idLista, spellcheck: 'false', autocomplete: 'off' });
+    var dl = h('datalist', { id: idLista });
+    (S.apps || []).slice(0, 400).forEach(function (a) { dl.appendChild(h('option', { value: a.nome })); });
+    if (!S.apps && !S.appsCarregando) carregarApps();
+    var add = h('button', { type: 'button', class: 'botao fraco' }, tr('Adicionar'));
+    var adicionar = function () {
+      var v = campoNovo.value.trim();
+      if (!v) return;
+      if (comSites && pareceEndereco(v) && !/\s/.test(v)) v = normalizarUrl(v);
+      mudar(function () { var nova = listaDe(b, campo).concat([v]).slice(0, 12); escrever(b, campo, nova); });
+    };
+    add.addEventListener('click', adicionar);
+    campoNovo.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); adicionar(); } });
+    return h('div', null, caixa, h('div', { class: 'linha-campo' }, campoNovo, add), dl);
+  }
+
+  function notaNaoPerturbe() {
+    if (S.sistema === 'mac') return tr('No Mac, o deck liga o Foco pelo app Atalhos: crie uma vez os atalhos “Deck Foco Ligar” e “Deck Foco Desligar” com a ação “Definir Foco” (Não Perturbe › Ligado/Desligado).');
+    if (S.sistema === 'windows') return tr('No Windows não há como ligar o Não perturbe por programa: o deck avisa no celular para você ligar em Win+N.');
+    return tr('No Linux funciona no GNOME (esconde os avisos na tela).');
+  }
+
+  function camposModo(b, p, i) {
+    var np = ler(b, 'nao_perturbe');
+    var npAtual = np === true ? 'ligar' : np === false ? 'desligar' : '';
+    var npSeg = segmentos([['', tr('Não mexer')], ['ligar', tr('Ativar')], ['desligar', tr('Desativar')]], npAtual, function (v) {
+      mudar(function () { escrever(b, 'nao_perturbe', v === 'ligar' ? true : v === 'desligar' ? false : null); });
+    });
+    var mins = parseInt(ler(b, 'minutos'), 10) || 0;
+    var opcoesMin = [['0', tr('Sem')], ['5', '5 min'], ['15', '15 min'], ['25', '25 min'], ['50', '50 min']];
+    var outroMin = mins && !opcoesMin.some(function (o) { return o[0] === String(mins); });
+    var campoMin = h('input', { class: 'campo', type: 'number', min: '1', max: '480', value: mins ? String(mins) : '', 'aria-label': tr('Minutos') });
+    campoMin.style.width = '96px';
+    campoMin.addEventListener('change', function () {
+      var n = Math.max(1, Math.min(480, parseInt(campoMin.value, 10) || 25));
+      mudar(function () { escrever(b, 'minutos', n); }, { painel: false });
+    });
+    var minSeg = segmentos(opcoesMin.concat([['outro', tr('Outro')]]), outroMin ? 'outro' : String(mins), function (v) {
+      mudar(function () { escrever(b, 'minutos', v === '0' ? null : v === 'outro' ? (mins || 30) : parseInt(v, 10)); });
+    });
+    var vol = ler(b, 'volume');
+    var temVol = typeof vol === 'number' || (typeof vol === 'string' && /^\d+$/.test(vol));
+    var faixa = h('input', { type: 'range', min: '0', max: '100', step: '5', value: temVol ? String(vol) : '40', 'aria-label': tr('Volume do modo') });
+    var faixaNum = h('span', { class: 'nota', style: 'margin:0;min-width:42px;text-align:right', text: (temVol ? vol : 40) + '%' });
+    faixa.addEventListener('input', function () { faixaNum.textContent = faixa.value + '%'; });
+    faixa.addEventListener('change', function () { mudar(function () { escrever(b, 'volume', parseInt(faixa.value, 10)); }, { painel: false }); });
+    var volSeg = segmentos([['', tr('Não mexer')], ['n', tr('Ajustar')]], temVol ? 'n' : '', function (v) {
+      mudar(function () { escrever(b, 'volume', v === 'n' ? 40 : null); });
+    });
+    var pagSel = h('select', { class: 'campo', 'aria-label': tr('Ir para a página') });
+    var pagAtual = String(ler(b, 'pagina') || '');
+    var pagAchou = !pagAtual;
+    pagSel.appendChild(h('option', { value: '', text: tr('Ficar na página atual'), selected: !pagAtual }));
+    paginas().forEach(function (pg, q) {
+      if (q === p) return;
+      var igual = !!pagAtual && simples(pagAtual) === simples(nomePagina(q));
+      if (igual) pagAchou = true;
+      pagSel.appendChild(h('option', { value: nomePagina(q), text: nomePagina(q), selected: igual }));
+    });
+    if (!pagAchou) pagSel.appendChild(h('option', { value: pagAtual, text: tr('{p} (não existe mais)', { p: pagAtual }), selected: true }));
+    pagSel.addEventListener('change', function () { mudar(function () { escrever(b, 'pagina', pagSel.value || null); }, { painel: false }); });
+    return h('div', null,
+      h('p', { class: 'nota', text: tr('Um toque liga o modo; outro toque desliga (e desfaz o Não perturbe). Só um modo fica ligado por vez.') }),
+      secao(tr('Não perturbe'), npSeg, npAtual ? h('p', { class: 'nota', text: notaNaoPerturbe() }) : null),
+      secao(tr('Cronômetro na tela do celular'), minSeg, outroMin ? h('div', { class: 'linha-campo', style: 'margin-top:8px' }, campoMin, h('span', { class: 'nota', style: 'margin:0', text: tr('minutos') })) : null),
+      secao(tr('Abrir'), editorDeLista(b, 'abrir', tr('App ou site (ex.: Notion, gmail.com)'), true)),
+      secao(tr('Fechar apps que distraem'), editorDeLista(b, 'fechar', tr('Nome do app (ex.: WhatsApp)'), false)),
+      secao(tr('Volume'), volSeg, temVol ? h('div', { class: 'linha-campo', style: 'margin-top:8px;align-items:center' }, faixa, faixaNum) : null),
+      secao(tr('Depois, no celular'), pagSel));
+  }
+
+  function camposChamada(b) {
+    var atual = chamadaDe(b)[0];
+    var seg = segmentos(CHAMADA.map(function (x) { return [x[0], x[2] + ' ' + x[1]]; }), atual, function (v) {
+      var tAuto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
+      var iAuto = !ler(b, 'icone') || ler(b, 'icone') === iconePadrao(b);
+      var x = CHAMADA.filter(function (y) { return y[0] === v; })[0];
+      mudar(function () {
+        escrever(b, 'chamada', v);
+        if (tAuto) escrever(b, 'titulo', v === 'mudo' ? tr('Mudo na chamada') : x[1]);
+        if (iAuto && !ler(b, 'imagem')) escrever(b, 'icone', x[2]);
+      });
+    });
+    var appAtual = String(ler(b, 'app') || 'auto').toLowerCase().replace(/[^a-z]/g, '');
+    if (appAtual === 'microsoftteams' || appAtual === 'msteams') appAtual = 'teams';
+    if (appAtual === 'googlemeet') appAtual = 'meet';
+    if (appAtual === 'whats' || appAtual === 'zap' || appAtual === 'wpp') appAtual = 'whatsapp';
+    var appSel = h('select', { class: 'campo', 'aria-label': tr('App da chamada') });
+    APPS_CHAMADA.forEach(function (a) { appSel.appendChild(h('option', { value: a[0], text: a[1], selected: a[0] === appAtual })); });
+    appSel.addEventListener('change', function () { mudar(function () { escrever(b, 'app', appSel.value === 'auto' ? null : appSel.value); }); });
+    var notas = [];
+    if (atual === 'atender' || atual === 'recusar') {
+      notas.push(S.sistema === 'mac'
+        ? tr('No Mac, ligações do FaceTime, do iPhone (pela Continuidade) e do WhatsApp aparecem no celular com Atender e Recusar. Nos outros apps, o deck usa o atalho do app.')
+        : tr('O deck traz o app para frente e aperta o atalho de atender dele (Zoom, Teams e Discord têm).'));
+    }
+    if (appAtual === 'auto') notas.push(tr('No automático, o deck usa o app de chamada que estiver na frente no computador (WhatsApp, Zoom, Teams, Meet…); se nenhum estiver, a reunião aberta.'));
+    if (appAtual === 'whatsapp' && (atual === 'mudo' || atual === 'camera')) notas.push(tr('No WhatsApp, use durante a chamada: fora dela, o mesmo atalho silencia a conversa aberta.'));
+    if (appAtual === 'whatsapp' && (atual === 'atender' || atual === 'recusar')) notas.push(tr('O WhatsApp não tem atalho de atender: no Mac, a ligação aparece no celular com Atender e Recusar.'));
+    if (atual === 'mudo') notas.push(tr('Sem chamada aberta, este botão silencia o microfone do computador.'));
+    if (atual === 'encerrar' && (appAtual === 'zoom' || appAtual === 'auto')) notas.push(tr('No Zoom, sair pede confirmação na tela.'));
+    if (atual === 'encerrar' && appAtual === 'meet') notas.push(tr('No Meet, encerrar fecha a aba da reunião.'));
+    return h('div', null,
+      secao(tr('Ação'), seg),
+      secao(tr('App da chamada'), appSel, notas.length ? h('p', { class: 'nota', text: notas.join(' ') }) : null));
   }
 
   function trocarTeclas(b, combo) {
@@ -1263,15 +1568,15 @@
     var auto = tipo === 'app' || tipo === 'link';
     var modo = ler(b, 'imagem') ? 'imagem' : ler(b, 'icone') ? 'emoji' : (auto ? 'auto' : 'nenhum');
     var opcoes = auto
-      ? [['auto', tipo === 'app' ? 'Do computador' : 'Do site'], ['emoji', 'Emoji'], ['imagem', 'Imagem']]
-      : [['emoji', 'Emoji'], ['imagem', 'Imagem'], ['nenhum', 'Sem ícone']];
+      ? [['auto', tipo === 'app' ? tr('Do computador') : tr('Do site')], ['emoji', 'Emoji'], ['imagem', tr('Imagem')]]
+      : [['emoji', 'Emoji'], ['imagem', tr('Imagem')], ['nenhum', tr('Sem ícone')]];
     var arquivo = h('input', { type: 'file', accept: 'image/png,image/jpeg,image/gif,image/webp,image/svg+xml', hidden: true });
     arquivo.addEventListener('change', function () {
       var f = arquivo.files && arquivo.files[0];
       if (f) enviarImagem(b, f);
       arquivo.value = '';
     });
-    var s = secao('Ícone', segmentos(opcoes, modo, function (v) {
+    var s = secao(tr('Ícone'), segmentos(opcoes, modo, function (v) {
       if (v === 'imagem') { arquivo.click(); return; }
       mudar(function () {
         escrever(b, 'imagem', null);
@@ -1287,18 +1592,18 @@
       });
       campo.addEventListener('blur', function () { S.grupo = null; });
       s.appendChild(h('div', { class: 'secao', style: 'margin-top:10px' }, h('div', { class: 'linha-campo', style: 'align-items:center' }, campo,
-        h('span', { class: 'nota', style: 'margin:0', text: S.sistema === 'mac' ? 'Dica: ⌃⌘Espaço abre os emojis do Mac.' : S.sistema === 'windows' ? 'Dica: Win + . abre os emojis.' : 'Cole um emoji ou escreva até 2 letras.' }))));
+        h('span', { class: 'nota', style: 'margin:0', text: S.sistema === 'mac' ? tr('Dica: ⌃⌘Espaço abre os emojis do Mac.') : S.sistema === 'windows' ? tr('Dica: Win + . abre os emojis.') : tr('Cole um emoji ou escreva até 2 letras.') }))));
     } else if (modo === 'imagem') {
-      s.appendChild(h('p', { class: 'nota' }, 'Imagem: ', h('b', { text: String(ler(b, 'imagem')) }), ' (pasta icones). ',
-        h('button', { type: 'button', class: 'botao fraco', style: 'height:auto;padding:0;text-decoration:underline', onclick: function () { arquivo.click(); } }, 'Trocar')));
+      s.appendChild(h('p', { class: 'nota' }, tr('Imagem: '), h('b', { text: String(ler(b, 'imagem')) }), tr(' (pasta icones). '),
+        h('button', { type: 'button', class: 'botao fraco', style: 'height:auto;padding:0;text-decoration:underline', onclick: function () { arquivo.click(); } }, tr('Trocar'))));
     } else if (modo === 'auto') {
-      s.appendChild(h('p', { class: 'nota', text: tipo === 'app' ? 'O ícone é o mesmo do app no computador.' : 'O ícone é o do próprio site.' }));
+      s.appendChild(h('p', { class: 'nota', text: tipo === 'app' ? tr('O ícone é o mesmo do app no computador.') : tr('O ícone é o do próprio site.') }));
     }
     return s;
   }
 
   function enviarImagem(b, arquivo) {
-    if (arquivo.size > 4 * 1024 * 1024) { toast('Imagem grande demais (máximo 4 MB).', null, null, 'erro'); return; }
+    if (arquivo.size > 4 * 1024 * 1024) { toast(tr('Imagem grande demais (máximo 4 MB).'), null, null, 'erro'); return; }
     var leitor = new FileReader();
     leitor.onload = function () {
       api('/api/editor/imagem', { corpo: { nome: arquivo.name, dados: leitor.result }, limite: 30000 }).then(function (r) {
@@ -1310,8 +1615,8 @@
 
   function secaoCor(b) {
     var atual = corDe(ler(b, 'cor'));
-    var c = h('div', { class: 'cores', role: 'group', 'aria-label': 'Cor do botão' });
-    var nenhuma = h('button', { type: 'button', class: 'cor nenhuma', title: 'Sem cor', 'aria-label': 'Sem cor', 'aria-pressed': String(!atual) });
+    var c = h('div', { class: 'cores', role: 'group', 'aria-label': tr('Cor do botão') });
+    var nenhuma = h('button', { type: 'button', class: 'cor nenhuma', title: tr('Sem cor'), 'aria-label': tr('Sem cor'), 'aria-pressed': String(!atual) });
     nenhuma.addEventListener('click', function () { mudar(function () { escrever(b, 'cor', null); }, { painel: true }); });
     c.appendChild(nenhuma);
     CORES_ORDEM.forEach(function (nome) {
@@ -1322,7 +1627,7 @@
       bt.addEventListener('click', function () { mudar(function () { escrever(b, 'cor', nome); }); });
       c.appendChild(bt);
     });
-    return secao('Cor', c);
+    return secao(tr('Cor'), c);
   }
 
   function padraoNome() {
@@ -1335,10 +1640,10 @@
   }
 
   function seletorSites(urlAtual, textoBotao, aoConcluir, editando) {
-    var campo = h('input', { class: 'campo', value: editando ? (urlAtual || '') : '', placeholder: editando ? 'ex.: youtube.com' : 'Procurar ou digitar um endereço…', inputmode: 'url', spellcheck: 'false', autocomplete: 'off', 'data-foco': '' });
+    var campo = h('input', { class: 'campo', value: editando ? (urlAtual || '') : '', placeholder: editando ? tr('ex.: youtube.com') : tr('Procurar ou digitar um endereço…'), inputmode: 'url', spellcheck: 'false', autocomplete: 'off', 'data-foco': '' });
     var botao = h('button', { type: 'button', class: 'botao primario' }, textoBotao);
     var msg = h('p', { class: 'nota', hidden: true });
-    var lista = h('div', { class: 'lista-apps lista-sites', role: 'listbox', 'aria-label': 'Sites sugeridos' });
+    var lista = h('div', { class: 'lista-apps lista-sites', role: 'listbox', 'aria-label': tr('Sites sugeridos') });
     var ocupado = false;
     function concluir(url, titulo, item) {
       if (ocupado) return;
@@ -1347,11 +1652,11 @@
       if (item) item.classList.add('buscando');
       msg.hidden = false;
       msg.className = 'nota';
-      msg.textContent = 'Buscando o ícone do site…';
+      msg.textContent = tr('Buscando o ícone do site…');
       api('/api/editor/site', { corpo: { url: url, titulo: titulo || null }, limite: 40000 }).then(function (r) {
         if (r.titulo) S.titulosSites[r.url] = r.titulo;
         msg.hidden = !r.semInternet;
-        msg.textContent = r.semInternet ? 'Não consegui abrir o site agora — por enquanto fica a inicial no lugar do ícone.' : '';
+        msg.textContent = r.semInternet ? tr('Não consegui abrir o site agora — por enquanto fica a inicial no lugar do ícone.') : '';
         if (r.pedido) S.mapaImg2[r.pedido] = r.img2 || null;
         aoConcluir({ tipo: 'site', url: r.url }, { titulo: r.titulo, pedido: r.pedido, img: r.img });
       }).catch(function (e) {
@@ -1389,7 +1694,7 @@
       var total = 0;
       if (dados) {
         var vistos = {};
-        [['abas', 'Abas abertas agora'], ['favoritos', 'Favoritos'], ['visitados', 'Mais visitados']].forEach(function (g) {
+        [['abas', tr('Abas abertas agora')], ['favoritos', tr('Favoritos')], ['visitados', tr('Mais visitados')]].forEach(function (g) {
           var itens = (dados[g[0]] || []).filter(function (x) {
             var k = x.url.replace(/^https?:\/\/(www\.)?/, '').replace(/#.*$/, '').replace(/\/$/, '');
             if (vistos[k]) return false;
@@ -1404,25 +1709,25 @@
       }
       var v = campo.value.trim();
       if (v && !mesmo && pareceEndereco(v)) {
-        var livre = h('button', { type: 'button', class: 'app-item' }, miniLetra(v), h('span', { text: 'Abrir ' + v }));
+        var livre = h('button', { type: 'button', class: 'app-item' }, miniLetra(v), h('span', { text: tr('Abrir ') + v }));
         livre.addEventListener('click', function () { concluir(v, null, livre); });
         lista.insertBefore(livre, lista.firstChild);
         total++;
       }
       if (!total) {
         lista.appendChild(h('div', { class: 'lista-vazia', text: !dados || S.sitesCarregando
-          ? 'Procurando abas, favoritos e sites mais visitados…'
-          : (termo ? 'Nada com “' + campo.value.trim() + '”. Digite o endereço completo (ex.: nome.com).' : 'Digite o endereço de um site (ex.: youtube.com).') }));
+          ? tr('Procurando abas, favoritos e sites mais visitados…')
+          : (termo ? tr('Nada com “{q}”. Digite o endereço completo (ex.: nome.com).', { q: campo.value.trim() }) : tr('Digite o endereço de um site (ex.: youtube.com).')) }));
       }
       lista.scrollTop = rolagem;
     }
     campo.addEventListener('input', function () { S.buscaSite = campo.value; lista.scrollTop = 0; preencher(); });
     campo.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); enviar(); } });
     botao.addEventListener('click', enviar);
-    var atualizar = h('button', { type: 'button', class: 'botao fraco', title: 'Procurar de novo as abas abertas', 'aria-label': 'Atualizar' }, '↻');
+    var atualizar = h('button', { type: 'button', class: 'botao fraco', title: tr('Procurar de novo as abas abertas'), 'aria-label': tr('Atualizar') }, '↻');
     atualizar.addEventListener('click', function () { carregarSites(true); });
     var caixa = h('div', null, h('div', { class: 'linha-campo' }, campo, botao), msg,
-      h('div', { class: 'cabeca-lista' }, h('span', { class: 'rotulo', style: 'margin:0', text: 'Sugestões deste computador' }), atualizar), lista);
+      h('div', { class: 'cabeca-lista' }, h('span', { class: 'rotulo', style: 'margin:0', text: tr('Sugestões deste computador') }), atualizar), lista);
     caixa._preencher = preencher;
     S.seletorSite = caixa;
     preencher();
@@ -1458,15 +1763,15 @@
   }
 
   function seletorApps(valorAtual, aoEscolher) {
-    var campo = h('input', { class: 'campo', type: 'search', placeholder: 'Procurar app…', value: S.busca, 'aria-label': 'Procurar app', autocomplete: 'off', spellcheck: 'false', 'data-foco': '' });
-    var lista = h('div', { class: 'lista-apps', role: 'listbox', 'aria-label': 'Apps deste computador' });
+    var campo = h('input', { class: 'campo', type: 'search', placeholder: tr('Procurar app…'), value: S.busca, 'aria-label': tr('Procurar app'), autocomplete: 'off', spellcheck: 'false', 'data-foco': '' });
+    var lista = h('div', { class: 'lista-apps', role: 'listbox', 'aria-label': tr('Apps deste computador') });
     var caixa = h('div', { class: 'seletor' }, h('div', { class: 'busca' }, icone('busca'), campo), lista);
     function preencher() {
       var rolagem = lista.scrollTop;
       lista.textContent = '';
       var termo = semAcento(campo.value.trim());
       if (!S.apps || (!S.apps.length && S.appsCarregando)) {
-        lista.appendChild(h('div', { class: 'lista-vazia', text: 'Procurando os apps deste ' + (S.nomeSistema || 'computador') + '…' }));
+        lista.appendChild(h('div', { class: 'lista-vazia', text: tr('Procurando os apps deste {s}…', { s: S.nomeSistema || tr('computador') }) }));
         return;
       }
       var itens = S.apps.filter(function (a) {
@@ -1483,11 +1788,11 @@
       });
       if (termo && !exato) {
         var livre = campo.value.trim();
-        var outro = h('button', { type: 'button', class: 'app-item' }, miniLetra(livre), h('span', { text: 'Usar “' + livre + '” como nome do app' }));
+        var outro = h('button', { type: 'button', class: 'app-item' }, miniLetra(livre), h('span', { text: tr('Usar “{n}” como nome do app', { n: livre }) }));
         outro.addEventListener('click', function () { aoEscolher({ nome: livre, valor: livre, img: null }); });
         lista.appendChild(outro);
       }
-      if (!itens.length && !termo) lista.appendChild(h('div', { class: 'lista-vazia', text: 'Não achei apps neste computador.' }));
+      if (!itens.length && !termo) lista.appendChild(h('div', { class: 'lista-vazia', text: tr('Não achei apps neste computador.') }));
       lista.scrollTop = rolagem;
     }
     campo.addEventListener('input', function () { S.busca = campo.value; lista.scrollTop = 0; preencher(); });
@@ -1584,15 +1889,15 @@
     return m;
   }
   function gravadorTeclas(atual, aoGravar) {
-    var g = h('div', { class: 'gravador', tabindex: '0', role: 'button', 'aria-label': 'Gravar atalho: clique e aperte as teclas' });
+    var g = h('div', { class: 'gravador', tabindex: '0', role: 'button', 'aria-label': tr('Gravar atalho: clique e aperte as teclas') });
     var combo = atual;
     function mostrar(texto) {
       g.textContent = '';
       if (combo && !texto) g.appendChild(comboEl(combo));
-      else g.appendChild(document.createTextNode(texto || 'Clique aqui e aperte o atalho'));
+      else g.appendChild(document.createTextNode(texto || tr('Clique aqui e aperte o atalho')));
     }
     mostrar();
-    g.addEventListener('focus', function () { if (!combo) mostrar('Aperte as teclas agora…'); });
+    g.addEventListener('focus', function () { if (!combo) mostrar(tr('Aperte as teclas agora…')); });
     g.addEventListener('blur', function () { mostrar(); });
     g.addEventListener('click', function () { g.focus(); });
     g.addEventListener('keydown', function (e) {
@@ -1602,7 +1907,7 @@
       var k = nomeTecla(e);
       var mods = modsDe(e);
       if (!k) {
-        mostrar(mods.length ? mods.map(function (x) { return nomeBonito(x, false); }).join(S.sistema === 'mac' ? '' : '+') + (S.sistema === 'mac' ? '' : '+') + '…' : 'Aperte as teclas agora…');
+        mostrar(mods.length ? mods.map(function (x) { return nomeBonito(x, false); }).join(S.sistema === 'mac' ? '' : '+') + (S.sistema === 'mac' ? '' : '+') + '…' : tr('Aperte as teclas agora…'));
         return;
       }
       combo = mods.concat([k]).join('+');
@@ -1615,10 +1920,10 @@
   function removerBotao(p, i) {
     var b = botaoEm(p, i);
     if (!b) return;
-    var nome = tituloDe(b) || 'Botão';
+    var nome = tituloDe(b) || tr('Botão');
     S.sel = null;
     mudar(function () { colocar(p, i, null); });
-    toast('“' + nome + '” removido.', 'Desfazer', desfazer);
+    toast(tr('“{n}” removido.', { n: nome }), tr('Desfazer'), desfazer);
   }
 
   function moverBotao(o, d) {
@@ -1636,15 +1941,20 @@
   }
 
   function moverParaPagina(p, i, q) {
+    if (ehPlayer(q)) {
+      toast(tr('A página “{p}” é o player (modo DJ) e não tem botões.', { p: nomePagina(q) }), null, null, 'erro');
+      desenharPainel();
+      return false;
+    }
     var destino = null;
     for (var k = 0; k < cap(); k++) if (!botaoEm(q, k)) { destino = k; break; }
     if (destino === null) {
-      toast('A página “' + nomePagina(q) + '” está cheia. Libere um espaço ou mude a grade.', null, null, 'erro');
+      toast(tr('A página “{p}” está cheia. Libere um espaço ou mude a grade.', { p: nomePagina(q) }), null, null, 'erro');
       desenharPainel();
       return false;
     }
     moverBotao({ p: p, i: i }, { p: q, i: destino });
-    toast('Movido para “' + nomePagina(q) + '”.');
+    toast(tr('Movido para “{p}”.', { p: nomePagina(q) }));
     return true;
   }
 
@@ -1656,10 +1966,11 @@
       paginas()[p].nome = nome;
       paginas().forEach(function (pg, q) {
         botoes(q).forEach(function (b) {
-          if (vazioB(b) || tipoCanon(b) !== 'pagina') return;
+          var t = vazioB(b) ? null : tipoCanon(b);
+          if (t !== 'pagina' && t !== 'modo') return;
           var alvo = ler(b, 'pagina');
           if (typeof alvo === 'string' && simples(alvo) === simples(antigo)) {
-            if (tituloDe(b) === alvo) escrever(b, 'titulo', nome);
+            if (t === 'pagina' && tituloDe(b) === alvo) escrever(b, 'titulo', nome);
             escrever(b, 'pagina', nome);
           }
         });
@@ -1685,12 +1996,14 @@
     S.tela = null;
     S.pag = Math.max(0, p - 1);
     mudar(function () { paginas().splice(p, 1); });
-    toast('Página “' + nome + '” apagada.', 'Desfazer', desfazer);
+    toast(tr('Página “{p}” apagada.', { p: nome }), tr('Desfazer'), desfazer);
   }
 
   function moverPagina(de, para) {
+    para = Math.max(0, Math.min(paginas().length - 1, para));
     if (de === para) return;
     var atual = paginas()[S.pag];
+    var nome = nomePagina(de);
     mudar(function () {
       var pg = paginas().splice(de, 1)[0];
       paginas().splice(para, 0, pg);
@@ -1698,6 +2011,12 @@
     S.pag = paginas().indexOf(atual);
     S.sel = null;
     desenhar();
+    toast(tr('“{p}” agora é a página {n}.', { p: nome, n: para + 1 }), tr('Desfazer'), desfazer);
+  }
+
+  function focarAba(p) {
+    var el = document.querySelector('#abas .aba[data-p="' + p + '"]');
+    if (el) el.focus();
   }
 
   function editarNomeAba(aba, p) {
@@ -1745,8 +2064,8 @@
     f.appendChild(tk.cloneNode(true));
     document.body.appendChild(f);
     a.fantasma = f;
-    a.dx = e.clientX - r.left;
-    a.dy = e.clientY - r.top;
+    a.dx = a.x0 - r.left;
+    a.dy = a.y0 - r.top;
     a.el.classList.add('origem');
     document.body.classList.add('arrastando');
     return true;
@@ -1793,23 +2112,99 @@
     desenhar();
   }
 
-  function comecarArrasteAba(a) {
-    a.el.classList.add('movendo');
+  function unidadesDa(a) {
+    var unidades = [];
+    Array.prototype.forEach.call(a.cont.querySelectorAll(a.seletor), function (el) {
+      var p = parseInt(el.dataset.p, 10);
+      var r = el.getBoundingClientRect();
+      var u = unidades.length && unidades[unidades.length - 1].p === p ? unidades[unidades.length - 1] : null;
+      if (!u) { u = { p: p, els: [], ini: Infinity, fim: -Infinity }; unidades.push(u); }
+      u.els.push(el);
+      u.ini = Math.min(u.ini, a.vertical ? r.top : r.left);
+      u.fim = Math.max(u.fim, a.vertical ? r.bottom : r.right);
+    });
+    return unidades;
+  }
+
+  function comecarArrasteAba(a, e) {
+    a.unidades = unidadesDa(a);
+    a.de = -1;
+    a.unidades.forEach(function (u, n) { if (u.p === a.p) a.de = n; });
+    if (a.de < 0 || a.unidades.length < 2) return false;
+    var minha = a.unidades[a.de];
+    var depois = a.unidades[a.de + 1], antes = a.unidades[a.de - 1];
+    var folga = depois ? depois.ini - minha.fim : minha.ini - antes.fim;
+    a.passo = (minha.fim - minha.ini) + Math.max(0, folga);
+    a.rolagem0 = a.vertical ? a.cont.scrollTop : a.cont.scrollLeft;
+    var r = a.el.getBoundingClientRect();
+    var copia = a.el.cloneNode(true);
+    copia.removeAttribute('id');
+    var f = copia;
+    if (a.tipo === 'pilula') {
+      f = h('div', { class: 'pilulas fantasma-pilulas' });
+      f.appendChild(copia);
+    } else {
+      f.classList.add('fantasma-aba');
+    }
+    f.style.left = r.left + 'px';
+    f.style.top = r.top + 'px';
+    f.style.width = r.width + 'px';
+    f.style.height = r.height + 'px';
+    document.body.appendChild(f);
+    a.fantasma = f;
+    a.r0 = r;
+    a.d = a.vertical ? a.y0 - r.top : a.x0 - r.left;
+    a.para = a.de;
+    minha.els.forEach(function (el) { el.classList.add('segurando'); });
+    a.unidades.forEach(function (u) { u.els.forEach(function (el) { el.classList.add('deslizando'); }); });
     document.body.classList.add('arrastando');
     return true;
   }
-  function moverArrasteAba(a, e) {
-    limparAlvos();
-    var alvo = alvoEm(e.clientX, e.clientY);
-    a.alvo = alvo && alvo.tipo === 'aba' ? alvo : null;
-    if (a.alvo && a.alvo.p !== a.p) a.alvo.el.classList.add('alvo');
+
+  function rolarPerto(a, c) {
+    var r = a.cont.getBoundingClientRect();
+    var ini = a.vertical ? r.top : r.left, fim = a.vertical ? r.bottom : r.right;
+    var v = c < ini + 36 ? -10 : c > fim - 36 ? 10 : 0;
+    if (!v) return;
+    if (a.vertical) a.cont.scrollTop += v;
+    else a.cont.scrollLeft += v;
   }
+
+  function moverArrasteAba(a, e) {
+    var c = a.vertical ? e.clientY : e.clientX;
+    var pos = c - a.d;
+    a.fantasma.style.transform = a.vertical ? 'translateY(' + (pos - a.r0.top) + 'px)' : 'translateX(' + (pos - a.r0.left) + 'px)';
+    rolarPerto(a, c);
+    var desloc = (a.vertical ? a.cont.scrollTop : a.cont.scrollLeft) - a.rolagem0;
+    var centro = pos + (a.vertical ? a.r0.height : a.r0.width) / 2 + desloc;
+    var para = 0;
+    a.unidades.forEach(function (u, n) {
+      if (n !== a.de && (u.ini + u.fim) / 2 < centro) para++;
+    });
+    a.para = para;
+    a.unidades.forEach(function (u, n) {
+      var t = 0;
+      if (n > a.de && n <= para) t = -a.passo;
+      else if (n < a.de && n >= para) t = a.passo;
+      var valor = t ? (a.vertical ? 'translateY(' : 'translateX(') + t + 'px)' : '';
+      u.els.forEach(function (el) { el.style.transform = valor; });
+    });
+  }
+
   function terminarArrasteAba(a) {
     document.body.classList.remove('arrastando');
-    limparAlvos();
-    if (a.el) a.el.classList.remove('movendo');
-    if (a.alvo && a.alvo.p !== a.p) moverPagina(a.p, a.alvo.p);
-    else desenharAbas();
+    if (a.fantasma) a.fantasma.remove();
+    (a.unidades || []).forEach(function (u) {
+      u.els.forEach(function (el) { el.classList.remove('segurando', 'deslizando'); el.style.transform = ''; });
+    });
+    var redesenhar = S.redesenharDepois;
+    S.redesenharDepois = false;
+    if (!a.cancelado && typeof a.para === 'number' && a.para !== a.de) {
+      moverPagina(a.de, a.para);
+      if (a.tipo === 'aba') focarAba(a.para);
+      return;
+    }
+    if (redesenhar) desenhar();
   }
 
   document.addEventListener('pointermove', function (e) {
@@ -1818,7 +2213,7 @@
     if (!a.ativo) {
       if (Math.hypot(e.clientX - a.x0, e.clientY - a.y0) < 6) return;
       if (a.tipo === 'nada') { arraste = null; return; }
-      a.ativo = a.tipo === 'tecla' ? comecarArrasteTecla(a, e) : comecarArrasteAba(a);
+      a.ativo = a.tipo === 'tecla' ? comecarArrasteTecla(a, e) : comecarArrasteAba(a, e);
       if (!a.ativo) { arraste = null; return; }
       try { a.el.setPointerCapture(a.id); } catch (erro) { a.semCaptura = true; }
     }
@@ -1834,15 +2229,21 @@
     if (a.tipo === 'tecla') terminarArrasteTecla(a);
     else terminarArrasteAba(a);
   });
-  document.addEventListener('pointercancel', function (e) {
+  function cancelarArraste() {
     var a = arraste;
-    if (!a || e.pointerId !== a.id) return;
     arraste = null;
-    if (!a.ativo) return;
+    if (!a || !a.ativo) return;
     a.alvo = null;
+    a.cancelado = true;
     if (a.tipo === 'tecla') terminarArrasteTecla(a);
     else terminarArrasteAba(a);
+  }
+  document.addEventListener('pointercancel', function (e) {
+    if (arraste && e.pointerId === arraste.id) cancelarArraste();
   });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && arraste && arraste.ativo) { e.preventDefault(); e.stopPropagation(); cancelarArraste(); }
+  }, true);
 
   function clicarSlot(p, i) {
     if (botaoEm(p, i)) {
@@ -1883,7 +2284,7 @@
     if (b.dataset.acao === 'mover') {
       var sel = $('#painel .mover select');
       if (sel) { sel.focus(); sel.scrollIntoView({ block: 'center' }); }
-      else toast('Crie outra página para poder mover botões.');
+      else toast(tr('Crie outra página para poder mover botões.'));
     }
   });
   document.addEventListener('pointerdown', function (e) {
@@ -1927,6 +2328,7 @@
     var p = parseInt(aba.dataset.p, 10);
     arraste = {
       tipo: 'aba', id: e.pointerId, x0: e.clientX, y0: e.clientY, el: aba, p: p, ativo: false,
+      cont: $('#abas'), seletor: '.aba-linha', vertical: true,
       clique: function () {
         var agora = Date.now();
         if (S.ultimoCliqueAba && S.ultimoCliqueAba.p === p && agora - S.ultimoCliqueAba.t < 380) {
@@ -1941,6 +2343,8 @@
     };
   });
   $('#abas').addEventListener('click', function (e) {
+    var olho = e.target.closest('.olho');
+    if (olho) { alternarOculta(parseInt(olho.dataset.p, 10)); return; }
     if (e.detail !== 0) return;
     var aba = e.target.closest('.aba');
     if (!aba) return;
@@ -1951,14 +2355,57 @@
   });
   $('#abas').addEventListener('keydown', function (e) {
     var aba = e.target.closest('.aba');
-    if (aba && e.key === 'F2') { e.preventDefault(); editarNomeAba(aba, parseInt(aba.dataset.p, 10)); }
+    if (!aba) return;
+    var p = parseInt(aba.dataset.p, 10);
+    if (e.key === 'F2') { e.preventDefault(); editarNomeAba(aba, p); return; }
+    if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+      e.preventDefault();
+      var para = p + (e.key === 'ArrowUp' ? -1 : 1);
+      if (para < 0 || para >= paginas().length) return;
+      moverPagina(p, para);
+      focarAba(para);
+    }
+  });
+
+  ['#pilulas', '#pilulas-topo'].forEach(function (id) {
+    var cont = $(id);
+    var irPara = function (p) {
+      if (S.pag !== p || S.sel || S.tela) { S.pag = p; S.sel = null; S.tela = null; S.tipoNovo = null; desenhar(); }
+    };
+    cont.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      var b = e.target.closest('button[data-p]');
+      if (!b) return;
+      var p = parseInt(b.dataset.p, 10);
+      arraste = {
+        tipo: 'pilula', id: e.pointerId, x0: e.clientX, y0: e.clientY, el: b, p: p, ativo: false,
+        cont: cont, seletor: 'button[data-p]', vertical: false, clique: function () { irPara(p); },
+      };
+    });
+    cont.addEventListener('click', function (e) {
+      if (e.detail !== 0) return;
+      var b = e.target.closest('button[data-p]');
+      if (b) irPara(parseInt(b.dataset.p, 10));
+    });
+    cont.addEventListener('keydown', function (e) {
+      var b = e.target.closest('button[data-p]');
+      if (!b || !e.altKey || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      e.preventDefault();
+      var p = parseInt(b.dataset.p, 10);
+      var para = p + (e.key === 'ArrowLeft' ? -1 : 1);
+      if (para < 0 || para >= paginas().length) return;
+      moverPagina(p, para);
+      var novo = cont.querySelector('button[data-p="' + para + '"]');
+      if (novo) novo.focus();
+    });
   });
 
   function adicionarRapido(tipo) {
+    if (ehPlayer(S.pag)) { toast(tr('Esta página é o player (modo DJ). Para pôr botões, mude o tipo da página.'), null, null, 'erro'); return; }
     S.ultimoAdd = tipo;
     var destino = null;
     for (var k = 0; k < cap(); k++) if (!botaoEm(S.pag, k)) { destino = k; break; }
-    if (destino === null) { toast('Esta página está cheia. Libere um espaço ou aumente a grade nas configurações.', null, null, 'erro'); return; }
+    if (destino === null) { toast(tr('Esta página está cheia. Libere um espaço ou aumente a grade nas configurações.'), null, null, 'erro'); return; }
     S.sel = { p: S.pag, i: destino, novo: true };
     S.tela = null;
     S.tipoNovo = tipo;
@@ -2050,7 +2497,7 @@
   window.aoTrocarLink = function (token) {
     S.token = token;
     S.status = null;
-    toast('Link novo gerado. Escaneie o QR code de novo nos celulares.');
+    toast(tr('Link novo gerado. Escaneie o QR code de novo nos celulares.'));
   };
 
   function atualizarCelular() {
@@ -2060,14 +2507,15 @@
     b.classList.toggle('primaria', !recentes.length && !((S.status && S.status.clientes) || []).length);
     b.classList.toggle('alerta', !recentes.length && ((S.status && S.status.avisos) || []).length > 0);
     b.querySelector('span').textContent = recentes.length
-      ? (recentes.length > 1 ? recentes.length + ' aparelhos conectados' : recentes[0].aparelho + ' conectado')
-      : (((S.status && S.status.clientes) || []).length ? 'Celular desconectado' : 'Conectar celular');
+      ? (recentes.length > 1 ? tr('{n} aparelhos conectados', { n: recentes.length }) : tr('{a} conectado', { a: recentes[0].aparelho }))
+      : (((S.status && S.status.clientes) || []).length ? tr('Celular desconectado') : tr('Conectar celular'));
   }
 
   function vigiar() {
     api('/api/editor/status', { limite: 6000 }).then(function (r) {
       if (!S.online) { S.online = true; mostrarFaixa(); if (S.sujo) salvar(); }
       if (r.app && S.appVersao && r.app !== S.appVersao) { location.reload(); return; }
+      if (r.idioma && window.IDIOMA && r.idioma !== window.IDIOMA && !S.sujo && !S.salvando) { location.reload(); return; }
       if (S.redesenharDepois && !(arraste && arraste.ativo)) { S.redesenharDepois = false; redesenharTeclas(); }
       S.status = r;
       atualizarCelular();
@@ -2079,7 +2527,7 @@
           S.undo = [];
           S.redo = [];
           aplicarDados(d);
-          toast('O config.json mudou fora do editor — atualizei aqui.');
+          toast(tr('O config.json mudou fora do editor — atualizei aqui.'));
         });
       }
       if (r.geracao !== S.geracao) {
@@ -2129,11 +2577,11 @@
     $('#btn-pagina').appendChild(icone('lapis'));
     $('.logo-tile').appendChild(icone('grade'));
     $('#guia-lateral').appendChild(icone('livro'));
-    $('#guia-lateral').appendChild(h('span', { text: 'Como usar' }));
+    $('#guia-lateral').appendChild(h('span', { text: tr('Como usar') }));
     $('#config-lateral').appendChild(icone('engrenagem'));
-    $('#config-lateral').appendChild(h('span', { text: 'Configurações' }));
+    $('#config-lateral').appendChild(h('span', { text: tr('Configurações') }));
     $('#nova-pagina').appendChild(icone('mais'));
-    $('#nova-pagina').appendChild(h('span', { text: 'Nova página' }));
+    $('#nova-pagina').appendChild(h('span', { text: tr('Nova página') }));
     var addApp = $('.segmentos-add .add-app'), addSite = $('.segmentos-add .add-site');
     addApp.appendChild(icone('app')); addApp.appendChild(h('span', { text: 'Apps' }));
     addSite.appendChild(icone('site')); addSite.appendChild(h('span', { text: 'Sites' }));
@@ -2155,11 +2603,11 @@
         f.className = 'faixa grave';
         f.hidden = false;
         if (e.status === 403) {
-          f.textContent = 'O editor só abre no próprio computador onde o deck está ligado: http://localhost:' + (location.port || '8787') + '/editar';
+          f.textContent = tr('O editor só abre no próprio computador onde o deck está ligado: ') + 'http://localhost:' + (location.port || '8787') + '/editar';
           $('#aparelhos').textContent = '';
           return;
         }
-        f.textContent = 'Não consegui falar com o deck. Ele está ligado? Tentando de novo…';
+        f.textContent = tr('Não consegui falar com o deck. Ele está ligado? Tentando de novo…');
         setTimeout(tentar, 2500);
       });
     };

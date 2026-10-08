@@ -19,7 +19,7 @@
     </div>
     <div class="barra-direita">
       <span id="salvo" class="salvo" role="status" aria-live="polite"></span>
-      <button id="celular" class="status-celular" type="button"><i></i><span>Conectar celular</span></button>
+      <button id="celular" class="status-celular" type="button"><i></i><span data-t>Conectar celular</span></button>
       <span class="divisor"></span>
       <button id="btn-celular" class="icone-btn" type="button" title="Conectar celular" aria-label="Conectar celular"></button>
       <button id="btn-config" class="icone-btn" type="button" title="Configurações" aria-label="Configurações"></button>
@@ -34,7 +34,7 @@
       <button id="config-lateral" class="item-lateral" type="button"></button>
       <div class="lateral-rodape">
         <span class="tracinho" aria-hidden="true"></span>
-        <p class="lema">Mais produtividade,<br>todos os dias.</p>
+        <p class="lema" data-t>Mais produtividade,<br>todos os dias.</p>
       </div>
     </nav>
 
@@ -44,6 +44,7 @@
           <span id="pagina-tile" class="pagina-tile" aria-hidden="true"></span>
           <div class="titulo-textos">
             <h1 id="titulo-pagina">Favoritos</h1>
+            <span id="pagina-oculta" class="selo-oculta" hidden><span data-t>Oculta no celular</span></span>
             <p id="sub-pagina">Seus atalhos mais usados, sempre à mão.</p>
           </div>
         </div>
@@ -61,13 +62,13 @@
         <input id="busca" class="campo" type="search" placeholder="Procurar botão em todas as páginas…" autocomplete="off" spellcheck="false">
       </div>
       <div id="faixa" class="faixa" role="alert" hidden></div>
-      <div id="aparelhos" class="aparelhos"><div class="carregando">Carregando…</div></div>
+      <div id="aparelhos" class="aparelhos"><div class="carregando" data-t>Carregando…</div></div>
       <div class="rodape-paginas"><div id="pilulas" class="pilulas" role="tablist" aria-label="Páginas (como no celular)"></div></div>
     </main>
 
     <aside id="gaveta" class="gaveta" aria-label="Editar" hidden>
       <div class="gaveta-topo">
-        <span id="gaveta-titulo" class="gaveta-titulo">Editar</span>
+        <span id="gaveta-titulo" class="gaveta-titulo" data-t>Editar</span>
         <button id="fechar-gaveta" class="icone-btn" type="button" aria-label="Fechar"></button>
       </div>
       <div id="painel" class="painel"></div>
@@ -76,21 +77,22 @@
 </div>
 
 <div id="menu-card" class="menu" hidden>
-  <button type="button" data-acao="editar">Editar</button>
-  <button type="button" data-acao="mover">Mover para outra página…</button>
-  <button type="button" data-acao="remover" class="perigo">Remover</button>
+  <button type="button" data-acao="editar" data-t>Editar</button>
+  <button type="button" data-acao="mover" data-t>Mover para outra página…</button>
+  <button type="button" data-acao="remover" class="perigo" data-t>Remover</button>
 </div>
 
 <div id="conectar" class="modal" hidden>
   <div class="modal-caixa" role="dialog" aria-modal="true" aria-labelledby="conectar-titulo">
     <button type="button" class="icone-btn fechar-modal" id="fechar-conectar" aria-label="Fechar"></button>
-    <h2 id="conectar-titulo">Conectar o celular</h2>
+    <h2 id="conectar-titulo" data-t>Conectar o celular</h2>
     <div id="conectar-ui"></div>
   </div>
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"><span id="toast-txt"></span><button type="button" id="toast-acao" hidden></button></div>
 
+<script src="idioma.js"></script>
 <script src="qrcode.js"></script>
 <script src="conectar.js"></script>
 <script src="icones.js"></script>

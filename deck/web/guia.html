@@ -113,8 +113,10 @@
     <a href="#conectar">Conectar</a>
     <a href="#botoes">Botões</a>
     <a href="#celular">Celular</a>
+    <a href="#modos">DJ e modos</a>
     <a href="#aparelhos">Aparelhos</a>
     <a href="#problemas">Problemas</a>
+    <a href="/guia?idioma=en" title="English version">EN</a>
     <a href="/editar" class="destaque">Abrir o editor →</a>
   </nav>
 </header>
@@ -155,7 +157,7 @@
     <p>Abre uma janela de terminal com o endereço do deck e, em seguida, o <b>editor</b> no navegador (<code>http://localhost:8787/editar</code>). Deixe a janela do terminal aberta enquanto usa: é ela que está rodando o deck. Para desligar, feche a janela ou aperte <kbd>Ctrl</kbd>+<kbd>C</kbd> nela.</p>
     <h3>Permissões (só na primeira vez)</h3>
     <ul>
-      <li><b>Mac:</b> para botões que apertam teclas, o macOS pede <b>Acessibilidade</b> (Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ligue o Terminal). Para ver as abas abertas do navegador, pede <b>Automação</b>. Se o Firewall do Mac estiver ligado, clique em <b>Permitir</b> quando ele perguntar sobre o Python.</li>
+      <li><b>Mac:</b> para botões que apertam teclas, o macOS pede <b>Acessibilidade</b> (Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ligue o Terminal) — a mesma permissão deixa o deck ver ligações chegando. Para ver as abas abertas do navegador e controlar o Spotify e o Música no DJ, pede <b>Automação</b>: clique em <b>Permitir</b>. Se o Firewall do Mac estiver ligado, clique em <b>Permitir</b> quando ele perguntar sobre o Python.</li>
       <li><b>Windows:</b> só o aviso do Firewall acima.</li>
       <li><b>Linux:</b> no Wayland, teclas e texto usam <code>wtype</code> ou <code>ydotool</code>; no X11, <code>xdotool</code>. O deck avisa no terminal se faltar algum.</li>
     </ul>
@@ -188,8 +190,10 @@
       <li><b>Microfone</b><span>Liga e desliga o mudo; a luz acende no celular enquanto estiver mudo.</span></li>
       <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear o computador. Pede um segundo toque por segurança.</span></li>
       <li><b>Ir para página</b><span>Pula para outra página do celular.</span></li>
+      <li><b>Modo</b><span>Foco, trabalho, estudo: liga o Não perturbe, abre e fecha apps, ajusta o volume e mostra um cronômetro (seção 6).</span></li>
+      <li><b>Chamada</b><span>Atender, recusar, mudo, câmera e encerrar no Zoom, Teams, Meet e outros (seção 6).</span></li>
     </ul>
-    <p>Arraste os botões para reorganizar, clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> (engrenagem) para o tema, o tamanho da grade e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta — que você pode copiar para outro computador.</p>
+    <p>Arraste os botões para reorganizar e as <b>páginas</b> na lateral para mudar a ordem delas (ou <kbd>⌥</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>). O <b>olho</b> ao lado do nome de uma página esconde ela do celular sem apagar — clique de novo para voltar. Clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> (engrenagem) para o tema, o tamanho da grade, o idioma e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta — que você pode copiar para outro computador.</p>
     <div class="nota"><p><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular.</p></div>
   </section>
 
@@ -205,8 +209,38 @@
     </ul>
   </section>
 
+  <section id="modos">
+    <h2><span class="n">6</span>DJ, modos e chamadas</h2>
+    <div class="cartoes">
+      <div class="cartao"><b>🎵 DJ</b><p>A página <b>DJ</b> vira um player em tela cheia com o que estiver tocando no computador — Spotify, Música, YouTube no navegador, qualquer player —, com capa, tempo, voltar, tocar/pausar, pular e volume. Vídeos do YouTube aparecem com a miniatura do vídeo, inteira (16:9). Toque na barra para ir a outro ponto. Nas outras páginas aparece um mini player no canto: toque nele para abrir o DJ. Qualquer página vira player em <b>Página › Tipo da página › Player</b>.</p></div>
+      <div class="cartao"><b>🎯 Modos</b><p>Um toque deixa o computador pronto para o momento: liga o <b>Não perturbe</b>, abre apps e sites, fecha o que distrai, ajusta o volume, troca de página e mostra um <b>cronômetro</b> grande no celular (pausar, +5 min, encerrar — dá para minimizar). Outro toque desliga e desfaz o Não perturbe. Só um modo fica ligado por vez. Vêm prontos Foco, Trabalho, Estudos, Casa e Pausa.</p></div>
+      <div class="cartao"><b>📞 Chamadas</b><p>O deck traz a janela da chamada para frente e aperta o atalho do próprio app. No automático, ele usa o app de chamada que estiver na frente no computador (WhatsApp, Zoom, Teams, Meet…) e, se nenhum estiver, a reunião aberta. Sem chamada aberta, o mudo silencia o microfone do computador.</p></div>
+    </div>
+    <h3>Não perturbe em cada sistema</h3>
+    <table>
+      <tr><th>Computador</th><th>Como funciona</th></tr>
+      <tr><td>Mac</td><td>Pelo app <b>Atalhos</b> (macOS 12 ou mais novo). Crie uma vez dois atalhos com a ação <b>Definir Foco</b>: <b>Deck Foco Ligar</b> (Não Perturbe › Ligado) e <b>Deck Foco Desligar</b> (Não Perturbe › Desligado). Os nomes precisam ser exatamente esses. Sem os atalhos, o modo faz todo o resto e explica no celular o que falta.</td></tr>
+      <tr><td>Windows</td><td>O Windows não deixa programas ligarem o Não perturbe: o modo faz o resto e lembra no celular de ligar em <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
+      <tr><td>Linux</td><td>No GNOME, liga e desliga sozinho (esconde os avisos na tela).</td></tr>
+    </table>
+    <h3>Chamadas em cada app</h3>
+    <table>
+      <tr><th>App</th><th>Mudo</th><th>Câmera</th><th>Encerrar</th><th>Atender e recusar</th></tr>
+      <tr><td>Zoom</td><td>✓</td><td>✓</td><td>✓ (o Zoom pede confirmação)</td><td>✓ (Zoom Phone)</td></tr>
+      <tr><td>Microsoft Teams</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      <tr><td>Google Meet</td><td>✓</td><td>✓</td><td>✓ (fecha a aba)</td><td>—</td></tr>
+      <tr><td>Webex</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+      <tr><td>Discord</td><td>✓</td><td>—</td><td>—</td><td>✓</td></tr>
+      <tr><td>Slack (huddle)</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+      <tr><td>WhatsApp</td><td>✓ (só durante a chamada)</td><td>✓</td><td>✓</td><td>✓ pelo aviso no celular (Mac)</td></tr>
+      <tr><td>FaceTime e iPhone (Mac)</td><td>microfone do Mac</td><td>—</td><td>—</td><td>✓ pelo aviso no celular</td></tr>
+    </table>
+    <div class="nota"><p><b>WhatsApp:</b> o mudo (⌘⇧M / Ctrl+Shift+M) só vale com a chamada aberta — fora dela, o mesmo atalho silencia a conversa que estiver aberta. O WhatsApp não tem atalho de atender: no Mac, use o aviso que aparece no celular.</p></div>
+    <p><b>Ligação chegando no Mac:</b> quando o deck tem algum botão de Chamada, ligações do FaceTime, do iPhone (pela Continuidade) e do WhatsApp aparecem no topo do celular com <b>Atender</b> e <b>Recusar</b>. O deck lê o aviso da Central de Notificações (e a janelinha de ligação do WhatsApp) — funciona com a permissão de Acessibilidade e pode falhar se o macOS mudar esse aviso; nesse caso, atenda no Mac.</p>
+  </section>
+
   <section id="aparelhos">
-    <h2><span class="n">6</span>Outros aparelhos</h2>
+    <h2><span class="n">7</span>Outros aparelhos</h2>
     <table>
       <tr><th>Aparelho</th><th>Como</th></tr>
       <tr><td>iPhone / iPad</td><td>Câmera no QR code › link › Compartilhar › Adicionar à Tela de Início. Pelo nome ou pelo IP, os dois funcionam.</td></tr>
@@ -218,20 +252,22 @@
   </section>
 
   <section id="problemas">
-    <h2><span class="n">7</span>Se algo der errado</h2>
+    <h2><span class="n">8</span>Se algo der errado</h2>
     <ul>
       <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo. Para não repetir, use o link pelo nome (padrão no Mac) ou o cabo USB.</li>
       <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
       <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só), ou instale pela linha do Terminal do site, que não tem esse aviso.</li>
       <li><b>Botão de teclas não faz nada no Mac:</b> falta a permissão de Acessibilidade para o Terminal (seção 2).</li>
       <li><b>Abas abertas não aparecem no Mac:</b> falta a permissão de Automação para o Safari/Chrome.</li>
+      <li><b>O DJ não mostra o que toca no navegador (Mac):</b> algumas versões do macOS escondem dos programas o que está tocando; Spotify e Música continuam aparecendo. Os botões de tocar, pular e voltar funcionam do mesmo jeito.</li>
+      <li><b>O modo não liga o Não perturbe no Mac:</b> confira os dois atalhos no app Atalhos (seção 6) — o nome tem que ser exatamente “Deck Foco Ligar” e “Deck Foco Desligar”.</li>
       <li><b>"A porta já está em uso":</b> o deck já está aberto em outra janela. Feche a outra, ou ligue com <code>--porta 8788</code>.</li>
       <li><b>Perdeu o celular ou quer desconectar todos:</b> ligue com <code>--novo-link</code> e escaneie de novo.</li>
     </ul>
   </section>
 
   <section id="seguranca">
-    <h2><span class="n">8</span>Segurança</h2>
+    <h2><span class="n">9</span>Segurança</h2>
     <p>O editor e o QR code só abrem no próprio computador. Só quem tem o link do celular (com a chave secreta dentro) aperta os botões — e mesmo assim só os botões que você criou; o celular nunca manda comandos livres. Nada é enviado para fora: favoritos, histórico e endereços ficam no computador. Use em rede de confiança: a conexão local não é criptografada.</p>
   </section>
 

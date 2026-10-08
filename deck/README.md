@@ -1,9 +1,13 @@
 # Deck
 
+🇺🇸 [English version](README.en.md)
+
 Painel de botões no celular para controlar o computador.
 O computador pode ser **Mac, Windows ou Linux**; o painel abre em **qualquer celular** (iPhone, Samsung e outros Android) ou no navegador de outro computador/tablet.
 
-Você monta os botões **num editor visual no computador**; o celular só espelha, na hora. Vem pronto com páginas de **favoritos, apps, sites, mídia, produtividade e sistema**, em 4×2, pensado para usar o celular **deitado**.
+Você monta os botões **num editor visual no computador**; o celular só espelha, na hora. Vem pronto com páginas de **favoritos, DJ (o que está tocando), modos, apps, sites, mídia, produtividade, chamadas e sistema**, em 4×2, pensado para usar o celular **deitado**.
+
+A interface é em **português ou inglês**: segue o idioma do computador, e dá para trocar em **Configurações › Idioma** no editor (vale para o editor, o celular e o guia).
 
 **Comece aqui:** no Mac e no Linux, cole a linha do Terminal que está no site do Deck (ela baixa, libera e liga); ou baixe o `deck.zip`, descompacte e dê duplo clique no arquivo de iniciar do seu sistema (seção 1). Depois escaneie o QR code com o celular (seção 2) e monte os botões (seção 3). O guia completo, do download ao uso em qualquer aparelho, está dentro do próprio deck: **Como usar**, na lateral do editor (`http://localhost:8787/guia`).
 
@@ -62,12 +66,13 @@ Em cada aba o deck detecta sozinho quando o celular aparece por aquele caminho e
 
 Tudo no `http://localhost:8787/editar`, que só abre no próprio computador:
 
-- **Clique num espaço vazio (+)** e escolha o que o botão faz: app, site, atalho de teclado, texto, mídia, volume, microfone ou ir para outra página.
+- **Clique num espaço vazio (+)** e escolha o que o botão faz: app, site, atalho de teclado, texto, mídia, volume, microfone, energia, modo, chamada ou ir para outra página.
 - **App:** escolha na lista dos apps instalados — o botão ganha **o mesmo ícone do app no computador**.
 - **Energia:** desligar, reiniciar, suspender ou bloquear o computador. Desligar, reiniciar e suspender pedem um **segundo toque** no celular por padrão. Ligar um computador desligado pelo celular não é possível (não há nada rodando nele para receber o pedido): prefira **Suspender** — ele acorda com qualquer tecla e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular (o deck se anuncia na rede para isso).
 - **Site:** digite um endereço ou escolha entre as **abas abertas agora** (Mac), os **favoritos** e os **sites mais visitados** dos navegadores do computador. O botão ganha **o ícone do próprio site** — e, quando o site tem um app oficial (WhatsApp, YouTube, Notion…), o deck busca também **o ícone oficial do app** e usa ele no lugar de ícones brancos ou pequenos demais. Dá para escolher em qual navegador abrir e, no Mac, se a aba já estiver aberta o botão só **traz ela para frente** em vez de abrir outra.
 - **Atalho de teclado:** clique no campo e aperte as teclas.
 - **Arraste** os botões para mudar a ordem; solte numa aba lá em cima para levar para outra página. **+ Página** cria mais páginas — no celular, deslize para o lado.
+- **Páginas:** arraste na lateral (ou nas abas lá em cima) para mudar a ordem — pelo teclado, ⌥/Alt+↑/↓. O **olho** ao lado do nome esconde a página do celular sem apagar (clique de novo para mostrar); no `config.json`, `"oculta": true` na página.
 - Nome, emoji ou imagem própria, cor e confirmação (segundo toque) ficam no painel da direita.
 
 Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-anterior.json`). Ctrl/⌘+Z desfaz. Se existir um `config.local.json` na pasta, o deck usa ele no lugar — útil para manter seus botões fora do Git enquanto o `config.json` continua sendo o exemplo.
@@ -87,27 +92,56 @@ Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-ant
 | Microfone | liga/desliga o mudo (acende a luz MUDO) | ✓ | ✓ | ✓⁴ |
 | Energia | desligar, reiniciar, suspender, bloquear (com segundo toque) | ✓ | ✓ | ✓⁵ |
 | Ir para página | troca a página no celular | ✓ | ✓ | ✓ |
+| Modo | Não perturbe, abre e fecha apps, volume e cronômetro no celular (seção 5) | ✓⁶ | ✓⁶ | ✓⁶ |
+| Chamada | atender, recusar, mudo, câmera e encerrar no app da chamada — WhatsApp, Zoom, Teams, Meet… (seção 5) | ✓ | ✓ | ✓⁷ |
 
 ¹ no Mac, com Safari, Chrome, Edge, Brave, Arc, Vivaldi ou Opera; no Windows e no Linux abre uma aba nova ·
-² precisa do `xdotool` (ou `wtype` no Wayland) · ³ `playerctl` · ⁴ `pactl` ou `wpctl` (já vêm na maioria das distros) · ⁵ `systemctl`/`loginctl` (systemd)
+² precisa do `xdotool` (ou `wtype` no Wayland) · ³ `playerctl` · ⁴ `pactl` ou `wpctl` (já vêm na maioria das distros) · ⁵ `systemctl`/`loginctl` (systemd) ·
+⁶ o Não perturbe liga no Mac pelo app Atalhos e no Linux pelo GNOME; no Windows o modo só lembra de ligar · ⁷ precisa do `xdotool` (X11)
 
 Quem prefere editar o `config.json` na mão ainda pode (o editor e o celular acompanham): há também `comando`, `sequencia`, `esperar`, e no Mac `atalho` (app Atalhos) e `applescript`. Valores por sistema: `"app": { "mac": "Safari", "windows": "Microsoft Edge", "linux": "Firefox" }`.
 
 ---
 
-## 5 · Permissões (só na primeira vez)
+## 5 · DJ, modos e chamadas
+
+**DJ (mini player).** A página **DJ** mostra em tela cheia o que está tocando no computador — Spotify, Música, YouTube no navegador ou qualquer outro player — com capa, tempo, voltar, tocar/pausar, pular e volume; toque na barra para ir a outro ponto. Músicas mostram a capa do álbum e vídeos do YouTube, a miniatura do vídeo inteira (16:9). Nas outras páginas aparece um mini player no canto (toque nele para abrir o DJ). Qualquer página vira player no editor: **Página › Tipo da página › Player**.
+
+| Sistema | De onde o DJ lê |
+|---|---|
+| Mac | o mesmo "Tocando agora" da Central de Controle; se o macOS esconder, lê o Spotify e o Música direto. A miniatura do YouTube vem da aba aberta (Safari, Chrome, Edge, Brave, Arc, Vivaldi ou Opera) |
+| Windows | os controles de mídia do Windows 10/11 (o mesmo do volume na barra de tarefas) |
+| Linux | `playerctl` (qualquer player MPRIS); a miniatura do YouTube vem do endereço do vídeo |
+
+**Modos.** Um toque deixa o computador pronto para o momento: liga o **Não perturbe**, abre apps e sites, fecha o que distrai, ajusta o volume, troca de página e mostra um **cronômetro** grande no celular (pausar, +5 min, encerrar, minimizar). Outro toque desliga e desfaz o Não perturbe; só um modo fica ligado por vez. Vêm prontos Foco (25 min), Trabalho, Estudos (50 min), Casa e Pausa (5 min).
+
+| Sistema | Não perturbe |
+|---|---|
+| Mac | pelo app **Atalhos** (macOS 12+): crie uma vez os atalhos `Deck Foco Ligar` e `Deck Foco Desligar`, com a ação **Definir Foco** › Não Perturbe › Ligado / Desligado. Sem eles, o modo faz o resto e explica no celular |
+| Windows | o Windows não deixa programas ligarem: o modo faz o resto e lembra no celular de ligar em Win+N |
+| Linux | no GNOME, sozinho |
+
+**Chamadas.** Atender, recusar, mudo, câmera e encerrar: o deck traz a janela da chamada para frente e aperta o atalho do próprio app — WhatsApp, Zoom, Teams, Meet, Webex, Discord e Slack. No automático ele usa o app de chamada que estiver na frente no computador e, se nenhum estiver, a reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime). Sem chamada aberta, o mudo silencia o microfone do computador. No WhatsApp, o mudo (⌘⇧M / Ctrl+Shift+M) só vale durante a chamada — fora dela, o mesmo atalho silencia a conversa aberta — e não existe atalho de atender. No Mac, ligações do FaceTime, do iPhone e do WhatsApp chegam no celular com **Atender** e **Recusar** quando o deck tem algum botão de Chamada (ele lê o aviso da Central de Notificações e a janelinha de ligação do WhatsApp — experimental, pode parar se o macOS ou o WhatsApp mudarem esse aviso).
+
+No `config.json`: `{"tipo": "modo", "nao_perturbe": true, "minutos": 25, "volume": 30, "abrir": ["Notion", "gmail.com"], "fechar": ["WhatsApp"], "pagina": "DJ"}`, `{"tipo": "chamada", "chamada": "mudo", "app": "whatsapp"}` e, numa página, `"tipo": "player"` ou `"oculta": true`.
+
+---
+
+## 6 · Permissões (só na primeira vez)
 
 | Sistema | O que aparece | O que fazer |
 |---|---|---|
 | Mac | "Terminal quer controlar System Events" | Permitir |
 | Mac | "Terminal quer controlar o Safari/Chrome" | Permitir — é o que lista as abas abertas e traz a aba para frente |
+| Mac | "Terminal quer controlar o Spotify/Música" | Permitir — o DJ usa para ler e controlar esses apps |
+| Mac | o modo não liga o Não perturbe | crie os atalhos `Deck Foco Ligar` e `Deck Foco Desligar` no app Atalhos (seção 5) |
 | Mac | teclas/texto/mídia não funcionam | Ajustes do Sistema › Privacidade e Segurança › **Acessibilidade** → ativar o Terminal, fechar e abrir o Terminal |
 | Windows | alerta do Firewall para o Python | marcar **Redes privadas** › Permitir (o Wi-Fi precisa estar como rede privada) |
 | Linux | firewall `ufw` ativo | `sudo ufw allow 8787/tcp` |
 
 ---
 
-## 6 · Se não conectar
+## 7 · Se não conectar
 
 - **O app abre com a tela preta** (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app no celular (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou — abra **Conectar celular** no editor: ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo. Para isso não acontecer mais, use o link **pelo nome** (padrão no Mac) ou o cabo USB.
 - Confira se o celular e o computador estão **no mesmo Wi-Fi**. Wi-Fi de visitantes e redes de empresa costumam bloquear aparelhos entre si — nesse caso, use o **cabo USB** ou o **Bluetooth** (seção 2).
@@ -116,14 +150,15 @@ Quem prefere editar o `config.json` na mão ainda pode (o editor e o celular aco
 
 ---
 
-## 7 · Segurança e privacidade
+## 8 · Segurança e privacidade
 
 - O editor e a página do QR code só abrem no próprio computador (`localhost`).
 - Só quem tem o link do celular (com a chave secreta) aperta os botões, e mesmo assim só os botões que você criou — o celular nunca manda comandos livres. A chave fica na pasta de dados do seu usuário; para trocar e desconectar todos: `--novo-link`.
 - As sugestões de sites vêm dos favoritos e do histórico dos navegadores **deste** computador e não saem dele. Ícones de sites são baixados do próprio site; para achar o ícone oficial do app, o deck consulta a busca pública da App Store (só o nome do site) e, se precisar, o serviço de ícones do Google (só o domínio). Nada sobre você é enviado; os ícones ficam guardados na pasta de dados por 7 dias.
 - O deck guarda na pasta de dados do seu usuário só o endereço que cada celular usou para abrir (para avisar quando o IP ou o nome do computador mudar); nada disso sai do computador.
+- O DJ guarda as capas das últimas músicas na pasta de dados; quando o player só informa um link da capa (Spotify lido direto no Mac, alguns players no Linux), o deck baixa a imagem desse link. O que está tocando não é enviado para lugar nenhum.
 - Use em rede de confiança (casa/escritório): a conexão local não é criptografada.
 
-**Opções:** `--porta 9000` · `--parear` · `--novo-link` · `--sem-navegador` · `--config outro.json`
+**Opções:** `--porta 9000` · `--parear` · `--novo-link` · `--sem-navegador` · `--idioma en` (auto, pt ou en) · `--config outro.json`
 
 Créditos: gerador de QR code [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT).

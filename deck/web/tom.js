@@ -129,6 +129,16 @@
     return 'rgba(' + tom.r + ',' + tom.g + ',' + tom.b + ',' + alfa + ')';
   };
 
+  window.tomClaro = function (tom, minimo) {
+    var v = hsl(tom.r, tom.g, tom.b);
+    var h = v[0], sat = Math.min(v[1], 0.85), l = Math.max(v[2], minimo);
+    var c = (1 - Math.abs(2 * l - 1)) * sat, x = c * (1 - Math.abs(((h / 60) % 2) - 1)), m = l - c / 2;
+    var r = 0, g = 0, b = 0;
+    if (h < 60) { r = c; g = x; } else if (h < 120) { r = x; g = c; } else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; } else if (h < 300) { r = x; b = c; } else { r = c; b = x; }
+    return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+  };
+
   window.tripla = function (tom) {
     return tom.r + ', ' + tom.g + ', ' + tom.b;
   };

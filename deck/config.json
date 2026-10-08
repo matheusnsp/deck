@@ -18,6 +18,26 @@
       ]
     },
     {
+      "nome": "DJ",
+      "tipo": "player",
+      "icone": "musica",
+      "botoes": []
+    },
+    {
+      "nome": "Modos",
+      "icone": "lua",
+      "botoes": [
+        {"titulo": "Foco", "tipo": "modo", "icone": "🎯", "cor": "anil", "nao_perturbe": true, "volume": 25, "minutos": 25},
+        {"titulo": "Trabalho", "tipo": "modo", "icone": "💼", "cor": "azul", "abrir": ["https://mail.google.com", "https://calendar.google.com"]},
+        {"titulo": "Estudos", "tipo": "modo", "icone": "📚", "cor": "verde", "nao_perturbe": true, "minutos": 50},
+        {"titulo": "Casa", "tipo": "modo", "icone": "🏠", "cor": "laranja", "volume": 50, "pagina": "DJ"},
+        {"titulo": "Pausa", "tipo": "modo", "icone": "☕", "cor": "marrom", "minutos": 5},
+        null,
+        null,
+        null
+      ]
+    },
+    {
       "nome": "Apps",
       "icone": "grade",
       "botoes": [
@@ -71,6 +91,20 @@
         {"titulo": "Fechar aba", "tipo": "teclas", "teclas": "cmd+w", "icone": "❌"},
         {"titulo": "Trocar app", "tipo": "teclas", "teclas": {"mac": "cmd+tab", "windows": "alt+tab", "linux": "alt+tab"}, "icone": "🔀"},
         {"titulo": "Já volto", "tipo": "texto", "texto": "Já te respondo!", "icone": "💬"}
+      ]
+    },
+    {
+      "nome": "Chamadas",
+      "icone": "video",
+      "botoes": [
+        {"titulo": "Atender", "tipo": "chamada", "chamada": "atender", "icone": "📞", "cor": "verde"},
+        {"titulo": "Recusar", "tipo": "chamada", "chamada": "recusar", "icone": "📵", "cor": "vermelho"},
+        {"titulo": "Mudo na chamada", "tipo": "chamada", "chamada": "mudo", "icone": "🔇"},
+        {"titulo": "Câmera", "tipo": "chamada", "chamada": "camera", "icone": "📷"},
+        {"titulo": "Encerrar", "tipo": "chamada", "chamada": "encerrar", "icone": "☎️", "cor": "vermelho", "confirmar": true},
+        {"titulo": "Microfone", "tipo": "microfone", "icone": "🎙️"},
+        {"titulo": "Volume −", "tipo": "volume", "volume": "descer", "icone": "🔉"},
+        {"titulo": "Volume +", "tipo": "volume", "volume": "subir", "icone": "🔊"}
       ]
     },
     {

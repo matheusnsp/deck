@@ -21,8 +21,10 @@
 <div id="app">
   <header id="topo">
     <h1 id="nome">Deck</h1>
+    <button class="ficha-foco" type="button" hidden><span class="ficha-icone"></span><span class="ficha-tempo"></span></button>
+    <button class="mini-player" type="button" hidden><img alt=""><span class="eq"><i></i><i></i><i></i></span><span class="mini-titulo"></span></button>
     <button id="avisos" class="avisos" type="button" hidden></button>
-    <div id="status" class="status tentando" role="status"><i></i><span>Conectando…</span></div>
+    <div id="status" class="status tentando" role="status"><i></i><span data-t>Conectando…</span></div>
     <button class="tela-cheia" type="button" hidden aria-label="Tela cheia">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path class="abrir" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="fechar" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
     </button>
@@ -40,6 +42,8 @@
 
 <div id="cantinho" class="cantinho">
   <span id="status-mini" class="status-mini tentando" role="status"></span>
+  <button class="mini-player" type="button" hidden><img alt=""><span class="eq"><i></i><i></i><i></i></span></button>
+  <button class="ficha-foco" type="button" hidden><span class="ficha-icone"></span><span class="ficha-tempo"></span></button>
   <button class="tela-cheia" type="button" hidden aria-label="Tela cheia">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path class="abrir" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/><path class="fechar" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"/></svg>
   </button>
@@ -52,15 +56,45 @@
 
 <div id="folha" class="folha" hidden>
   <div class="folha-caixa">
-    <h2>Avisos dos botões</h2>
+    <h2 data-t>Avisos dos botões</h2>
     <ul id="folha-lista" class="rolavel"></ul>
-    <p class="folha-nota">Corrija no editor do computador — o celular atualiza sozinho.</p>
-    <button type="button" id="folha-ok">Entendi</button>
+    <p class="folha-nota" data-t>Corrija no editor do computador — o celular atualiza sozinho.</p>
+    <button type="button" id="folha-ok" data-t>Entendi</button>
   </div>
+</div>
+
+<div id="foco" class="foco" hidden>
+  <div class="foco-caixa">
+    <div class="foco-relogio">
+      <svg class="foco-anel" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="foco-trilho" cx="60" cy="60" r="52" pathLength="100"></circle>
+        <circle class="foco-progresso" cx="60" cy="60" r="52" pathLength="100"></circle>
+      </svg>
+      <div class="foco-tempo">0:00</div>
+    </div>
+    <div class="foco-lado">
+      <div class="foco-icone"></div>
+      <div class="foco-titulo"></div>
+      <div class="foco-acoes">
+        <button type="button" data-foco="pausar" data-t>Pausar</button>
+        <button type="button" data-foco="mais5" data-t>+5 min</button>
+        <button type="button" data-foco="encerrar" class="perigo" data-t>Encerrar</button>
+      </div>
+      <button type="button" class="foco-minimizar" data-t>Minimizar</button>
+    </div>
+  </div>
+</div>
+
+<div id="chamada" class="chamada" role="alert" hidden>
+  <div class="chamada-icone" aria-hidden="true">📞</div>
+  <div class="chamada-textos"><b class="chamada-quem"></b><span class="chamada-detalhe"></span></div>
+  <button type="button" data-chamada="recusar" class="recusar" data-t>Recusar</button>
+  <button type="button" data-chamada="atender" class="atender" data-t>Atender</button>
 </div>
 
 <div id="toast" class="toast" role="alert"></div>
 
+<script src="idioma.js"></script>
 <script src="icones.js"></script>
 <script src="tom.js"></script>
 <script src="app.js"></script>

@@ -7,7 +7,7 @@
     fetch('/api/parear', { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        $('#sub').textContent = 'a ' + (d.computador || 'este computador') + (d.sistema ? ' (' + d.sistema + ')' : '');
+        $('#sub').textContent = tr('a {c}', { c: d.computador || tr('este computador') }) + (d.sistema ? ' (' + d.sistema + ')' : '');
         ui.atualizar(d);
       })
       .catch(function () { ui.desligado(); });
