@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.3"
+VERSAO = "3.2.5"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -1045,10 +1045,10 @@ function run(argv) {
   if (!r.titulo && !r.artista) return JSON.stringify({tem: false});
   r.chave = [r.titulo, r.artista, r.album, r.appId].join('|');
   if (argv.length > 1 && argv[0] !== r.chave) {
-    try {
-      var dados = info.valueForKey('kMRMediaRemoteNowPlayingInfoArtworkData');
-      r.capa = !nulo(dados) && Number(dados.length) > 0 && !!dados.writeToFileAtomically(argv[1], true);
-    } catch (e) { r.capa = false; }
+    var dados = null;
+    try { dados = info.valueForKey('kMRMediaRemoteNowPlayingInfoArtworkData'); } catch (e) { dados = null; }
+    if (nulo(dados)) { try { var arte = item.artwork; dados = nulo(arte) ? null : arte.imageData; } catch (e) { dados = null; } }
+    try { r.capa = nulo(dados) ? false : (Number(dados.length) > 0 && dados.writeToFileAtomically(argv[1], true) == true); } catch (e) { r.capa = false; }
   }
   return JSON.stringify(r);
 }
@@ -1076,6 +1076,14 @@ function run(argv) {
   try { r = ler('Spotify', 'com.spotify.client', 1000); } catch (e) { r = null; }
   if (!r) { try { r = ler('Music', 'com.apple.Music', 1); } catch (e) { r = null; } }
   return JSON.stringify(r || {tem: false});
+}
+"""
+
+JXA_CAPA_SPOTIFY = r"""
+function run() {
+  var a = Application('Spotify');
+  if (a.running() === false) return '';
+  try { return String(a.currentTrack().artworkUrl() || ''); } catch (e) { return ''; }
 }
 """
 
@@ -1789,8 +1797,22 @@ class SistemaMac(Sistema):
                 self._capa_da_musica(outro, chave_capa, destino)
                 return outro
         if r and r.get("tem") and not r.get("capa") and r.get("chave") != chave_capa:
-            self._capa_do_video(r)
+            self._capa_extra(r, chave_capa, destino)
         return r or {"tem": False}
+
+    def _capa_extra(self, r, chave_capa, destino):
+        app = (r.get("appId") or "").lower()
+        if app == "com.spotify.client":
+            try:
+                url = (osascript(JXA_CAPA_SPOTIFY, js=True, espera=6) or "").strip()
+            except ErroAcao:
+                url = ""
+            if url.startswith(("http://", "https://")):
+                r["capaUrl"] = url
+        elif app == "com.apple.music":
+            self._capa_da_musica(r, chave_capa, destino)
+        else:
+            self._capa_do_video(r)
 
     def _capa_da_musica(self, r, chave_capa, destino):
         if r.get("appId") != "com.apple.Music" or r.get("chave") == chave_capa or not destino:
@@ -1803,7 +1825,7 @@ class SistemaMac(Sistema):
             r["capa"] = True
 
     def _capa_do_video(self, r):
-        if (r.get("appId") or "").lower() not in BUNDLES_NAVEGADORES:
+        if not eh_navegador(r.get("appId"), r.get("app")):
             return
         chave = r.get("chave") or ""
         urls = self._miniaturas.get(chave)
@@ -3464,7 +3486,18 @@ def aba_do_video(abas, titulo):
         t = _titulo_video(a.get("titulo"))
         if t and min(len(t), len(alvo)) >= 8 and (alvo in t or t in alvo):
             return a
+    if len(candidatas) == 1:
+        return candidatas[0]
     return None
+
+
+NOMES_NAVEGADORES = {"safari", "safari technology preview", "google chrome", "chrome", "microsoft edge", "brave browser", "brave",
+                     "arc", "vivaldi", "opera", "opera gx", "firefox", "chromium", "orion", "zen", "zen browser"}
+
+
+def eh_navegador(app_id, nome):
+    i = (app_id or "").lower()
+    return i in BUNDLES_NAVEGADORES or i.startswith("com.apple.webkit") or (nome or "").strip().lower() in NOMES_NAVEGADORES
 NOMES_PLAYERS = {"spotify": "Spotify", "chrome": "Google Chrome", "chromium": "Chromium", "msedge": "Microsoft Edge",
                  "edge": "Microsoft Edge", "firefox": "Firefox", "brave": "Brave", "vlc": "VLC", "zunemusic": "Media Player",
                  "mediaplayer": "Media Player", "music": "Music", "itunes": "iTunes", "opera": "Opera", "vivaldi": "Vivaldi",
