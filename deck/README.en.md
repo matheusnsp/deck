@@ -67,9 +67,9 @@ On each tab the deck detects by itself when the phone shows up through that path
 Everything at `http://localhost:8787/editar`, which only opens on the computer itself:
 
 - **Click an empty space (+)** and choose what the button does: app, site, keyboard shortcut, text, media, volume, microphone, power, mode, call or go to another page.
-- **App:** pick from the list of installed apps (on a Mac, the ones in the Applications folder and in your other folders, such as Downloads) — the button gets **the app's own icon from the computer**. Search also matches initials: “vs code” finds Visual Studio Code.
-- **Power:** shut down, restart, sleep or lock the computer. Shut down, restart and sleep ask for a **second tap** on the phone by default. Turning on a computer that's off from the phone isn't possible (nothing is running on it to receive the request): prefer **Sleep** — it wakes with any key and, on a Mac with "Wake for network access" on and an Apple TV, HomePod or Apple router on the network, it wakes by itself when Deck opens on the phone (the deck announces itself on the network for that).
-- **Site:** type an address or pick from the **tabs open right now** (Mac), the **bookmarks** and the **most visited sites** of the computer's browsers. The button gets **the site's own icon** — and, when the site has an official app (WhatsApp, YouTube, Notion…), the deck also fetches **the app's official icon** and uses it instead of white or tiny icons. You can choose which browser opens it and, on a Mac, if the tab is already open the button just **brings it to the front** instead of opening another.
+- **App:** pick from the list of installed apps (on a Mac, the ones in the Applications folder and in your other folders, such as Downloads) — the button gets **the app's own icon from the computer**. Search also matches initials: “vs code” finds Visual Studio Code. If the app isn't installed and has a web version (Spotify, WhatsApp, Discord, Slack, Notion, Teams…), the button opens the website and says so on the phone.
+- **Power:** shut down, restart, sleep or lock the computer. Shut down, restart and sleep ask for a **second tap** on the phone by default. Turning on a computer that's off from the phone isn't possible (nothing is running on it to receive the request): prefer **Sleep** — it wakes with any key and, on a Mac with "Wake for network access" on and an Apple TV, HomePod or Apple router on the network, it wakes by itself when Deck opens on the phone (the deck announces itself on the network for that). **Screen off** and **Screen on** turn only the screen off and on: the computer stays on and the deck keeps answering — that's the pair to turn it off and back on from the phone (after Sleep, the whole computer sleeps and can't hear the phone). On power, with the deck open, the computer doesn't sleep by itself, only the screen turns off; change it in **Settings › Computer on power**.
+- **Site:** type an address or pick from the **tabs open right now** (Mac), the **bookmarks** and the **most visited sites** of the computer's browsers. The button gets **the site's own icon** — and, when the site has an official app (WhatsApp, YouTube, Notion…), the deck also fetches **the app's official icon** and uses it instead of white or tiny icons. You can choose which browser opens it and, on a Mac, what happens under **If the site is already open**: **Bring the tab to the front** (the default, no duplicate tabs) or **Open another tab** on every tap.
 - **Keyboard shortcut:** click the field and press the keys.
 - **Drag** the buttons to change their order; drop one on a tab at the top to move it to another page. **+ Page** creates more pages — on the phone, swipe sideways.
 - **Pages:** drag them in the sidebar (or in the tabs at the top) to change their order — from the keyboard, ⌥/Alt+↑/↓. The **eye** next to the name hides the page from the phone without deleting it (click again to show it); in `config.json`, `"oculta": true` on the page.
@@ -92,7 +92,7 @@ Everything saves by itself to `config.json` (a copy of the previous one stays in
 | Media | play/pause, next, previous | ✓ | ✓ | ✓³ |
 | Volume | up, down, mute or a value | ✓ | ✓ | ✓⁴ |
 | Microphone | mutes/unmutes (lights the MUTE lamp) | ✓ | ✓ | ✓⁴ |
-| Power | shut down, restart, sleep, lock (with a second tap) | ✓ | ✓ | ✓⁵ |
+| Power | shut down, restart, sleep, lock (with a second tap), screen off and on | ✓ | ✓ | ✓⁵ |
 | Go to page | switches the page on the phone | ✓ | ✓ | ✓ |
 | Mode | Do Not Disturb, opens and closes apps, volume and a timer on the phone (section 5) | ✓⁶ | ✓⁶ | ✓⁶ |
 | Call | answer, decline, mute, camera and hang up in the meeting app (section 5) | ✓ | ✓ | ✓⁷ |
@@ -103,11 +103,15 @@ Everything saves by itself to `config.json` (a copy of the previous one stays in
 
 If you prefer editing `config.json` by hand you still can (the editor and the phone follow along): there are also `comando` (shell command), `sequencia` (sequence), `esperar` (wait), and on a Mac `atalho` (Shortcuts app) and `applescript`. The keys in the file are in Portuguese (`paginas`, `botoes`, `titulo`, `teclas`, `texto`…) and so are the values of `midia`, `volume` and `energia` (`play`/`proxima`/`anterior`, `subir`/`descer`/`mudo`, `desligar`/`reiniciar`/`suspender`/`bloquear`); the editor writes them for you. Per-system values: `"app": { "mac": "Safari", "windows": "Microsoft Edge", "linux": "Firefox" }`.
 
+**Check everything at once.** Double-click `Testar no Windows.bat` or `Testar no Mac.command` (or run `python3 server.py --autoteste`; on Windows, `py server.py --autoteste`). The self-test checks every button **without pressing any**: whether the app exists and which one opens, which keyboard shortcut is sent on that system (⌘ becomes Ctrl on Windows), whether volume, microphone and “now playing” respond, and whether a permission is missing. The result is saved to `autoteste.txt`, ready to send to whoever is helping you.
+
 ---
 
 ## 5 · DJ, modes and calls
 
 **DJ (mini player).** The **DJ** page shows full screen whatever is playing on the computer — Spotify, Music, YouTube in the browser or any other player — with artwork, time, back, play/pause, skip and volume; tap the bar to jump to another point. Songs show the album artwork and YouTube videos show the video's thumbnail in full (16:9). On the other pages a mini player shows up in the corner (tap it to open the DJ). Any page can become a player in the editor: **Page › Page type › Player**.
+
+**With the phone locked.** Tap the **lock** next to the DJ controls: the computer's music shows up on the lock screen (and in Android's notification shade) with artwork, play/pause, back, skip and the time bar — the phone's Bluetooth headphones also start controlling the computer. To do that the deck plays an inaudible sound on the phone, so the phone's own music pauses while it is on; tap the lock again to turn it off. The choice is saved on the phone and comes back on the first tap after opening the deck. It works best in Chrome on Android; on iPhone, iOS sometimes cuts the sound of Home Screen apps in the background — if the controls disappear, open the deck and tap anywhere. Computer volume is still set from the deck: the phone's volume buttons only change the phone.
 
 | System | Where the DJ reads from |
 |---|---|

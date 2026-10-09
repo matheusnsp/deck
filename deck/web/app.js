@@ -24,6 +24,7 @@
     som: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
     mudo: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></svg>',
     nota: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>',
+    trava: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="2.5" width="13" height="19" rx="2.8"/><rect x="8.9" y="11" width="6.2" height="5" rx="1.1"/><path d="M10.1 11V9.6a1.9 1.9 0 0 1 3.8 0V11"/></svg>',
   };
 
   var busca = new URLSearchParams(location.search);
@@ -96,6 +97,7 @@
       aplicarTema(d.tema);
       document.documentElement.setAttribute('data-luz', d.luz || 'parada');
       montarPaginas();
+      if (bloqueio.audio && temPaginaPlayer() < 0) pararBloqueio();
       var salvo = nomeAnterior || guardado.get('deck.pagina');
       var idx = paginas.findIndex(function (p) { return p.nome === salvo; });
       atual = idx >= 0 ? idx : Math.min(atual, Math.max(0, paginas.length - 1));
@@ -677,6 +679,7 @@
     semAcessoAtivo = true;
     deck = null;
     paginas = [];
+    pararBloqueio();
     el.bancos.textContent = '';
     el.rodape.hidden = true;
     if (erro === 'bloqueado') {
@@ -733,9 +736,13 @@
     var ja = el2('span', null, '0:00');
     var total = el2('span', null, '');
     tempos.append(ja, total);
-    var controles = el2('div', 'player-controles');
+    var controles = el2('div', temSessao ? 'player-controles com-trava' : 'player-controles');
     var alternar = botaoCtl('alternar', tr('Tocar ou pausar'), SVG_P.tocar, 'grande');
-    controles.append(botaoCtl('anterior', tr('Anterior'), SVG_P.anterior), alternar, botaoCtl('proxima', tr('Próxima'), SVG_P.proxima));
+    var trava = botaoCtl('bloqueio', tr('Controles na tela bloqueada'), SVG_P.trava, 'pequeno trava');
+    var espaco = el2('span', 'ctl pequeno espaco');
+    espaco.setAttribute('aria-hidden', 'true');
+    if (!temSessao) { trava.hidden = true; espaco.hidden = true; }
+    controles.append(espaco, botaoCtl('anterior', tr('Anterior'), SVG_P.anterior), alternar, botaoCtl('proxima', tr('Próxima'), SVG_P.proxima), trava);
     var volume = el2('div', 'player-volume');
     var mudo = botaoCtl('mudo', tr('Mudo'), SVG_P.som, 'pequeno');
     var vbarra = el2('div', 'barra volume');
@@ -762,9 +769,194 @@
     img.addEventListener('error', function () { capa.classList.remove('com-capa'); });
     pl = { raiz: raiz, fundo: fundo, img: img, capa: capa, appNome: appNome, titulo: titulo, artista: artista, barra: barra,
       cheio: cheio, bolinha: bolinha, ja: ja, total: total, alternar: alternar, mudo: mudo, vbarra: vbarra, vcheio: vcheio,
-      vbola: vbola, vnum: vnum, capaUrl: null };
+      vbola: vbola, vnum: vnum, trava: trava, capaUrl: null };
+    desenharTrava();
     return raiz;
   }
+
+  var temSessao = 'mediaSession' in navigator && typeof window.MediaMetadata === 'function';
+  var bloqueio = { querido: temSessao && guardado.get('deck.bloqueio') === '1', suspenso: false, audio: null, url: null, meta: '', estado: '', pular: null, pos: null };
+
+  function desenharTrava() {
+    if (!pl || !pl.trava) return;
+    pl.trava.classList.toggle('ligado', bloqueio.querido);
+    pl.trava.classList.toggle('pausado', !!(bloqueio.querido && bloqueio.suspenso));
+    pl.trava.setAttribute('aria-pressed', bloqueio.querido ? 'true' : 'false');
+    pl.trava.title = bloqueio.querido ? tr('Controles na tela bloqueada: ligados') : tr('Controles na tela bloqueada: desligados');
+  }
+
+  function wavQuaseMudo() {
+    var taxa = 8000, total = taxa * 10;
+    var dados = new DataView(new ArrayBuffer(44 + total * 2));
+    var texto = function (pos, s) { for (var i = 0; i < s.length; i++) dados.setUint8(pos + i, s.charCodeAt(i)); };
+    texto(0, 'RIFF');
+    dados.setUint32(4, 36 + total * 2, true);
+    texto(8, 'WAVEfmt ');
+    dados.setUint32(16, 16, true);
+    dados.setUint16(20, 1, true);
+    dados.setUint16(22, 1, true);
+    dados.setUint32(24, taxa, true);
+    dados.setUint32(28, taxa * 2, true);
+    dados.setUint16(32, 2, true);
+    dados.setUint16(34, 16, true);
+    texto(36, 'data');
+    dados.setUint32(40, total * 2, true);
+    for (var n = 0; n < total; n++) dados.setInt16(44 + n * 2, Math.round(66 * Math.sin(2 * Math.PI * 25 * n / taxa)), true);
+    return new Blob([dados.buffer], { type: 'audio/wav' });
+  }
+
+  function audioDoBloqueio() {
+    if (bloqueio.audio) return bloqueio.audio;
+    try {
+      var a = new Audio();
+      a.loop = true;
+      a.preload = 'auto';
+      bloqueio.url = URL.createObjectURL(wavQuaseMudo());
+      a.src = bloqueio.url;
+      a.addEventListener('playing', function () {
+        bloqueio.suspenso = false;
+        desenharTrava();
+        atualizarSessao();
+        agendarTocando(0);
+      });
+      a.addEventListener('pause', function () {
+        if (a !== bloqueio.audio || !bloqueio.querido) return;
+        bloqueio.suspenso = true;
+        desenharTrava();
+      });
+      bloqueio.audio = a;
+    } catch (e) { bloqueio.audio = null; }
+    return bloqueio.audio;
+  }
+
+  function bloqueioTocando() { return !!(bloqueio.querido && bloqueio.audio && !bloqueio.audio.paused); }
+
+  function iniciarBloqueio() {
+    if (!bloqueio.querido || semAcessoAtivo || temPaginaPlayer() < 0) return;
+    var a = audioDoBloqueio();
+    if (!a || !a.paused) return;
+    prepararSessao();
+    var p = a.play();
+    if (p && p.catch) p.catch(function () { return null; });
+    agendarTocando(0);
+  }
+
+  function pararBloqueio() {
+    var a = bloqueio.audio;
+    if (a) {
+      a.pause();
+      a.removeAttribute('src');
+      a.load();
+    }
+    if (bloqueio.url) URL.revokeObjectURL(bloqueio.url);
+    bloqueio.audio = null;
+    bloqueio.url = null;
+    bloqueio.suspenso = false;
+    bloqueio.meta = '';
+    bloqueio.estado = '';
+    bloqueio.pular = null;
+    bloqueio.pos = null;
+    if (!temSessao) return;
+    ['play', 'pause', 'previoustrack', 'nexttrack', 'seekto'].forEach(function (k) {
+      try { navigator.mediaSession.setActionHandler(k, null); } catch (e) { return; }
+    });
+    try { navigator.mediaSession.metadata = null; navigator.mediaSession.playbackState = 'none'; } catch (e) { return; }
+  }
+
+  function alternarBloqueio() {
+    if (bloqueio.querido && bloqueio.suspenso) {
+      bloqueio.suspenso = false;
+      iniciarBloqueio();
+      desenharTrava();
+      vibrar(10);
+      toast(tr('Controles na tela bloqueada de volta.'), 'ok');
+      return;
+    }
+    bloqueio.querido = !bloqueio.querido;
+    guardado.set('deck.bloqueio', bloqueio.querido ? '1' : '0');
+    desenharTrava();
+    vibrar(10);
+    if (bloqueio.querido) {
+      iniciarBloqueio();
+      toast(tr('Pronto: bloqueie o celular e controle a música do computador pela tela de bloqueio.'), 'ok');
+    } else {
+      pararBloqueio();
+      toast(tr('Controles na tela bloqueada desligados.'), 'ok');
+    }
+  }
+
+  function pularPara(d) {
+    if (!tocando || !tocando.tem || !(tocando.pode || {}).posicao || !(d && d.seekTime >= 0)) return;
+    tocando.posicao = d.seekTime;
+    tocandoEm = performance.now();
+    desenharTocando();
+    enviarPlayer('posicao', Math.round(d.seekTime * 10) / 10);
+  }
+
+  function prepararSessao() {
+    var acao = function (nome, fn) {
+      try { navigator.mediaSession.setActionHandler(nome, fn); } catch (e) { return; }
+    };
+    acao('play', function () {
+      bloqueio.suspenso = false;
+      if (bloqueio.audio && bloqueio.audio.paused) {
+        var p = bloqueio.audio.play();
+        if (p && p.catch) p.catch(function () { return null; });
+      }
+      if (!(tocando && tocando.tocando)) controlarPlayer('alternar');
+    });
+    acao('pause', function () { controlarPlayer('alternar'); });
+    acao('previoustrack', function () { controlarPlayer('anterior'); });
+    acao('nexttrack', function () { controlarPlayer('proxima'); });
+    bloqueio.meta = '';
+    bloqueio.estado = '';
+    bloqueio.pular = null;
+    bloqueio.pos = null;
+    atualizarSessao();
+  }
+
+  function atualizarSessao() {
+    if (!temSessao || !bloqueio.querido || !bloqueio.audio) return;
+    var ms = navigator.mediaSession;
+    var t = tocando || {};
+    var capa = new URL(t.tem && t.capa ? t.capa + (t.capa.indexOf('?') < 0 ? '?' : '&') + 'k=' + encodeURIComponent(token || '') : 'icon-512.png', location.href).href;
+    var titulo = t.tem ? (t.titulo || tr('Sem título')) : tr('Nada tocando no computador');
+    var artista = t.tem ? [t.artista, t.album && t.album !== t.titulo ? t.album : ''].filter(Boolean).join(' · ') : ((deck && deck.computador) || '');
+    var chave = [titulo, artista, t.app || '', capa].join('\n');
+    if (chave !== bloqueio.meta) {
+      bloqueio.meta = chave;
+      try { ms.metadata = new MediaMetadata({ title: titulo, artist: artista, album: t.tem ? (t.app || '') : 'Deck', artwork: [{ src: capa, sizes: '512x512' }] }); } catch (e) { bloqueio.meta = ''; }
+    }
+    var estado = t.tem && t.tocando ? 'playing' : 'paused';
+    if (estado !== bloqueio.estado) {
+      bloqueio.estado = estado;
+      try { ms.playbackState = estado; } catch (e) { bloqueio.estado = ''; }
+    }
+    var pular = !!(t.tem && (t.pode || {}).posicao);
+    if (pular !== bloqueio.pular) {
+      bloqueio.pular = pular;
+      try { ms.setActionHandler('seekto', pular ? pularPara : null); } catch (e) { bloqueio.pular = null; }
+    }
+    if (!ms.setPositionState) return;
+    var p = posicaoAgora();
+    var pos = t.tem && t.duracao > 0 && p !== null
+      ? { duration: t.duracao, position: Math.max(0, Math.min(p, t.duracao)), playbackRate: t.tocando ? 1 : 0.000001 }
+      : { duration: 0, position: 0, playbackRate: 1 };
+    var u = bloqueio.pos;
+    var agora = performance.now();
+    if (u && u.duration === pos.duration && u.playbackRate === pos.playbackRate &&
+        Math.abs(Math.min(u.position + (agora - u.em) / 1000 * u.playbackRate, u.duration || Infinity) - pos.position) < 1.5) return;
+    try {
+      ms.setPositionState(pos);
+      bloqueio.pos = { duration: pos.duration, position: pos.position, playbackRate: pos.playbackRate, em: agora };
+    } catch (e) { bloqueio.pos = null; }
+  }
+
+  ['pointerup', 'touchend', 'click', 'keydown'].forEach(function (tipo) {
+    document.addEventListener(tipo, function () {
+      if (bloqueio.querido && !bloqueio.suspenso && (!bloqueio.audio || bloqueio.audio.paused)) iniciarBloqueio();
+    }, true);
+  });
 
   function relogio(seg) {
     if (!(seg >= 0) || !isFinite(seg)) return '';
@@ -858,18 +1050,21 @@
   }
 
   function atualizarTocando() {
-    if (!token || document.hidden || semAcessoAtivo || !deck || temPaginaPlayer() < 0) return;
+    var bloq = bloqueioTocando();
+    if (!token || semAcessoAtivo || !deck) return;
+    if ((document.hidden || temPaginaPlayer() < 0) && !bloq) return;
     if (pedindoTocando) { agendarTocando(500); return; }
     pedindoTocando = true;
     api('/api/tocando', {}, 7000).then(function (r) {
       tocando = r;
       tocandoEm = performance.now();
       desenharTocando();
+      atualizarSessao();
     }).catch(function (e) {
       if (e.status === 401) semAcesso(e.erro);
     }).finally(function () {
       pedindoTocando = false;
-      if (!semAcessoAtivo) agendarTocando(naPaginaPlayer() ? 1000 : 4000);
+      if (!semAcessoAtivo) agendarTocando(document.hidden ? 2500 : (naPaginaPlayer() ? 1000 : 4000));
     });
   }
 
@@ -947,7 +1142,12 @@
   }
 
   function controlarPlayer(acao) {
+    if (acao === 'bloqueio') { alternarBloqueio(); return; }
     if (!acao || acao === 'posicao' || acao === 'volume') return;
+    if (bloqueio.querido && bloqueio.suspenso && (acao === 'alternar' || acao === 'anterior' || acao === 'proxima') && !document.hidden) {
+      bloqueio.suspenso = false;
+      iniciarBloqueio();
+    }
     if (acao === 'alternar' && tocando && tocando.tem) {
       tocando.posicao = posicaoAgora();
       tocandoEm = performance.now();

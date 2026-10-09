@@ -12,9 +12,9 @@
         {"titulo": "WhatsApp", "tipo": "site", "url": "https://web.whatsapp.com"},
         {"titulo": "Agenda", "tipo": "site", "url": "https://calendar.google.com"},
         {"titulo": "Drive", "tipo": "site", "url": "https://drive.google.com"},
-        {"tipo": "site", "url": "https://secretaria.cursoscruzvermelha.org/", "titulo": "Secretaria CVBRJ"},
-        {"titulo": "Netflix", "tipo": "app", "app": "Netflix"},
-        {"titulo": "Spotify", "tipo": "app", "app": "Spotify"}
+        {"titulo": "Instagram", "tipo": "site", "url": "https://www.instagram.com"},
+        {"titulo": "Netflix", "tipo": "site", "url": "https://www.netflix.com"},
+        {"titulo": "Spotify", "tipo": "site", "url": "https://open.spotify.com"}
       ]
     },
     {
@@ -31,7 +31,10 @@
         {"titulo": "Trabalho", "tipo": "modo", "icone": "💼", "cor": "azul", "abrir": ["https://mail.google.com", "https://calendar.google.com"]},
         {"titulo": "Estudos", "tipo": "modo", "icone": "📚", "cor": "verde", "nao_perturbe": true, "minutos": 50},
         {"titulo": "Casa", "tipo": "modo", "icone": "🏠", "cor": "laranja", "volume": 50, "pagina": "DJ"},
-        {"titulo": "Pausa", "tipo": "modo", "icone": "☕", "cor": "marrom", "minutos": 5}
+        {"titulo": "Pausa", "tipo": "modo", "icone": "☕", "cor": "marrom", "minutos": 5},
+        null,
+        null,
+        null
       ]
     },
     {
@@ -43,9 +46,9 @@
         {"titulo": "Terminal", "tipo": "app", "app": {"mac": "Terminal", "windows": ["Terminal", "Windows PowerShell", "wt", "powershell"], "linux": ["Terminal", "Console", "gnome-terminal", "konsole", "xterm"]}},
         {"titulo": "Calculadora", "tipo": "app", "app": {"mac": "Calculator", "windows": ["Calculadora", "Calculator", "calc"], "linux": ["Calculadora", "Calculator", "gnome-calculator", "kcalc"]}},
         {"titulo": "Notas", "tipo": "app", "app": {"mac": "Notes", "windows": ["Bloco de Notas", "Notepad", "notepad"], "linux": ["Editor de texto", "Text Editor", "gnome-text-editor", "gedit", "kate"]}},
-        {"titulo": "Captura", "tipo": "app", "app": {"mac": "Screenshot", "windows": ["Ferramenta de Captura", "Snipping Tool", "SnippingTool"], "linux": ["Captura de tela", "Screenshot", "gnome-screenshot", "spectacle"]}},
+        {"titulo": "Captura", "tipo": "app", "app": {"mac": "Screenshot", "windows": ["Ferramenta de Captura", "Snipping Tool", "Ferramenta de Recorte", "Captura e Esboço", "SnippingTool"], "linux": ["Captura de tela", "Screenshot", "gnome-screenshot", "spectacle"]}},
         {"titulo": "Monitor", "tipo": "app", "app": {"mac": "Activity Monitor", "windows": ["Gerenciador de Tarefas", "Task Manager", "taskmgr"], "linux": ["Monitor do sistema", "System Monitor", "gnome-system-monitor", "plasma-systemmonitor"]}},
-        {"titulo": "Ajustes", "tipo": "app", "app": {"mac": ["System Settings", "System Preferences"], "windows": ["Configurações", "Settings", "ms-settings:"], "linux": ["Configurações", "Settings", "gnome-control-center", "systemsettings"]}}
+        {"titulo": "Ajustes", "tipo": "app", "app": {"mac": ["System Settings", "System Preferences"], "windows": ["Configurações", "Settings", "Definições", "ms-settings:"], "linux": ["Configurações", "Settings", "gnome-control-center", "systemsettings"]}}
       ]
     },
     {
@@ -112,7 +115,10 @@
         {"titulo": "Suspender", "tipo": "energia", "energia": "suspender", "icone": "🌙", "confirmar": true},
         {"titulo": "Reiniciar", "tipo": "energia", "energia": "reiniciar", "icone": "🔄", "confirmar": true},
         {"titulo": "Desligar", "tipo": "energia", "energia": "desligar", "icone": "⏻", "confirmar": true, "cor": "#ef4444"},
-        {"titulo": "Área de trabalho", "tipo": "teclas", "teclas": {"mac": "cmd+f3", "windows": "win+d", "linux": "win+d"}, "icone": "🖥️"}
+        {"titulo": "Área de trabalho", "tipo": "teclas", "teclas": {"mac": "f11", "windows": "win+d", "linux": "win+d"}, "icone": "🖥️"},
+        {"titulo": "Apagar tela", "tipo": "energia", "energia": "apagar_tela", "icone": "🌑"},
+        {"titulo": "Ligar tela", "tipo": "energia", "energia": "ligar_tela", "icone": "🔆"},
+        null
       ]
     }
   ]

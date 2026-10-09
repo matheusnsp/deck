@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.6"
+VERSAO = "3.2.9"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -129,6 +129,7 @@ TITULOS_EN = {"Navegador": "Browser", "Arquivos": "Files", "Calculadora": "Calcu
               "Microfone": "Microphone", "Copiar": "Copy", "Colar": "Paste", "Desfazer": "Undo", "Nova aba": "New tab",
               "Fechar aba": "Close tab", "Trocar app": "Switch app", "Já volto": "Be right back", "Bloquear": "Lock",
               "Suspender": "Sleep", "Reiniciar": "Restart", "Desligar": "Shut down", "Área de trabalho": "Desktop",
+              "Apagar tela": "Screen off", "Ligar tela": "Screen on",
               "Foco": "Focus", "Trabalho": "Work", "Estudos": "Study", "Casa": "Home", "Pausa": "Break",
               "Atender": "Answer", "Recusar": "Decline", "Mudo na chamada": "Mute call", "Câmera": "Camera",
               "Encerrar": "Hang up"}
@@ -168,6 +169,16 @@ def traduzir_nomes_padrao(dados):
                 _trocar(b, "titulo", paginas)
             if b.get("tipo") == "modo":
                 _trocar(b, "pagina", paginas)
+
+
+def corrigir_padroes_antigos(dados):
+    if not isinstance(dados, dict) or not isinstance(dados.get("paginas"), list):
+        return
+    for p in dados["paginas"]:
+        for b in (p.get("botoes") if isinstance(p, dict) and isinstance(p.get("botoes"), list) else []):
+            teclas = b.get("teclas") if isinstance(b, dict) and b.get("tipo") == "teclas" else None
+            if isinstance(teclas, dict) and teclas.get("mac") == "cmd+f3" and teclas.get("windows") == "win+d":
+                teclas["mac"] = "f11"
 
 
 TEXTOS_EN = {
@@ -248,6 +259,16 @@ TEXTOS_EN = {
     "Não consegui %s o computador.": "Couldn't %s the computer.",
     "Não achei um microfone padrão.": "Couldn't find a default microphone.",
     "Desligar": "Shut down", "Reiniciar": "Restart", "Suspender": "Sleep", "Bloquear": "Lock",
+    "Apagar tela": "Screen off", "Ligar tela": "Screen on",
+    "Não consegui apagar a tela.": "Couldn't turn the screen off.",
+    "Não consegui ligar a tela.": "Couldn't turn the screen on.",
+    "apaga só a tela; o computador continua ligado e o deck responde": "turns only the screen off; the computer stays on and the deck keeps answering",
+    "acende a tela de novo (se o computador não estiver dormindo)": "turns the screen back on (if the computer isn't asleep)",
+    "Na tomada": "On power",
+    "o computador não dorme com o deck aberto (a tela pode apagar)": "the computer doesn't sleep while the deck is open (the screen may turn off)",
+    "o computador pode dormir; aí o celular não alcança mais (Configurações)": "the computer may sleep; then the phone can't reach it (Settings)",
+    "Na tomada, o computador não dorme enquanto o deck estiver aberto (a tela pode apagar). Dá para mudar em Configurações.":
+        "On power, the computer doesn't sleep while the deck is open (the screen may turn off). You can change this in Settings.",
     '%s: falta "%s" (ex.: %s)': '%s: "%s" is missing (e.g. %s)',
     '%s: "%s" precisa ser um número de segundos (ex.: 0.5)': '%s: "%s" must be a number of seconds (e.g. 0.5)',
     "%s: sequência dentro de sequência demais": "%s: too many nested sequences",
@@ -263,8 +284,8 @@ TEXTOS_EN = {
     '%s: "midia" deve ser play, proxima ou anterior': '%s: "midia" must be play, proxima or anterior',
     '%s: "volume" deve ser subir, descer, mudo ou um número de 0 a 100':
         '%s: "volume" must be subir, descer, mudo or a number from 0 to 100',
-    '%s: "energia" deve ser desligar, reiniciar, suspender ou bloquear':
-        '%s: "energia" must be desligar, reiniciar, suspender or bloquear',
+    '%s: "energia" deve ser desligar, reiniciar, suspender, bloquear, apagar_tela ou ligar_tela':
+        '%s: "energia" must be desligar, reiniciar, suspender, bloquear, apagar_tela or ligar_tela',
     '%s: diga para qual página ir, ex.: "pagina": "Apps"': '%s: say which page to go to, e.g. "pagina": "Apps"',
     '%s: "acoes" deve ser uma lista de ações': '%s: "acoes" must be a list of actions',
     "%s: no máximo 30 passos por sequência": "%s: at most 30 steps per sequence",
@@ -426,6 +447,85 @@ TEXTOS_EN = {
         '%s: unknown call app "%s" (use auto, zoom, teams, meet, facetime, discord, slack or webex)',
     '%s: no máximo 12 itens em "%s"': '%s: at most 12 items in "%s"',
     "%s: troca de página ou modo não pode ficar dentro de sequência": "%s: a page change or mode can't be inside a sequence",
+    "o PowerShell demorou demais": "PowerShell took too long",
+    'O computador não deixou rodar "%s" (%s).': 'The computer didn\'t allow running "%s" (%s).',
+    "o PowerShell saiu com erro %s": "PowerShell exited with error %s",
+    "resposta ilegível do PowerShell": "unreadable answer from PowerShell",
+    "⚠ Não consegui ler a lista de apps do menu Iniciar (%s). Apps da Microsoft Store podem não abrir pelo nome.": "⚠ Couldn't read the Start menu app list (%s). Microsoft Store apps may not open by name.",
+    "lista vazia": "empty list",
+    "%s (menu Iniciar)": "%s (Start menu)",
+    "app da Microsoft Store (%s)": "Microsoft Store app (%s)",
+    "“%s” não está instalado neste computador: abri a versão web.": "“%s” isn't installed on this computer: opened the web version.",
+    "Espaço": "Space",
+    "Computador": "Computer",
+    "Botões": "Buttons",
+    "Saída de som": "Sound output",
+    "Python de 32 bits num Windows de 64 bits: funciona, mas o ideal é instalar o Python de 64 bits.": "32-bit Python on 64-bit Windows: it works, but installing 64-bit Python is better.",
+    "%d apps encontrados (%s)": "%d apps found (%s)",
+    "Menu Iniciar": "Start menu",
+    "não consegui ler a lista de apps": "couldn't read the app list",
+    "Acessibilidade": "Accessibility",
+    "o Terminal pode mandar teclas": "Terminal can send keystrokes",
+    "o Terminal não pode mandar teclas: Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ative o Terminal": "Terminal can't send keystrokes: System Settings › Privacy & Security › Accessibility › enable Terminal",
+    "não consegui conferir": "couldn't check",
+    " (no mudo)": " (muted)",
+    "volume em %s%%": "volume at %s%%",
+    "não consegui ler o volume deste computador": "couldn't read this computer's volume",
+    "ligado": "on",
+    "no mudo": "muted",
+    "não achei um microfone padrão": "no default microphone found",
+    "Tocando agora": "Now playing",
+    "nada tocando (dê play em algo para conferir o player)": "nothing playing (play something to check the player)",
+    "falta a permissão de Acessibilidade (veja acima)": "Accessibility permission is missing (see above)",
+    "a tecla “%s” não existe no teclado atual": "the key “%s” doesn't exist on the current keyboard layout",
+    "o Win+Shift+S precisa da Ferramenta de Captura instalada": "Win+Shift+S needs the Snipping Tool installed",
+    "este atalho está desligado em Ajustes do Sistema › Teclado › Atalhos de Teclado": "this shortcut is turned off in System Settings › Keyboard › Keyboard Shortcuts",
+    "este atalho foi trocado em Ajustes do Sistema › Teclado › Atalhos de Teclado": "this shortcut was changed in System Settings › Keyboard › Keyboard Shortcuts",
+    "aperta %s": "presses %s",
+    " no app %s": " in the %s app",
+    "abre %s": "opens %s",
+    "não está instalado: o botão abre %s": "not installed: the button opens %s",
+    "não achei “%s” neste computador": "couldn't find “%s” on this computer",
+    "digita “%s”": "types “%s”",
+    "navegador padrão": "the default browser",
+    "abre %s no %s": "opens %s in %s",
+    "anterior": "previous",
+    "próxima": "next",
+    "tocar/pausar": "play/pause",
+    "tecla de mídia: %s": "media key: %s",
+    "desce o volume": "turns the volume down",
+    "liga/desliga o mudo": "toggles mute",
+    "sobe o volume": "turns the volume up",
+    "põe o volume em %s%%": "sets the volume to %s%%",
+    "liga/desliga o mudo do microfone": "toggles the microphone mute",
+    "não testei de verdade (ia %s o computador)": "not really tested (it would %s the computer)",
+    "roda: %s": "runs: %s",
+    "roda um AppleScript": "runs an AppleScript",
+    "o atalho “%s” não existe no app Atalhos": "the shortcut “%s” doesn't exist in the Shortcuts app",
+    "roda o atalho “%s”": "runs the shortcut “%s”",
+    "vai para outra página": "goes to another page",
+    "espera %s s": "waits %s s",
+    "sem reunião aberta: muta o microfone do computador": "no meeting open: mutes the computer's microphone",
+    "clica no aviso da chamada": "clicks the call notification",
+    "nenhum app de chamada tem atalho para isso": "no call app has a shortcut for this",
+    "volume %d%%": "volume %d%%",
+    "Não perturbe: no Windows não liga sozinho (Win+N)": "Do Not Disturb: Windows doesn't let it turn on by itself (Win+N)",
+    "Não perturbe: falta criar o atalho “Deck Foco Ligar” no app Atalhos": "Do Not Disturb: create the “Deck Focus On” shortcut in the Shortcuts app",
+    "liga o Não perturbe": "turns on Do Not Disturb",
+    "%s não está instalado (abre a versão web)": "%s isn't installed (opens the web version)",
+    "não achei “%s”": "couldn't find “%s”",
+    "fecha %s": "closes %s",
+    "cronômetro de %d min": "%d min timer",
+    "vai para a página %s": "goes to the %s page",
+    "  Deck v%s · autoteste no %s": "  Deck v%s · self-test on %s",
+    "  Nada é apertado de verdade: só confiro se cada botão tem o que precisa neste computador.": "  Nothing is actually pressed: I only check that each button has what it needs on this computer.",
+    " (player)": " (player)",
+    "Player": "Player",
+    "mostra o que está tocando (veja “Tocando agora” acima)": "shows what's playing (see “Now playing” above)",
+    "falhou ao conferir: %s": "check failed: %s",
+    "  Resumo: %d ok, %d avisos, %d problemas": "  Summary: %d ok, %d warnings, %d problems",
+    "  Resultado salvo em %s (dá para mandar esse arquivo para quem te ajuda).": "  Result saved to %s (you can send this file to whoever is helping you).",
+    "confere cada botão neste computador, sem apertar nenhum, e salva autoteste.txt": "checks every button on this computer without pressing any, and saves autoteste.txt",
 }
 
 
@@ -514,6 +614,10 @@ class ErroAcao(Exception):
     pass
 
 
+class ErroAppAusente(ErroAcao):
+    pass
+
+
 def simples(valor):
     t = unicodedata.normalize("NFD", str(valor)).encode("ascii", "ignore").decode()
     return re.sub(r"\s+", "_", t.strip().lower())
@@ -560,6 +664,9 @@ def rodar(args, espera=10.0, rotulo=None, shell=False, ambiente=None):
     except FileNotFoundError:
         nome = args.split()[0] if isinstance(args, str) else args[0]
         raise ErroAcao(tr('O programa "%s" não existe neste computador.') % nome)
+    except OSError as e:
+        nome = args.split()[0] if isinstance(args, str) else args[0]
+        raise ErroAcao(tr('O computador não deixou rodar "%s" (%s).') % (nome, e.strerror or e))
     try:
         saida, erro = p.communicate(timeout=espera)
     except subprocess.TimeoutExpired:
@@ -1119,6 +1226,14 @@ function run(argv) {
 }
 """
 
+JXA_CAMINHO_APP = r"""
+function run(argv) {
+  ObjC.import('AppKit');
+  var p = $.NSWorkspace.sharedWorkspace.fullPathForApplication(argv[0]);
+  return (p && !p.isNil()) ? ObjC.unwrap(p) : '';
+}
+"""
+
 JXA_FECHAR = r"""
 function run(argv) {
   var r = [];
@@ -1499,6 +1614,9 @@ class Sistema:
     def nao_perturbe(self, ligar):
         raise ErroAcao(tr("Este computador não deixa ligar o Não perturbe pelo deck."))
 
+    def manter_acordado(self, ligar):
+        return None
+
     def fechar_apps(self, nomes):
         raise ErroAcao(tr("Não sei fechar apps neste computador."))
 
@@ -1554,6 +1672,19 @@ class SistemaMac(Sistema):
         self._fora = None
         self._fora_quando = 0.0
         self._avisou_automacao = False
+        self._cafe = None
+
+    def manter_acordado(self, ligar):
+        vivo = self._cafe is not None and self._cafe.poll() is None
+        if ligar and not vivo:
+            try:
+                self._cafe = subprocess.Popen(["caffeinate", "-s", "-w", str(os.getpid())], stdin=subprocess.DEVNULL,
+                                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except OSError:
+                self._cafe = None
+        elif not ligar and vivo:
+            self._cafe.terminate()
+            self._cafe = None
 
     def teclas(self, combos, app, intervalo):
         r = osascript(script_teclas(combos, app, intervalo))
@@ -1659,7 +1790,21 @@ class SistemaMac(Sistema):
                 codigo, saida, erro = rodar(["open", achado[1]], espera=10)
                 if not codigo:
                     return {"ok": True}
-        raise ErroAcao(tr("Não achei “%s” neste Mac (use o nome que aparece na pasta Aplicativos).") % candidatos[0])
+        raise ErroAppAusente(tr("Não achei “%s” neste Mac (use o nome que aparece na pasta Aplicativos).") % candidatos[0])
+
+    def onde_esta_app(self, candidatos):
+        for nome in candidatos:
+            caminho = self.caminho_app(nome)
+            if caminho:
+                return caminho
+        for nome in candidatos:
+            try:
+                saida = osascript(JXA_CAMINHO_APP, js=True, espera=6, argumentos=[nome])
+            except ErroAcao:
+                continue
+            if saida and saida.strip().startswith("/") and saida.strip().endswith(".app"):
+                return saida.strip()
+        return None
 
     def link(self, url):
         codigo, saida, erro = rodar(["open", url], espera=10)
@@ -1925,6 +2070,11 @@ class SistemaMac(Sistema):
         return {"ok": True, "info": "%s%%" % saida.strip()}
 
     def energia(self, op):
+        if op == "apagar_tela":
+            return self._primeiro_que_funciona([["pmset", "displaysleepnow"]], tr("Não consegui apagar a tela."))
+        if op == "ligar_tela":
+            lancar(["caffeinate", "-u", "-t", "5"])
+            return {"ok": True}
         if op == "bloquear":
             return self._primeiro_que_funciona([
                 ["/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession", "-suspend"],
@@ -1987,6 +2137,7 @@ class TecladoWindows:
 
         self.INPUT = INPUT
         self.KEYBDINPUT = KEYBDINPUT
+        self.MOUSEINPUT = MOUSEINPUT
         self.user32 = self.carregar_user32()
 
     def carregar_user32(self):
@@ -2011,6 +2162,14 @@ class TecladoWindows:
         e = self.INPUT(type=1)
         e.u.ki = self.KEYBDINPUT(0, codigo, 0x0004 | (0x0002 if solta else 0), 0, 0)
         return e
+
+    def mexer_mouse(self):
+        eventos = []
+        for dx in (1, -1):
+            e = self.INPUT(type=0)
+            e.u.mi = self.MOUSEINPUT(dx, 0, 0, 0x0001, 0, 0)
+            eventos.append(e)
+        return eventos
 
     def pressionar(self, vk, vezes=1):
         eventos = []
@@ -2072,6 +2231,110 @@ def _ps_texto(s):
     return "'" + str(s).replace("'", "''") + "'"
 
 
+_POWERSHELL = []
+
+
+def powershell():
+    if not _POWERSHELL:
+        raiz = os.environ.get("SystemRoot") or os.environ.get("WINDIR") or "C:\\Windows"
+        achado = "powershell"
+        for pasta in ("Sysnative", "System32"):
+            caminho = os.path.join(raiz, pasta, "WindowsPowerShell", "v1.0", "powershell.exe")
+            if os.path.isfile(caminho):
+                achado = caminho
+                break
+        _POWERSHELL.append(achado)
+    return _POWERSHELL[0]
+
+
+def ps_codificado(script):
+    return [powershell(), "-NoProfile", "-NonInteractive", "-EncodedCommand",
+            base64.b64encode(script.encode("utf-16-le")).decode("ascii")]
+
+
+PS_APPS_WINDOWS = r"""
+$ErrorActionPreference = 'SilentlyContinue'
+function Texto($s) {
+  $o = ''
+  foreach ($c in ([string]$s).ToCharArray()) {
+    $n = [int]$c
+    if ($n -lt 32 -or $n -gt 126 -or $n -eq 34 -or $n -eq 92) { $o += '\u{0:x4}' -f $n } else { $o += $c }
+  }
+  $o
+}
+$fonte = 'Get-StartApps'
+$achou = $false
+if (Get-Command Get-StartApps -ErrorAction SilentlyContinue) {
+  foreach ($x in @(Get-StartApps)) {
+    if ($x.AppID) { $achou = $true; 'deck-app ["' + (Texto $x.Name) + '","' + (Texto $x.AppID) + '"]' }
+  }
+}
+if (-not $achou) {
+  $fonte = 'Shell.Application'
+  $pasta = (New-Object -ComObject Shell.Application).NameSpace('shell:::{4234d49b-0245-4df3-b780-3893943456e1}')
+  if ($pasta) {
+    foreach ($x in @($pasta.Items())) {
+      if ($x.Path) { 'deck-app ["' + (Texto $x.Name) + '","' + (Texto $x.Path) + '"]' }
+    }
+  }
+}
+'deck-apps ' + $fonte
+"""
+
+
+def ler_apps_windows(saida):
+    itens, fonte = [], None
+    for linha in (saida or "").splitlines():
+        linha = linha.strip().lstrip(chr(0xfeff))
+        if linha.startswith("deck-app "):
+            try:
+                nome, appid = json.loads(linha[9:])
+            except (ValueError, TypeError):
+                continue
+            if str(appid).strip():
+                itens.append((str(nome).strip(), str(appid).strip()))
+        elif linha.startswith("deck-apps "):
+            fonte = linha[10:].strip() or None
+    if fonte is None:
+        return None, None
+    return fonte, itens
+
+
+AUMID = re.compile(r"^[\w.-]+_[a-z0-9]{13}![\w.-]+$", re.I)
+CONHECIDOS_WINDOWS = [
+    (("ferramenta de captura", "ferramenta de recorte", "snipping tool", "snippingtool", "captura e esboco", "snip sketch"),
+     ["Microsoft.ScreenSketch_8wekyb3d8bbwe!App", "%SystemRoot%\\Sysnative\\SnippingTool.exe",
+      "%SystemRoot%\\System32\\SnippingTool.exe"]),
+    (("spotify",), ["SpotifyAB.SpotifyMusic_zpdnekdrzrea0!Spotify", "%APPDATA%\\Spotify\\Spotify.exe"]),
+    (("calculadora", "calculator", "calc"), ["Microsoft.WindowsCalculator_8wekyb3d8bbwe!App", "calc.exe"]),
+    (("bloco de notas", "notepad"), ["Microsoft.WindowsNotepad_8wekyb3d8bbwe!App", "notepad.exe"]),
+    (("terminal", "windows terminal", "wt"), ["Microsoft.WindowsTerminal_8wekyb3d8bbwe!App",
+                                              "Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe!App", "wt.exe"]),
+    (("configuracoes", "definicoes", "settings"), ["ms-settings:"]),
+    (("gerenciador de tarefas", "gestor de tarefas", "task manager", "taskmgr"), ["taskmgr.exe"]),
+    (("explorador de arquivos", "explorador de ficheiros", "file explorer", "explorer"), ["explorer.exe"]),
+    (("microsoft edge", "edge"), ["msedge.exe"]),
+]
+
+
+def pacote_instalado(familia):
+    try:
+        funcao = ctypes.WinDLL("kernel32").GetPackagesByPackageFamily
+    except (AttributeError, OSError):
+        return None
+    funcao.argtypes = (ctypes.c_wchar_p, ctypes.POINTER(ctypes.c_uint32), ctypes.c_void_p,
+                       ctypes.POINTER(ctypes.c_uint32), ctypes.c_void_p)
+    funcao.restype = ctypes.c_long
+    quantos, tamanho = ctypes.c_uint32(0), ctypes.c_uint32(0)
+    try:
+        r = funcao(familia, ctypes.byref(quantos), None, ctypes.byref(tamanho), None)
+    except OSError:
+        return None
+    if r in (0, 122):
+        return quantos.value > 0
+    return None
+
+
 def pastas_menu_iniciar():
     return [os.path.join(os.environ.get("APPDATA", ""), "Microsoft", "Windows", "Start Menu", "Programs"),
             os.path.join(os.environ.get("PROGRAMDATA", "C:\\ProgramData"), "Microsoft", "Windows", "Start Menu",
@@ -2095,6 +2358,22 @@ def app_paths_windows(nome):
     return None
 
 
+class STATUS_ENERGIA(ctypes.Structure):
+    _fields_ = [("ACLineStatus", ctypes.c_ubyte), ("BatteryFlag", ctypes.c_ubyte), ("BatteryLifePercent", ctypes.c_ubyte),
+                ("SystemStatusFlag", ctypes.c_ubyte), ("BatteryLifeTime", ctypes.c_uint32),
+                ("BatteryFullLifeTime", ctypes.c_uint32)]
+
+
+def na_tomada_windows():
+    s = STATUS_ENERGIA()
+    try:
+        if not ctypes.WinDLL("kernel32").GetSystemPowerStatus(ctypes.byref(s)):
+            return True
+    except (AttributeError, OSError):
+        return True
+    return s.ACLineStatus != 0
+
+
 class SistemaWindows(Sistema):
     nome = "Windows"
 
@@ -2103,12 +2382,16 @@ class SistemaWindows(Sistema):
         self._apps = None
         self._lista_iniciar = []
         self._apps_quando = 0.0
+        self._apps_info = {}
+        self._avisou_apps = False
         self._trava_apps = threading.Lock()
         self._navs = None
         self._navs_quando = 0.0
         self._trava_player = threading.Lock()
         self._proc_player = None
         self._player_falhou = 0.0
+        self._quer_acordado = False
+        self._fio_acordado = None
 
     def teclado(self):
         if self._teclado is None:
@@ -2117,7 +2400,7 @@ class SistemaWindows(Sistema):
 
     def _ativar(self, app):
         script = "$w = New-Object -ComObject WScript.Shell; if ($w.AppActivate(%s)) { 'ok' }" % _ps_texto(app)
-        rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=6)
+        rodar([powershell(), "-NoProfile", "-NonInteractive", "-Command", script], espera=6)
         time.sleep(0.25)
 
     def teclas(self, combos, app, intervalo):
@@ -2143,27 +2426,31 @@ class SistemaWindows(Sistema):
                 return self._apps
             if renovar and time.time() - self._apps_quando < 60:
                 return self._apps or []
-            script = ("[Console]::OutputEncoding=[Text.Encoding]::UTF8; "
-                      "Get-StartApps | Select-Object Name,AppID | ConvertTo-Json -Compress")
             try:
-                codigo, saida, erro = rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
-                                            espera=25)
-            except ErroAcao:
-                codigo, saida = 1, ""
+                codigo, saida, erro = rodar(ps_codificado(PS_APPS_WINDOWS), espera=30)
+            except ErroAcao as e:
+                codigo, saida, erro = 1, "", str(e)
+            fonte, itens = ler_apps_windows(saida) if codigo == 0 else (None, None)
             apps = []
             lista = []
-            if codigo == 0 and saida:
-                try:
-                    dados = json.loads(saida)
-                except ValueError:
-                    dados = []
-                if isinstance(dados, dict):
-                    dados = [dados]
-                for d in dados:
-                    if isinstance(d, dict) and d.get("AppID"):
-                        apps.append((d.get("Name") or "", ("appid", d["AppID"])))
-                        apps.append((d["AppID"].split("!")[0].split("\\")[-1], ("appid", d["AppID"])))
-                        lista.append((str(d.get("Name") or "").strip(), d["AppID"]))
+            for nome, appid in itens or []:
+                apps.append((nome, ("appid", appid)))
+                apps.append((appid.split("!")[0].split("\\")[-1], ("appid", appid)))
+                lista.append((nome, appid))
+            if codigo is None:
+                motivo = tr("o PowerShell demorou demais")
+            elif codigo:
+                motivo = tr("o PowerShell saiu com erro %s") % codigo
+            elif itens is None:
+                motivo = tr("resposta ilegível do PowerShell")
+            else:
+                motivo = ""
+            self._apps_info = {"fonte": fonte, "total": len(lista), "motivo": motivo,
+                               "detalhe": (erro or ("" if itens is not None else saida) or "").strip()[-240:]}
+            if not lista and not self._avisou_apps:
+                self._avisou_apps = True
+                log(amarelo(tr("⚠ Não consegui ler a lista de apps do menu Iniciar (%s). Apps da Microsoft Store "
+                               "podem não abrir pelo nome.") % (motivo or tr("lista vazia"))))
             self._apps = apps
             self._lista_iniciar = lista
             self._apps_quando = time.time()
@@ -2234,7 +2521,7 @@ class SistemaWindows(Sistema):
                   "if ($i) { $i.ToBitmap().Save(%s, [System.Drawing.Imaging.ImageFormat]::Png) }"
                   % (_ps_texto(alvo), _ps_texto(destino)))
         try:
-            rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=15)
+            rodar([powershell(), "-NoProfile", "-NonInteractive", "-Command", script], espera=15)
             with open(destino, "rb") as f:
                 return f.read()
         except (OSError, ErroAcao):
@@ -2256,6 +2543,8 @@ class SistemaWindows(Sistema):
             return ("uri", valor)
         if os.path.exists(valor):
             return ("arquivo", valor)
+        if AUMID.match(valor):
+            return ("appid", valor) if pacote_instalado(valor.split("!")[0]) is not False else None
         candidatos = []
         exe = shutil.which(valor) or app_paths_windows(valor)
         if exe:
@@ -2264,10 +2553,31 @@ class SistemaWindows(Sistema):
             achado = melhor_nome(valor, fonte)
             if achado:
                 candidatos.append(achado)
-        if not candidatos:
-            return None
         candidatos.sort(key=lambda c: c[0])
-        return candidatos[0][1]
+        if candidatos and candidatos[0][0][0] == 0:
+            return candidatos[0][1]
+        return self.conhecido(valor) or (candidatos[0][1] if candidatos else None)
+
+    def conhecido(self, nome):
+        alvo = comparavel(nome)
+        for apelidos, opcoes in CONHECIDOS_WINDOWS:
+            if alvo not in apelidos:
+                continue
+            for opcao in opcoes:
+                opcao = os.path.expandvars(opcao)
+                if AUMID.match(opcao):
+                    if pacote_instalado(opcao.split("!")[0]):
+                        return ("appid", opcao)
+                elif opcao.endswith(":"):
+                    return ("uri", opcao)
+                elif os.path.isabs(opcao):
+                    if os.path.isfile(opcao):
+                        return ("arquivo", opcao)
+                else:
+                    exe = shutil.which(opcao) or app_paths_windows(opcao)
+                    if exe:
+                        return ("arquivo", exe)
+        return None
 
     def abrir(self, alvo):
         tipo, valor = alvo
@@ -2286,8 +2596,19 @@ class SistemaWindows(Sistema):
                 if alvo:
                     self.abrir(alvo)
                     return {"ok": True}
-        raise ErroAcao(tr("Não achei “%s” no Windows. Use o nome que aparece no menu Iniciar ou o caminho do .exe.")
-                       % candidatos[0])
+        raise ErroAppAusente(tr("Não achei “%s” no Windows. Use o nome que aparece no menu Iniciar ou o caminho do .exe.")
+                             % candidatos[0])
+
+    def onde_esta_app(self, candidatos):
+        for nome in candidatos:
+            alvo = self.resolver_app(nome)
+            if alvo:
+                tipo, valor = alvo
+                if tipo == "appid":
+                    rotulo = next((n for n, a in self._lista_iniciar if a == valor and n), None)
+                    return tr("%s (menu Iniciar)") % rotulo if rotulo else tr("app da Microsoft Store (%s)") % valor
+                return valor
+        return None
 
     def link(self, url):
         self.abrir(("uri", url))
@@ -2380,7 +2701,7 @@ class SistemaWindows(Sistema):
             script = os.path.join(pasta_do_usuario("cache"), "tocando.ps1")
             gravar_atomico(script, PS_TOCANDO.lstrip("\n"))
             try:
-                self._proc_player = ProcessoPorLinhas(["powershell", "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
+                self._proc_player = ProcessoPorLinhas([powershell(), "-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass",
                                                        "-File", script, pasta])
             except OSError:
                 self._player_falhou = time.time()
@@ -2406,12 +2727,36 @@ class SistemaWindows(Sistema):
             return {"ok": True}
         return {"ok": True, "mensagem": tr("No Windows, o Não perturbe não liga por programa: ligue em Win+N › Não perturbe.")}
 
+    def manter_acordado(self, ligar):
+        self._quer_acordado = bool(ligar)
+        if self._fio_acordado is None:
+            self._fio_acordado = threading.Thread(target=self._laco_acordado, daemon=True)
+            self._fio_acordado.start()
+
+    def _laco_acordado(self):
+        try:
+            k = ctypes.WinDLL("kernel32")
+            k.SetThreadExecutionState.argtypes = (ctypes.c_uint32,)
+            k.SetThreadExecutionState.restype = ctypes.c_uint32
+        except (AttributeError, OSError):
+            return
+        atual = None
+        while True:
+            try:
+                desejado = self._quer_acordado and na_tomada_windows()
+                if desejado != atual:
+                    k.SetThreadExecutionState(0x80000000 | (0x00000001 if desejado else 0))
+                    atual = desejado
+            except Exception:
+                pass
+            time.sleep(30)
+
     def fechar_apps(self, nomes):
         lista = ", ".join(_ps_texto(re.sub(r"\.exe$", "", n, flags=re.I)) for n in nomes)
         if lista:
             script = ("foreach ($n in @(%s)) { Get-Process -Name $n -ErrorAction SilentlyContinue | "
                       "ForEach-Object { [void]$_.CloseMainWindow() } }" % lista)
-            rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=12)
+            rodar([powershell(), "-NoProfile", "-NonInteractive", "-Command", script], espera=12)
         return {"ok": True}
 
     def processos(self):
@@ -2426,7 +2771,7 @@ class SistemaWindows(Sistema):
         script = ("$w = New-Object -ComObject WScript.Shell; "
                   "$p = Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 -and (%s) } | "
                   "Select-Object -First 1; if ($p -and $w.AppActivate($p.Id)) { 'ok' }" % filtro)
-        codigo, saida, erro = rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=8)
+        codigo, saida, erro = rodar([powershell(), "-NoProfile", "-NonInteractive", "-Command", script], espera=8)
         if (saida or "").strip().endswith("ok"):
             time.sleep(0.3)
             return True
@@ -2441,7 +2786,7 @@ class SistemaWindows(Sistema):
     def tem_reuniao_meet(self):
         script = ("Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -match %s } | "
                   "Select-Object -First 1 | ForEach-Object { 'sim' }" % _ps_texto(REUNIAO_MEET_TITULO))
-        codigo, saida, erro = rodar(["powershell", "-NoProfile", "-NonInteractive", "-Command", script], espera=8)
+        codigo, saida, erro = rodar([powershell(), "-NoProfile", "-NonInteractive", "-Command", script], espera=8)
         return "sim" in (saida or "")
 
     def focar_reuniao_meet(self):
@@ -2499,12 +2844,33 @@ class SistemaWindows(Sistema):
             raise ErroAcao(tr("Este computador não tem saída de som ativa."))
         return {"ok": True, "info": "%s%%" % r["volume"]}
 
+    def _tela(self, ligar):
+        u = ctypes.WinDLL("user32")
+        u.PostMessageW.argtypes = (ctypes.c_void_p, ctypes.c_uint, ctypes.c_size_t, ctypes.c_ssize_t)
+        u.PostMessageW.restype = ctypes.c_int
+        if not ligar:
+            u.PostMessageW(0xFFFF, 0x0112, 0xF170, 2)
+            return {"ok": True}
+        k = ctypes.WinDLL("kernel32")
+        k.SetThreadExecutionState.argtypes = (ctypes.c_uint32,)
+        k.SetThreadExecutionState.restype = ctypes.c_uint32
+        k.SetThreadExecutionState(0x00000002 | 0x00000001)
+        u.PostMessageW(0xFFFF, 0x0112, 0xF170, -1)
+        try:
+            t = self.teclado()
+            t.enviar(t.mexer_mouse())
+        except ErroAcao:
+            pass
+        return {"ok": True}
+
     def energia(self, op):
+        if op in ("apagar_tela", "ligar_tela"):
+            return self._tela(op == "ligar_tela")
         if op == "bloquear":
             return self._primeiro_que_funciona([["rundll32.exe", "user32.dll,LockWorkStation"]], tr("Não consegui bloquear o Windows."))
         if op == "suspender":
             return self._primeiro_que_funciona([
-                ["powershell", "-NoProfile", "-NonInteractive", "-Command",
+                [powershell(), "-NoProfile", "-NonInteractive", "-Command",
                  "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Application]::SetSuspendState('Suspend', $false, $false)"],
                 ["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"],
             ], tr("Não consegui suspender o Windows."))
@@ -3193,8 +3559,18 @@ class SistemaLinux(Sistema):
             if caminho:
                 lancar([caminho])
                 return {"ok": True}
-        raise ErroAcao(tr("Não achei “%s” neste Linux (use o nome do menu de aplicativos ou o comando).")
-                       % candidatos[0])
+        raise ErroAppAusente(tr("Não achei “%s” neste Linux (use o nome do menu de aplicativos ou o comando).")
+                             % candidatos[0])
+
+    def onde_esta_app(self, candidatos):
+        for nome in candidatos:
+            achado = melhor_nome(nome, self.apps_instalados())
+            if achado:
+                return achado[1][1]
+            caminho = shutil.which(nome)
+            if caminho:
+                return caminho
+        return None
 
     def link(self, url):
         self._ok(["xdg-open", url])
@@ -3424,6 +3800,17 @@ class SistemaLinux(Sistema):
         return {"ok": True, "info": "%d%%" % alvo}
 
     def energia(self, op):
+        if op in ("apagar_tela", "ligar_tela"):
+            estado = "on" if op == "ligar_tela" else "off"
+            tentativas = []
+            if os.environ.get("WAYLAND_DISPLAY") or os.environ.get("XDG_SESSION_TYPE") == "wayland":
+                tentativas += [["kscreen-doctor", "--dpms", estado],
+                               ["gdbus", "call", "--session", "--dest", "org.gnome.ScreenSaver", "--object-path",
+                                "/org/gnome/ScreenSaver", "--method", "org.gnome.ScreenSaver.SetActive",
+                                "false" if estado == "on" else "true"]]
+            tentativas.append(["xset", "dpms", "force", estado])
+            return self._primeiro_que_funciona(tentativas, tr("Não consegui ligar a tela.") if estado == "on"
+                                               else tr("Não consegui apagar a tela."))
         if op == "bloquear":
             return self._primeiro_que_funciona([
                 ["loginctl", "lock-session"], ["xdg-screensaver", "lock"],
@@ -3602,8 +3989,13 @@ ALIAS_ENERGIA = {
     "reiniciar": "reiniciar", "restart": "reiniciar", "reboot": "reiniciar",
     "suspender": "suspender", "dormir": "suspender", "sleep": "suspender", "repouso": "suspender", "hibernar": "suspender",
     "bloquear": "bloquear", "lock": "bloquear", "travar": "bloquear", "tela": "bloquear", "bloquear_tela": "bloquear",
+    "apagar_tela": "apagar_tela", "desligar_tela": "apagar_tela", "tela_off": "apagar_tela", "screen_off": "apagar_tela",
+    "monitor_off": "apagar_tela", "ligar_tela": "ligar_tela", "acender_tela": "ligar_tela", "acordar_tela": "ligar_tela",
+    "acordar": "ligar_tela", "tela_on": "ligar_tela", "screen_on": "ligar_tela", "wake": "ligar_tela",
 }
-NOMES_ENERGIA = {"desligar": "Desligar", "reiniciar": "Reiniciar", "suspender": "Suspender", "bloquear": "Bloquear"}
+NOMES_ENERGIA = {"desligar": "Desligar", "reiniciar": "Reiniciar", "suspender": "Suspender", "bloquear": "Bloquear",
+                 "apagar_tela": "Apagar tela", "ligar_tela": "Ligar tela"}
+ENERGIA_LEVE = ("bloquear", "apagar_tela", "ligar_tela")
 ALIAS_MIDIA = {
     "play": "play", "pause": "play", "playpause": "play", "play/pause": "play", "play_pause": "play",
     "tocar": "play", "pausar": "play", "tocar_pausar": "play", "tocar/pausar": "play",
@@ -3771,7 +4163,7 @@ def normalizar_acao(b, onde, nivel=0):
         v = pega(b, "energia", "acao", "ação")
         m = ALIAS_ENERGIA.get(simples(v)) if isinstance(v, str) else None
         if not m:
-            raise ErroConfig(tr('%s: "energia" deve ser desligar, reiniciar, suspender ou bloquear') % onde)
+            raise ErroConfig(tr('%s: "energia" deve ser desligar, reiniciar, suspender, bloquear, apagar_tela ou ligar_tela') % onde)
         a["energia"] = m
     elif tipo == "pagina":
         v = pega(b, "pagina", "página", "destino")
@@ -3860,7 +4252,7 @@ def energia_perigosa(a):
         return False
     if a["tipo"] == "sequencia":
         return any(energia_perigosa(p) for p in a["acoes"])
-    return a["tipo"] == "energia" and a["energia"] != "bloquear"
+    return a["tipo"] == "energia" and a["energia"] not in ENERGIA_LEVE
 
 
 def tipos_em(a):
@@ -3969,7 +4361,7 @@ LUZES = {"parada": "parada", "parado": "parada", "fixa": "parada", "ligada": "pa
 
 
 class Deck:
-    def __init__(self, nome, colunas, linhas, paginas, avisos, versao, tema="preto", luz="parada"):
+    def __init__(self, nome, colunas, linhas, paginas, avisos, versao, tema="preto", luz="parada", acordado=True):
         self.nome = nome
         self.colunas = colunas
         self.linhas = linhas
@@ -3978,6 +4370,7 @@ class Deck:
         self.versao = versao
         self.tema = tema
         self.luz = luz
+        self.acordado = acordado
         self.total = sum(1 for p in paginas for b in p["botoes"] if b)
 
     @classmethod
@@ -4088,7 +4481,7 @@ def montar_deck(dados, versao):
         nome=str(dados.get("nome") or "Deck")[:40],
         colunas=_limitar(grade.get("colunas"), 1, 8, 4),
         linhas=_limitar(grade.get("linhas"), 1, 8, 2),
-        paginas=paginas, avisos=avisos, versao=versao, tema=tema, luz=luz,
+        paginas=paginas, avisos=avisos, versao=versao, tema=tema, luz=luz, acordado=dados.get("acordado") is not False,
     )
 
 
@@ -4119,6 +4512,7 @@ def ler_config(caminho):
     if isinstance(dados, dict):
         definir_idioma(dados.get("idioma"))
         traduzir_nomes_padrao(dados)
+        corrigir_padroes_antigos(dados)
     return montar_deck(dados, versao), dados
 
 
@@ -4270,7 +4664,7 @@ def _enderecos_windows():
     comando = ("Get-NetIPAddress -AddressFamily IPv4 | ForEach-Object { $a = Get-NetAdapter -InterfaceIndex $_.InterfaceIndex "
                "-ErrorAction SilentlyContinue; [pscustomobject]@{ip=$_.IPAddress; nome=$_.InterfaceAlias; "
                "desc=[string]$a.InterfaceDescription; estado=[string]$a.Status} } | ConvertTo-Json -Compress")
-    texto = _saida(["powershell", "-NoProfile", "-NonInteractive", "-Command", comando])
+    texto = _saida([powershell(), "-NoProfile", "-NonInteractive", "-Command", comando])
     lista = []
     try:
         dados = json.loads(texto) if texto.strip() else []
@@ -5322,6 +5716,25 @@ def chave_do_navegador(nome):
     return None
 
 
+APPS_NA_WEB = {
+    "spotify": "https://open.spotify.com", "whatsapp": "https://web.whatsapp.com", "telegram": "https://web.telegram.org",
+    "discord": "https://discord.com/app", "slack": "https://app.slack.com", "notion": "https://www.notion.so",
+    "figma": "https://www.figma.com", "microsoft teams": "https://teams.microsoft.com", "teams": "https://teams.microsoft.com",
+    "deezer": "https://www.deezer.com", "chatgpt": "https://chatgpt.com", "canva": "https://www.canva.com",
+    "youtube music": "https://music.youtube.com", "trello": "https://trello.com",
+}
+
+
+def app_na_web(candidatos):
+    for c in candidatos or ():
+        base = re.split(r"[\\/]", str(c).strip())[-1]
+        for nome in (str(c), re.sub(r"\.(exe|app|lnk|desktop)$", "", base, flags=re.I)):
+            url = APPS_NA_WEB.get(comparavel(nome))
+            if url:
+                return url
+    return None
+
+
 def pedido_da_acao(acao):
     if not acao:
         return None
@@ -5447,6 +5860,11 @@ class Icones:
     def arquivo(self, chave):
         with self.trava:
             return self.indice.get(chave)
+
+    def sem_alvo(self, pedido):
+        with self.trava:
+            r = self.alvos.get(pedido)
+            return r is not None and r[0] is None
 
     def _com_reserva(self, url, info):
         if info.get("icone"):
@@ -5994,7 +6412,15 @@ class Executor:
         if t == "texto":
             return s.texto(a["texto"], a.get("app"))
         if t == "app":
-            return s.app(a["apps"])
+            try:
+                return s.app(a["apps"])
+            except ErroAppAusente:
+                web = app_na_web(a["apps"])
+                if not web:
+                    raise
+                if not s.focar_aba(web, None):
+                    s.abrir_site(web, None)
+                return {"ok": True, "mensagem": tr("“%s” não está instalado neste computador: abri a versão web.") % a["apps"][0]}
         if t == "link":
             if a.get("aba", True) and a["url"].lower().startswith(ESQUEMAS_SITE) and s.focar_aba(a["url"], a.get("navegador")):
                 return {"ok": True}
@@ -6109,6 +6535,11 @@ class Estado:
         if not pedido:
             return None, None, None
         estado, arquivo = self.icones.consultar(pedido)
+        if pedido[0] == "app" and not arquivo and self.icones.sem_alvo(pedido):
+            web = app_na_web(pedido[1:])
+            if web:
+                pedido = ("site", web)
+                estado, arquivo = self.icones.consultar(pedido)
         alternativo = None
         if pedido[0] == "site":
             alt = self.icones.arquivo("alt|" + pedido[1])
@@ -6453,7 +6884,14 @@ class Estado:
                 return
             s.abrir_site(url, None)
         else:
-            s.app([item])
+            try:
+                s.app([item])
+            except ErroAppAusente:
+                web = app_na_web([item])
+                if not web:
+                    raise
+                if not s.focar_aba(web, None):
+                    s.abrir_site(web, None)
 
     def _passo_do_modo(self, avisos, funcao, *args):
         try:
@@ -6635,6 +7073,14 @@ class Estado:
             raise ErroAcao(tr("Não achei a janela do %s para mandar o atalho.") % nome)
         s.teclas([ler_combinacao(combo, nome)], None, 0.08)
         return {"ok": True}
+
+    def vigiar_sono(self):
+        while True:
+            try:
+                self.sistema.manter_acordado(self.deck().acordado)
+            except Exception:
+                pass
+            time.sleep(20)
 
     def vigiar_chamadas(self):
         if SISTEMA != "mac":
@@ -6874,8 +7320,8 @@ PUBLICOS = {
 SO_NO_COMPUTADOR = {"/parear": "parear.html", "/parear.js": "parear.js", "/qrcode.js": "qrcode.js",
                     "/editar": "editar.html", "/editar.js": "editar.js", "/editar.css": "editar.css",
                     "/conectar.js": "conectar.js", "/conectar.css": "conectar.css", "/guia": "guia.html"}
-CSP = ("default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; "
-       "connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'")
+CSP = ("default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self' 'unsafe-inline'; "
+       "script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'")
 HOSTS_LOCAIS = {"127.0.0.1", "localhost", "::1"}
 LIMITES_POST = {"/api/apertar": 65536, "/api/editor": 2 * 1024 * 1024, "/api/editor/site": 8192,
                 "/api/editor/imagem": 6 * 1024 * 1024, "/api/editor/celulares": 4096,
@@ -7218,9 +7664,371 @@ def banner(estado):
         print(tr("  Link (nome):         ") + info["urlNome"])
     print("  " + linha)
     print("  " + cinza(tr("O que você muda no editor aparece no celular na hora. Deixe esta janela aberta; Ctrl+C desliga.")))
+    if SISTEMA in ("mac", "windows") and estado.deck().acordado:
+        print("  " + cinza(tr("Na tomada, o computador não dorme enquanto o deck estiver aberto (a tela pode apagar). "
+                              "Dá para mudar em Configurações.")))
     if SISTEMA == "windows":
         print("  " + amarelo(tr("Se o Windows perguntar sobre o Firewall, marque Redes privadas e clique em Permitir.")))
     print()
+
+
+NOMES_TECLAS_LEGIVEIS = {"enter": "Enter", "tab": "Tab", "space": "Espaço", "backspace": "Backspace", "delete": "Delete",
+                         "fdelete": "Delete", "esc": "Esc", "home": "Home", "end": "End", "pageup": "Page Up",
+                         "pagedown": "Page Down", "left": "←", "right": "→", "up": "↑", "down": "↓", "insert": "Insert",
+                         "print": "Print Screen"}
+HOTKEYS_MAC = {(("cmd", "shift"), "char", "3"): (28, 20), (("cmd", "shift"), "char", "4"): (30, 21),
+               (("cmd", "shift"), "char", "5"): (184, 23), ((), "nome", "f11"): (36, 103),
+               (("ctrl",), "nome", "up"): (32, 126), (("ctrl",), "nome", "down"): (33, 125)}
+
+
+def descrever_combo(combo):
+    mods, (tipo, valor) = combo
+    if SISTEMA == "mac":
+        ordem = (("ctrl", "Control"), ("alt", "Option"), ("cmd", "Cmd"), ("win", "Cmd"), ("shift", "Shift"))
+    else:
+        ordem = (("win", "Win" if SISTEMA == "windows" else "Super"), ("cmd", "Ctrl"), ("ctrl", "Ctrl"), ("alt", "Alt"),
+                 ("shift", "Shift"))
+    partes = []
+    for chave, nome in ordem:
+        if chave in mods and nome not in partes:
+            partes.append(nome)
+    if tipo == "char":
+        tecla = tr("Espaço") if valor == " " else valor.upper()
+    else:
+        tecla = tr(NOMES_TECLAS_LEGIVEIS.get(valor, valor.upper()))
+    return "+".join(partes + [tecla])
+
+
+def _hotkeys_mac():
+    try:
+        codigo, saida, erro = rodar(["defaults", "export", "com.apple.symbolichotkeys", "-"], espera=6)
+        return (plistlib.loads(saida.encode("utf-8")).get("AppleSymbolicHotKeys") or {}) if codigo == 0 and saida else {}
+    except Exception:
+        return {}
+
+
+def _acessibilidade_mac():
+    try:
+        saida = osascript("ObjC.import('ApplicationServices'); $.AXIsProcessTrusted()", js=True, espera=8)
+    except ErroAcao:
+        return None
+    return {"true": True, "false": False}.get((saida or "").strip())
+
+
+class Autoteste:
+    def __init__(self, caminho):
+        self.caminho = caminho
+        self.s = criar_sistema()
+        self.linhas = []
+        self.conta = {"ok": 0, "aviso": 0, "erro": 0}
+        self.ax = None
+        self.hotkeys = {}
+        self.audio = None
+        self.atalhos_mac = None
+
+    def escrever(self, texto="", cor=None):
+        self.linhas.append(texto)
+        print(cor(texto) if cor else texto, flush=True)
+
+    def marcar(self, estado, titulo, texto):
+        simbolo = {"ok": "✓", "aviso": "!", "erro": "✗", "info": "•"}[estado]
+        cor = {"ok": verde, "aviso": amarelo, "erro": vermelho, "info": cinza}[estado]
+        if estado in self.conta:
+            self.conta[estado] += 1
+        self.linhas.append("  %s %s: %s" % (simbolo, titulo, texto))
+        print("  " + cor(simbolo) + " " + negrito(titulo) + ": " + texto, flush=True)
+
+    def ambiente(self):
+        bits = struct.calcsize("P") * 8
+        self.marcar("info", tr("Computador"), "%s · %s" % (nome_do_computador(), platform.platform()))
+        self.marcar("info", "Python", "%s (%d bits) · %s" % (platform.python_version(), bits, sys.executable))
+        self.marcar("info", tr("Botões"), self.caminho)
+        if SISTEMA == "windows" and bits == 32 and os.environ.get("PROCESSOR_ARCHITEW6432"):
+            self.marcar("aviso", "Python", tr("Python de 32 bits num Windows de 64 bits: funciona, mas o ideal é instalar o Python de 64 bits."))
+        passos = [(tr("Saída de som"), self._audio), (tr("Tocando agora"), self._tocando)]
+        if SISTEMA == "windows":
+            passos.insert(0, (tr("Menu Iniciar"), self._windows))
+        if SISTEMA == "mac":
+            passos.insert(0, (tr("Acessibilidade"), self._mac))
+        for titulo, funcao in passos:
+            try:
+                funcao()
+            except Exception as e:
+                self.marcar("aviso", titulo, tr("não consegui conferir") + " (%s)" % str(e)[:160])
+
+    def _windows(self):
+        self.marcar("info", "PowerShell", powershell())
+        self.s.apps_iniciar()
+        info = self.s._apps_info or {}
+        if info.get("total"):
+            self.marcar("ok", tr("Menu Iniciar"), tr("%d apps encontrados (%s)") % (info["total"], info.get("fonte") or "?"))
+        else:
+            detalhe = " · ".join(x for x in (info.get("motivo"), info.get("detalhe")) if x)
+            self.marcar("erro", tr("Menu Iniciar"), tr("não consegui ler a lista de apps") + (" (%s)" % detalhe if detalhe else ""))
+
+    def _mac(self):
+        self.ax = _acessibilidade_mac()
+        self.hotkeys = _hotkeys_mac()
+        if self.ax:
+            self.marcar("ok", tr("Acessibilidade"), tr("o Terminal pode mandar teclas"))
+        elif self.ax is False:
+            self.marcar("erro", tr("Acessibilidade"), tr("o Terminal não pode mandar teclas: Ajustes do Sistema › Privacidade e Segurança › Acessibilidade › ative o Terminal"))
+        else:
+            self.marcar("aviso", tr("Acessibilidade"), tr("não consegui conferir"))
+        if shutil.which("shortcuts"):
+            codigo, saida, erro = rodar(["shortcuts", "list"], espera=10)
+            self.atalhos_mac = {comparavel(x) for x in (saida or "").splitlines() if x.strip()} if codigo == 0 else None
+
+    def _audio(self):
+        self.audio = self.s.audio()
+        a = self.audio or {}
+        if a.get("tem_som"):
+            self.marcar("ok", tr("Saída de som"), tr("volume em %s%%") % a.get("volume") + (tr(" (no mudo)") if a.get("som_mudo") else ""))
+        else:
+            self.marcar("aviso", tr("Saída de som"), tr("não consegui ler o volume deste computador"))
+        if a.get("tem_mic"):
+            self.marcar("ok", tr("Microfone"), tr("no mudo") if a.get("mic_mudo") else tr("ligado"))
+        else:
+            self.marcar("aviso", tr("Microfone"), tr("não achei um microfone padrão"))
+
+    def _tocando(self):
+        destino = os.path.join(tempfile.gettempdir(), "deck-autoteste-capa")
+        try:
+            r = self.s.tocando("", destino) or {}
+            if r.get("tem"):
+                self.marcar("ok", tr("Tocando agora"), " · ".join(x for x in (r.get("app"), r.get("titulo"), r.get("artista")) if x))
+            else:
+                self.marcar("ok", tr("Tocando agora"), tr("nada tocando (dê play em algo para conferir o player)"))
+        except ErroAcao as e:
+            self.marcar("aviso", tr("Tocando agora"), str(e))
+        finally:
+            try:
+                os.remove(destino)
+            except OSError:
+                pass
+            proc = getattr(self.s, "_proc_player", None)
+            if proc is not None:
+                proc.fechar()
+
+    def precisa_ax(self):
+        if SISTEMA == "mac" and self.ax is False:
+            return tr("falta a permissão de Acessibilidade (veja acima)")
+        return None
+
+    def teclas(self, a):
+        partes, estado, notas = [], "ok", []
+        for combo in a["combos"]:
+            partes.append(descrever_combo(combo))
+            mods, (tipo, valor) = combo
+            if SISTEMA == "windows" and tipo == "char" and mods:
+                try:
+                    if TecladoWindows().user32.VkKeyScanW(valor) == -1:
+                        estado = "erro"
+                        notas.append(tr("a tecla “%s” não existe no teclado atual") % valor)
+                except Exception:
+                    pass
+            if SISTEMA == "windows" and "win" in mods and (tipo, valor) == ("char", "s") and "shift" in mods:
+                if pacote_instalado("Microsoft.ScreenSketch_8wekyb3d8bbwe") is False:
+                    estado = "aviso"
+                    notas.append(tr("o Win+Shift+S precisa da Ferramenta de Captura instalada"))
+            if SISTEMA == "mac":
+                chave = (tuple(m if m != "win" else "cmd" for m in mods), tipo, valor)
+                chave = (tuple(sorted(set(chave[0]))), tipo, valor)
+                if chave in HOTKEYS_MAC:
+                    ident, codigo = HOTKEYS_MAC[chave]
+                    item = self.hotkeys.get(str(ident)) or {}
+                    parametros = ((item.get("value") or {}).get("parameters") or [None, None])
+                    if item.get("enabled") is False:
+                        estado = "aviso"
+                        notas.append(tr("este atalho está desligado em Ajustes do Sistema › Teclado › Atalhos de Teclado"))
+                    elif len(parametros) > 1 and parametros[1] not in (None, codigo):
+                        estado = "aviso"
+                        notas.append(tr("este atalho foi trocado em Ajustes do Sistema › Teclado › Atalhos de Teclado"))
+        texto = tr("aperta %s") % ", ".join(partes)
+        if a.get("app"):
+            texto += tr(" no app %s") % a["app"]
+        falta = self.precisa_ax()
+        if falta:
+            return "erro", texto + " · " + falta
+        return estado, texto + ("".join(" · " + n for n in notas))
+
+    def acao(self, a):
+        s = self.s
+        t = a["tipo"]
+        motivo = s.motivo(a) or motivo_fixo(a)
+        if motivo:
+            return "erro", motivo
+        if t == "app":
+            onde = s.onde_esta_app(a["apps"])
+            if onde:
+                return "ok", tr("abre %s") % onde
+            web = app_na_web(a["apps"])
+            if web:
+                return "aviso", tr("não está instalado: o botão abre %s") % web
+            return "erro", tr("não achei “%s” neste computador") % a["apps"][0]
+        if t == "teclas":
+            return self.teclas(a)
+        if t == "texto":
+            falta = self.precisa_ax()
+            texto = tr("digita “%s”") % (a["texto"][:40] + ("…" if len(a["texto"]) > 40 else ""))
+            return ("erro", texto + " · " + falta) if falta else ("ok", texto)
+        if t == "link":
+            nav = a.get("navegador")
+            if not nav:
+                chave = s.navegador_padrao()
+                nav = POR_CHAVE[chave]["nome"] if chave in POR_CHAVE else tr("navegador padrão")
+            return "ok", tr("abre %s no %s") % (a["url"], nav)
+        if t == "midia":
+            falta = self.precisa_ax()
+            nomes = {"play": tr("tocar/pausar"), "proxima": tr("próxima"), "anterior": tr("anterior")}
+            texto = tr("tecla de mídia: %s") % nomes[a["midia"]]
+            return ("erro", texto + " · " + falta) if falta else ("ok", texto)
+        if t == "volume":
+            if not (self.audio or {}).get("tem_som"):
+                return "aviso", tr("não consegui ler o volume deste computador")
+            return "ok", {"subir": tr("sobe o volume"), "descer": tr("desce o volume"), "mudo": tr("liga/desliga o mudo")}.get(
+                a["volume"], tr("põe o volume em %s%%") % a["volume"])
+        if t == "microfone":
+            if not (self.audio or {}).get("tem_mic"):
+                return "aviso", tr("não achei um microfone padrão")
+            return "ok", tr("liga/desliga o mudo do microfone")
+        if t == "energia":
+            if a["energia"] == "apagar_tela":
+                return "ok", tr("apaga só a tela; o computador continua ligado e o deck responde")
+            if a["energia"] == "ligar_tela":
+                return "ok", tr("acende a tela de novo (se o computador não estiver dormindo)")
+            return "info", tr("não testei de verdade (ia %s o computador)") % tr(NOMES_ENERGIA[a["energia"]]).lower()
+        if t == "comando":
+            return "info", tr("roda: %s") % a["comando"][:80]
+        if t == "applescript":
+            return "info", tr("roda um AppleScript")
+        if t == "atalho":
+            if self.atalhos_mac is not None and comparavel(a["atalho"]) not in self.atalhos_mac:
+                return "erro", tr("o atalho “%s” não existe no app Atalhos") % a["atalho"]
+            return "ok", tr("roda o atalho “%s”") % a["atalho"]
+        if t == "pagina":
+            return "ok", tr("vai para outra página")
+        if t == "esperar":
+            return "ok", tr("espera %s s") % _num(a["segundos"])
+        if t == "chamada":
+            return self.chamada(a)
+        if t == "modo":
+            return self.modo(a)
+        if t == "sequencia":
+            pior, textos = "ok", []
+            for passo in a["acoes"]:
+                estado, texto = self.acao(passo)
+                textos.append(texto)
+                if ("erro", "aviso", "ok", "info").index(estado) < ("erro", "aviso", "ok", "info").index(pior):
+                    pior = estado
+            return pior, " → ".join(textos)
+        return "info", t
+
+    def chamada(self, a):
+        apps = [a["app"]] if a["app"] != "auto" else ORDEM_CHAMADA
+        lado = "mac" if SISTEMA == "mac" else "outros"
+        partes = []
+        for app in apps:
+            combo = ATALHOS_CHAMADA.get(app, {}).get(lado, {}).get(a["chamada"])
+            if combo:
+                partes.append("%s %s" % (APPS_CHAMADA[app]["nome"], descrever_combo(ler_combinacao(combo, app))))
+        if a["chamada"] == "mudo":
+            partes.append(tr("sem reunião aberta: muta o microfone do computador"))
+        if a["chamada"] in ("atender", "recusar") and SISTEMA == "mac":
+            partes.insert(0, tr("clica no aviso da chamada"))
+        falta = self.precisa_ax()
+        if falta:
+            return "erro", " · ".join(partes) + " · " + falta
+        if not partes:
+            return "aviso", tr("nenhum app de chamada tem atalho para isso")
+        return "ok", " · ".join(partes)
+
+    def modo(self, a):
+        partes, estado = [], "ok"
+        if a.get("volume") is not None:
+            partes.append(tr("volume %d%%") % a["volume"])
+        if a.get("nao_perturbe"):
+            if SISTEMA == "windows":
+                estado = "aviso"
+                partes.append(tr("Não perturbe: no Windows não liga sozinho (Win+N)"))
+            elif SISTEMA == "mac":
+                nomes = {comparavel(n) for n in ATALHOS_FOCO_MAC[True]}
+                if self.atalhos_mac is not None and not (nomes & self.atalhos_mac):
+                    estado = "aviso"
+                    partes.append(tr("Não perturbe: falta criar o atalho “Deck Foco Ligar” no app Atalhos"))
+                else:
+                    partes.append(tr("liga o Não perturbe"))
+            else:
+                partes.append(tr("liga o Não perturbe"))
+        for item in a.get("abrir") or []:
+            if tem_esquema(item) or re.match(r"^[\w.-]+\.[a-z]{2,}(/|$)", item, re.I):
+                partes.append(tr("abre %s") % item)
+                continue
+            if self.s.onde_esta_app([item]):
+                partes.append(tr("abre %s") % item)
+            elif app_na_web([item]):
+                if estado == "ok":
+                    estado = "aviso"
+                partes.append(tr("%s não está instalado (abre a versão web)") % item)
+            else:
+                estado = "erro"
+                partes.append(tr("não achei “%s”") % item)
+        if a.get("fechar"):
+            partes.append(tr("fecha %s") % ", ".join(a["fechar"]))
+        if a.get("minutos"):
+            partes.append(tr("cronômetro de %d min") % a["minutos"])
+        if a.get("pagina") is not None:
+            partes.append(tr("vai para a página %s") % a["pagina"])
+        return estado, " · ".join(partes)
+
+    def rodar(self):
+        self.escrever()
+        self.escrever(tr("  Deck v%s · autoteste no %s") % (VERSAO, NOMES_SISTEMA[SISTEMA]), negrito)
+        self.escrever(tr("  Nada é apertado de verdade: só confiro se cada botão tem o que precisa neste computador."), cinza)
+        self.escrever()
+        self.ambiente()
+        try:
+            deck = ler_config(self.caminho)[0]
+        except (ErroConfig, OSError) as e:
+            self.escrever()
+            self.marcar("erro", "config.json", str(e))
+            deck = None
+        if deck and SISTEMA in ("mac", "windows"):
+            self.marcar("info", tr("Na tomada"), tr("o computador não dorme com o deck aberto (a tela pode apagar)") if deck.acordado
+                        else tr("o computador pode dormir; aí o celular não alcança mais (Configurações)"))
+        for p in (deck.paginas if deck else []):
+            self.escrever()
+            self.escrever("  " + p["nome"] + (tr(" (player)") if p.get("tipo") == "player" else ""), negrito)
+            if p.get("tipo") == "player":
+                self.marcar("info", tr("Player"), tr("mostra o que está tocando (veja “Tocando agora” acima)"))
+                continue
+            for bt in p["botoes"]:
+                if not bt:
+                    continue
+                titulo = bt["titulo"] or bt["icone"] or "?"
+                if bt["erro"]:
+                    self.marcar("erro", titulo, bt["erro"])
+                    continue
+                if bt["fora"]:
+                    self.marcar("aviso", titulo, bt["fora"])
+                    continue
+                try:
+                    estado, texto = self.acao(bt["acao"])
+                except Exception as e:
+                    estado, texto = "erro", tr("falhou ao conferir: %s") % str(e)[:160]
+                self.marcar(estado, titulo, texto)
+        self.escrever()
+        resumo = tr("  Resumo: %d ok, %d avisos, %d problemas") % (self.conta["ok"], self.conta["aviso"], self.conta["erro"])
+        self.escrever(resumo, vermelho if self.conta["erro"] else (amarelo if self.conta["aviso"] else verde))
+        arquivo = os.path.join(PASTA, "autoteste.txt")
+        try:
+            with open(arquivo, "w", encoding="utf-8") as f:
+                f.write("\n".join(self.linhas) + "\n")
+            self.escrever(tr("  Resultado salvo em %s (dá para mandar esse arquivo para quem te ajuda).") % arquivo, cinza)
+        except OSError:
+            pass
+        self.escrever()
+        return 1 if self.conta["erro"] else 0
 
 
 def main():
@@ -7239,6 +8047,8 @@ def main():
     ap.add_argument("--idioma", default="", help=tr("idioma da interface: auto, pt ou en"))
     ap.add_argument("--config", default=ARQ_CONFIG_LOCAL if os.path.isfile(ARQ_CONFIG_LOCAL) else ARQ_CONFIG,
                     help=tr("caminho do config.json (se existir config.local.json, ele é usado)"))
+    ap.add_argument("--autoteste", "--diagnostico", action="store_true",
+                    help=tr("confere cada botão neste computador, sem apertar nenhum, e salva autoteste.txt"))
     args = ap.parse_args()
     if idioma_pedido(args.idioma) != "auto":
         global IDIOMA_FORCADO
@@ -7247,6 +8057,9 @@ def main():
 
     if sys.version_info < (3, 8):
         sys.exit(tr("Precisa do Python 3.8 ou mais novo (você tem %d.%d).") % sys.version_info[:2])
+
+    if args.autoteste:
+        sys.exit(Autoteste(os.path.abspath(args.config)).rodar())
 
     token, token_novo = carregar_token(args.novo_link)
     estado = Estado(os.path.abspath(args.config), token, args.porta)
@@ -7263,6 +8076,8 @@ def main():
     estado.imagens(estado.deck())
     if SISTEMA == "windows":
         threading.Thread(target=estado.sistema.apps_iniciar, daemon=True).start()
+    if SISTEMA in ("mac", "windows") and not os.environ.get("DECK_SISTEMA"):
+        threading.Thread(target=estado.vigiar_sono, daemon=True).start()
     if token_novo and args.novo_link:
         log(amarelo(tr("Link novo gerado: os celulares precisam escanear o QR code de novo.")))
     tem_tela = SISTEMA != "linux" or os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")

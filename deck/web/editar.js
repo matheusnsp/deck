@@ -68,7 +68,7 @@
     midia: { nome: tr('Mídia'), desc: tr('Tocar, pausar e pular'), icone: 'midia' },
     volume: { nome: 'Volume', desc: tr('Subir, baixar ou mudo'), icone: 'volume' },
     microfone: { nome: tr('Microfone'), desc: tr('Liga e desliga o mudo'), icone: 'microfone' },
-    energia: { nome: tr('Energia'), desc: tr('Desligar, reiniciar, suspender, bloquear'), icone: 'energia' },
+    energia: { nome: tr('Energia'), desc: tr('Desligar, suspender, bloquear, apagar e ligar a tela'), icone: 'energia' },
     modo: { nome: tr('Modo'), desc: tr('Foco, trabalho, estudo: abre, fecha e silencia'), icone: 'modo' },
     chamada: { nome: tr('Chamada'), desc: tr('Atender, mudo, câmera, encerrar'), icone: 'chamada' },
     pagina: { nome: tr('Ir para página'), desc: tr('Troca a página no celular'), icone: 'pagina' },
@@ -91,10 +91,15 @@
     tocar_pausar: 'play', 'tocar/pausar': 'play', proxima: 'proxima', proximo: 'proxima', next: 'proxima', avancar: 'proxima', seguinte: 'proxima',
     anterior: 'anterior', previous: 'anterior', prev: 'anterior', voltar: 'anterior' };
   var VOLUME = [['subir', tr('Subir'), '🔊', 'Volume +'], ['descer', tr('Baixar'), '🔉', 'Volume −'], ['mudo', tr('Mudo'), '🔇', tr('Mudo')]];
-  var ENERGIA = [['desligar', tr('Desligar'), '⏻'], ['reiniciar', tr('Reiniciar'), '🔄'], ['suspender', tr('Suspender'), '🌙'], ['bloquear', tr('Bloquear'), '🔒']];
+  var ENERGIA = [['desligar', tr('Desligar'), '⏻'], ['reiniciar', tr('Reiniciar'), '🔄'], ['suspender', tr('Suspender'), '🌙'], ['bloquear', tr('Bloquear'), '🔒'],
+    ['apagar_tela', tr('Apagar tela'), '🌑'], ['ligar_tela', tr('Ligar tela'), '🔆']];
+  var ENERGIA_LEVE = ['bloquear', 'apagar_tela', 'ligar_tela'];
   var ALIAS_ENERGIA = { desligar: 'desligar', shutdown: 'desligar', poweroff: 'desligar', apagar: 'desligar', off: 'desligar',
     reiniciar: 'reiniciar', restart: 'reiniciar', reboot: 'reiniciar', suspender: 'suspender', dormir: 'suspender', sleep: 'suspender',
-    repouso: 'suspender', hibernar: 'suspender', bloquear: 'bloquear', lock: 'bloquear', travar: 'bloquear', tela: 'bloquear', bloquear_tela: 'bloquear' };
+    repouso: 'suspender', hibernar: 'suspender', bloquear: 'bloquear', lock: 'bloquear', travar: 'bloquear', tela: 'bloquear', bloquear_tela: 'bloquear',
+    apagar_tela: 'apagar_tela', desligar_tela: 'apagar_tela', tela_off: 'apagar_tela', screen_off: 'apagar_tela', monitor_off: 'apagar_tela',
+    ligar_tela: 'ligar_tela', acender_tela: 'ligar_tela', acordar_tela: 'ligar_tela', acordar: 'ligar_tela', tela_on: 'ligar_tela',
+    screen_on: 'ligar_tela', wake: 'ligar_tela' };
   function energiaDe(b) { var x = ENERGIA.filter(function (e) { return e[0] === ALIAS_ENERGIA[simples(ler(b, 'energia') || 'desligar')]; })[0]; return x || ENERGIA[0]; }
   var ALIAS_VOLUME = { subir: 'subir', aumentar: 'subir', mais: 'subir', '+': 'subir', up: 'subir', descer: 'descer', baixar: 'descer',
     diminuir: 'descer', menos: 'descer', '-': 'descer', down: 'descer', mudo: 'mudo', mute: 'mudo', silenciar: 'mudo' };
@@ -1067,6 +1072,9 @@
       }), h('p', { class: 'nota', text: tr('Só no tema Preto. Correndo: a luz dá a volta na borda de cada botão. Desligada: sem o brilho colorido.') })),
       secao(tr('Grade (celular deitado)'), sel, h('p', { class: 'nota', text: tr('Em pé, as colunas viram linhas. Páginas com mais botões do que a grade viram telas extras.') })),
       secao(tr('Idioma'), idiomaSel, h('p', { class: 'nota', text: tr('Vale para o editor, o celular e o guia. Automático segue o idioma do computador.') })),
+      S.sistema === 'linux' ? null : secao(tr('Computador na tomada'), segmentos([['acordado', tr('Fica acordado')], ['dorme', tr('Pode dormir')]], S.cfg.acordado === false ? 'dorme' : 'acordado', function (v) {
+        mudar(function () { if (v === 'acordado') delete S.cfg.acordado; else S.cfg.acordado = false; });
+      }), h('p', { class: 'nota', text: tr('Com o deck aberto e o computador na tomada, ele não dorme sozinho: a tela pode apagar e o botão Ligar tela acende de novo pelo celular. Na bateria, dorme como sempre.') })),
       secao(tr('Celular'), conectar, h('p', { class: 'nota', text: tr('Os botões aparecem no celular na hora, sem precisar reconectar.') }))));
   }
 
@@ -1286,8 +1294,9 @@
     pn.appendChild(secaoIcone(b, p, i));
     pn.appendChild(secaoCor(b, p, i));
 
-    var conf = h('input', { type: 'checkbox', checked: tipo === 'energia' ? ler(b, 'confirmar') !== false : !!ler(b, 'confirmar') });
-    conf.addEventListener('change', function () { mudar(function () { escrever(b, 'confirmar', conf.checked ? true : (tipo === 'energia' ? false : null)); }, { painel: false }); });
+    var confPadrao = tipo === 'energia' && ENERGIA_LEVE.indexOf(energiaDe(b)[0]) < 0;
+    var conf = h('input', { type: 'checkbox', checked: ler(b, 'confirmar') === true || (ler(b, 'confirmar') == null && confPadrao) });
+    conf.addEventListener('change', function () { mudar(function () { escrever(b, 'confirmar', conf.checked === confPadrao ? null : conf.checked); }, { painel: false }); });
     pn.appendChild(secao(null, h('label', { class: 'chave' }, conf, h('span', { class: 'trilho' }), h('span', { text: tr('Pedir um segundo toque antes de executar') }))));
 
     var rodape = h('div', { class: 'rodape-painel' });
@@ -1326,20 +1335,25 @@
       });
       if (!achou) navSel.appendChild(h('option', { value: navAtual, text: navAtual + tr(' (não achei aqui)'), selected: true }));
       navSel.addEventListener('change', function () { mudar(function () { escrever(b, 'navegador', navSel.value || null); }, { painel: false }); });
-      var partes = [secao(tr('Endereço'), seletorSites(ler(b, 'url'), tr('Salvar'), function (dados, sug) {
+      var opcoes = [secao(tr('Abrir em'), navSel)];
+      if (S.sistema === 'mac') {
+        var modoAba = ler(b, 'aba') === false ? 'nova' : 'trazer';
+        opcoes.push(secao(tr('Se o site já estiver aberto'), segmentos([['trazer', tr('Trazer a aba para frente')], ['nova', tr('Abrir outra aba')]], modoAba, function (v) {
+          mudar(function () { escrever(b, 'aba', v === 'nova' ? false : null); });
+        }), h('p', { class: 'nota', text: modoAba === 'trazer'
+          ? tr('Tocou de novo, volta para a mesma aba: nada de abas repetidas. Funciona com Safari, Chrome, Edge, Brave, Arc, Vivaldi e Opera.')
+          : tr('Cada toque abre uma aba nova do site.') })));
+      } else {
+        opcoes.push(secao(tr('Se o site já estiver aberto'), h('p', { class: 'nota', text: tr('No Windows e no Linux cada toque abre uma aba nova. Trazer para frente a aba que já está aberta só funciona no Mac.') })));
+      }
+      return secao(tr('Endereço'), seletorSites(ler(b, 'url'), tr('Salvar'), function (dados, sug) {
         if (sug.pedido && sug.img) S.mapaImg[sug.pedido] = sug.img;
         var auto = !tituloDe(b) || tituloDe(b) === tituloPadrao(b);
         mudar(function () {
           escrever(b, 'url', dados.url);
           if (auto && sug.titulo) escrever(b, 'titulo', sug.titulo);
         });
-      }, true)), secao(tr('Abrir em'), navSel)];
-      if (S.sistema === 'mac') {
-        var reusar = h('input', { type: 'checkbox', checked: ler(b, 'aba') !== false });
-        reusar.addEventListener('change', function () { mudar(function () { escrever(b, 'aba', reusar.checked ? null : false); }, { painel: false }); });
-        partes.push(secao(null, h('label', { class: 'chave' }, reusar, h('span', { class: 'trilho' }), h('span', { text: tr('Se a aba já estiver aberta, só trazer para frente') }))));
-      }
-      return h('div', null, partes);
+      }, true, h('div', { class: 'opcoes-site' }, opcoes)));
     }
     if (tipo === 'teclas') {
       var atual = ler(b, 'teclas');
@@ -1409,6 +1423,8 @@
       var textoE = function (v) {
         if (v === 'suspender') return tr('O computador dorme na hora. Para acordar: qualquer tecla ou o mouse. No Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, ele acorda sozinho quando o Deck abre no celular.');
         if (v === 'bloquear') return tr('Vai para a tela de bloqueio; os programas continuam abertos.');
+        if (v === 'apagar_tela') return tr('Apaga só a tela. O computador continua ligado, então o deck segue respondendo e o botão Ligar tela acende de novo.');
+        if (v === 'ligar_tela') return tr('Acende a tela que apagou, sozinha ou pelo Apagar tela. Depois de Suspender não funciona: aí o computador inteiro dorme e não ouve o celular.');
         if (v === 'reiniciar') return tr('Fecha tudo e liga de novo. Programas com trabalho não salvo podem segurar o reinício.');
         return tr('Desliga de verdade. O celular não consegue ligar um computador desligado (não há nada rodando para receber o pedido) — se quiser ligar de longe, prefira Suspender.');
       };
@@ -1419,6 +1435,7 @@
         var x = ENERGIA.filter(function (y) { return y[0] === v; })[0];
         mudar(function () {
           escrever(b, 'energia', v);
+          escrever(b, 'confirmar', null);
           if (tAuto) escrever(b, 'titulo', x[1]);
           if (iAuto && !ler(b, 'imagem')) escrever(b, 'icone', x[2]);
         });
@@ -1663,7 +1680,7 @@
     return /^[a-zA-Z][\w+.-]*:/.test(v) || /^[\w.-]+\.[a-zA-Z]{2,}([\/:?#]|$)/.test(v) || /^(\d{1,3}\.){3}\d{1,3}/.test(v) || /^localhost/.test(v);
   }
 
-  function seletorSites(urlAtual, textoBotao, aoConcluir, editando) {
+  function seletorSites(urlAtual, textoBotao, aoConcluir, editando, extras) {
     var campo = h('input', { class: 'campo', value: editando ? (urlAtual || '') : '', placeholder: editando ? tr('ex.: youtube.com') : tr('Procurar ou digitar um endereço…'), inputmode: 'url', spellcheck: 'false', autocomplete: 'off', 'data-foco': '' });
     var botao = h('button', { type: 'button', class: 'botao primario' }, textoBotao);
     var msg = h('p', { class: 'nota', hidden: true });
@@ -1750,7 +1767,7 @@
     botao.addEventListener('click', enviar);
     var atualizar = h('button', { type: 'button', class: 'botao fraco', title: tr('Procurar de novo as abas abertas'), 'aria-label': tr('Atualizar') }, '↻');
     atualizar.addEventListener('click', function () { carregarSites(true); });
-    var caixa = h('div', null, h('div', { class: 'linha-campo' }, campo, botao), msg,
+    var caixa = h('div', null, h('div', { class: 'linha-campo' }, campo, botao), msg, extras || null,
       h('div', { class: 'cabeca-lista' }, h('span', { class: 'rotulo', style: 'margin:0', text: tr('Sugestões deste computador') }), atualizar), lista);
     caixa._preencher = preencher;
     S.seletorSite = caixa;

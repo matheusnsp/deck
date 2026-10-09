@@ -67,9 +67,9 @@ Em cada aba o deck detecta sozinho quando o celular aparece por aquele caminho e
 Tudo no `http://localhost:8787/editar`, que só abre no próprio computador:
 
 - **Clique num espaço vazio (+)** e escolha o que o botão faz: app, site, atalho de teclado, texto, mídia, volume, microfone, energia, modo, chamada ou ir para outra página.
-- **App:** escolha na lista dos apps instalados (no Mac, os da pasta Aplicativos e os que estão em outras pastas suas, como Downloads) — o botão ganha **o mesmo ícone do app no computador**. A busca também acha pelas iniciais: “vs code” encontra o Visual Studio Code.
-- **Energia:** desligar, reiniciar, suspender ou bloquear o computador. Desligar, reiniciar e suspender pedem um **segundo toque** no celular por padrão. Ligar um computador desligado pelo celular não é possível (não há nada rodando nele para receber o pedido): prefira **Suspender** — ele acorda com qualquer tecla e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular (o deck se anuncia na rede para isso).
-- **Site:** digite um endereço ou escolha entre as **abas abertas agora** (Mac), os **favoritos** e os **sites mais visitados** dos navegadores do computador. O botão ganha **o ícone do próprio site** — e, quando o site tem um app oficial (WhatsApp, YouTube, Notion…), o deck busca também **o ícone oficial do app** e usa ele no lugar de ícones brancos ou pequenos demais. Dá para escolher em qual navegador abrir e, no Mac, se a aba já estiver aberta o botão só **traz ela para frente** em vez de abrir outra.
+- **App:** escolha na lista dos apps instalados (no Mac, os da pasta Aplicativos e os que estão em outras pastas suas, como Downloads) — o botão ganha **o mesmo ícone do app no computador**. A busca também acha pelas iniciais: “vs code” encontra o Visual Studio Code. Se o app não estiver instalado e tiver versão web (Spotify, WhatsApp, Discord, Slack, Notion, Teams…), o botão abre o site e avisa no celular.
+- **Energia:** desligar, reiniciar, suspender ou bloquear o computador. Desligar, reiniciar e suspender pedem um **segundo toque** no celular por padrão. Ligar um computador desligado pelo celular não é possível (não há nada rodando nele para receber o pedido): prefira **Suspender** — ele acorda com qualquer tecla e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular (o deck se anuncia na rede para isso). **Apagar tela** e **Ligar tela** apagam e acendem só a tela: o computador continua ligado e o deck segue respondendo — é o par certo para apagar e acender de volta pelo celular (depois de Suspender, o computador inteiro dorme e não ouve o celular). Na tomada, com o deck aberto, o computador não dorme sozinho, só a tela apaga; dá para mudar em **Configurações › Computador na tomada**.
+- **Site:** digite um endereço ou escolha entre as **abas abertas agora** (Mac), os **favoritos** e os **sites mais visitados** dos navegadores do computador. O botão ganha **o ícone do próprio site** — e, quando o site tem um app oficial (WhatsApp, YouTube, Notion…), o deck busca também **o ícone oficial do app** e usa ele no lugar de ícones brancos ou pequenos demais. Dá para escolher em qual navegador abrir e, no Mac, o que fazer em **Se o site já estiver aberto**: **Trazer a aba para frente** (o padrão, sem abas repetidas) ou **Abrir outra aba** a cada toque.
 - **Atalho de teclado:** clique no campo e aperte as teclas.
 - **Arraste** os botões para mudar a ordem; solte numa aba lá em cima para levar para outra página. **+ Página** cria mais páginas — no celular, deslize para o lado.
 - **Páginas:** arraste na lateral (ou nas abas lá em cima) para mudar a ordem — pelo teclado, ⌥/Alt+↑/↓. O **olho** ao lado do nome esconde a página do celular sem apagar (clique de novo para mostrar); no `config.json`, `"oculta": true` na página.
@@ -92,7 +92,7 @@ Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-ant
 | Mídia | tocar/pausar, próxima, anterior | ✓ | ✓ | ✓³ |
 | Volume | subir, baixar, mudo ou um valor | ✓ | ✓ | ✓⁴ |
 | Microfone | liga/desliga o mudo (acende a luz MUDO) | ✓ | ✓ | ✓⁴ |
-| Energia | desligar, reiniciar, suspender, bloquear (com segundo toque) | ✓ | ✓ | ✓⁵ |
+| Energia | desligar, reiniciar, suspender, bloquear (com segundo toque), apagar e ligar a tela | ✓ | ✓ | ✓⁵ |
 | Ir para página | troca a página no celular | ✓ | ✓ | ✓ |
 | Modo | Não perturbe, abre e fecha apps, volume e cronômetro no celular (seção 5) | ✓⁶ | ✓⁶ | ✓⁶ |
 | Chamada | atender, recusar, mudo, câmera e encerrar no app da reunião (seção 5) | ✓ | ✓ | ✓⁷ |
@@ -103,11 +103,15 @@ Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-ant
 
 Quem prefere editar o `config.json` na mão ainda pode (o editor e o celular acompanham): há também `comando`, `sequencia`, `esperar`, e no Mac `atalho` (app Atalhos) e `applescript`. Valores por sistema: `"app": { "mac": "Safari", "windows": "Microsoft Edge", "linux": "Firefox" }`.
 
+**Conferir tudo de uma vez.** Dê dois cliques em `Testar no Windows.bat` ou `Testar no Mac.command` (ou rode `python3 server.py --autoteste`; no Windows, `py server.py --autoteste`). O autoteste confere cada botão **sem apertar nenhum**: se o app existe e qual vai abrir, qual atalho de teclado sai naquele sistema (⌘ vira Ctrl no Windows), se o volume, o microfone e o “tocando agora” respondem e se falta alguma permissão. O resultado fica salvo em `autoteste.txt`, pronto para mandar para quem te ajuda.
+
 ---
 
 ## 5 · DJ, modos e chamadas
 
 **DJ (mini player).** A página **DJ** mostra em tela cheia o que está tocando no computador — Spotify, Música, YouTube no navegador ou qualquer outro player — com capa, tempo, voltar, tocar/pausar, pular e volume; toque na barra para ir a outro ponto. Músicas mostram a capa do álbum e vídeos do YouTube, a miniatura do vídeo inteira (16:9). Nas outras páginas aparece um mini player no canto (toque nele para abrir o DJ). Qualquer página vira player no editor: **Página › Tipo da página › Player**.
+
+**Com o celular bloqueado.** Toque no **cadeado** ao lado dos controles do DJ: a música do computador aparece na tela de bloqueio (e na cortina de notificações do Android) com capa, tocar/pausar, voltar, pular e a barra de tempo — os fones Bluetooth do celular também passam a controlar o computador. Para isso o deck toca um som inaudível no celular, então a música do próprio celular pausa enquanto ele estiver ligado; toque no cadeado de novo para desligar. A escolha fica salva no celular e volta no primeiro toque depois de abrir o deck. Funciona melhor no Chrome do Android; no iPhone, o iOS às vezes corta o som de apps da Tela de Início em segundo plano — se os controles sumirem, abra o deck e toque em qualquer lugar. O volume do computador continua sendo pelo deck: os botões de volume do celular mexem só no celular.
 
 | Sistema | De onde o DJ lê |
 |---|---|

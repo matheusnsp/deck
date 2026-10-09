@@ -182,19 +182,19 @@
     <h2><span class="n">4</span>Montar os botões</h2>
     <p>Tudo é feito no editor, no computador; o celular espelha na hora. Cada <b>página</b> da lateral é uma tela do celular (4×2 por padrão). Clique num espaço vazio para criar um botão, ou use <b>＋ Apps</b> e <b>＋ Sites</b> no topo.</p>
     <ul class="tipos">
-      <li><b>App</b><span>Escolha na lista dos programas instalados (no Mac, os da pasta Aplicativos e os que estão em outras pastas suas, como Downloads) — o botão ganha o mesmo ícone do app. A busca acha pelas iniciais também: “vs code” encontra o Visual Studio Code.</span></li>
-      <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial do site.</span></li>
+      <li><b>App</b><span>Escolha na lista dos programas instalados (no Mac, os da pasta Aplicativos e os que estão em outras pastas suas, como Downloads) — o botão ganha o mesmo ícone do app. A busca acha pelas iniciais também: “vs code” encontra o Visual Studio Code. Se o app não estiver instalado e tiver versão web (Spotify, WhatsApp, Discord, Slack, Notion…), o botão abre o site.</span></li>
+      <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial do site. No Mac, se o site já estiver aberto, o toque traz a aba para frente em vez de abrir outra: dá para trocar no painel do botão, em <b>Se o site já estiver aberto</b>.</span></li>
       <li><b>Atalho de teclado</b><span>Grave uma combinação, como ⌘C ou Ctrl+Z, para apertar de longe.</span></li>
       <li><b>Texto</b><span>Digita uma frase pronta onde o cursor estiver.</span></li>
       <li><b>Mídia e Volume</b><span>Tocar/pausar, pular, subir, baixar, mudo.</span></li>
       <li><b>Microfone</b><span>Liga e desliga o mudo; a luz acende no celular enquanto estiver mudo.</span></li>
-      <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear o computador. Pede um segundo toque por segurança.</span></li>
+      <li><b>Energia</b><span>Desligar, reiniciar, suspender ou bloquear o computador (pede um segundo toque por segurança). <b>Apagar tela</b> e <b>Ligar tela</b> apagam e acendem só a tela, com o computador ligado: o deck continua respondendo.</span></li>
       <li><b>Ir para página</b><span>Pula para outra página do celular.</span></li>
       <li><b>Modo</b><span>Foco, trabalho, estudo: liga o Não perturbe, abre e fecha apps, ajusta o volume e mostra um cronômetro (seção 6).</span></li>
       <li><b>Chamada</b><span>Atender, recusar, mudo, câmera e encerrar no Zoom, Teams, Meet e outros (seção 6).</span></li>
     </ul>
     <p>Arraste os botões para reorganizar e as <b>páginas</b> na lateral para mudar a ordem delas (ou <kbd>⌥</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>). O <b>olho</b> ao lado do nome de uma página esconde ela do celular sem apagar — clique de novo para voltar. Clique no <b>···</b> do card para editar (nome, ícone, cor, confirmação), e use <b>Configurações</b> (engrenagem) para o tema, a luz da borda, o tamanho da grade, o idioma e o QR code. <kbd>⌘Z</kbd> desfaz. Tudo é salvo sozinho no arquivo <code>config.json</code> da pasta — que você pode copiar para outro computador.</p>
-    <div class="nota"><p><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular.</p></div>
+    <div class="nota"><p><b>Ligar o computador pelo celular?</b> Não dá para ligar um computador desligado — nada está rodando nele para receber o pedido. A saída é <b>Suspender</b> em vez de desligar: ele acorda com qualquer tecla ou mouse e, no Mac com "Despertar para acesso à rede" ligado e um Apple TV, HomePod ou roteador Apple na rede, acorda sozinho quando o Deck abre no celular. Para só apagar a tela e acender de volta pelo celular, use <b>Apagar tela</b> e <b>Ligar tela</b>: na tomada e com o deck aberto, o computador não dorme sozinho (Configurações › Computador na tomada).</p></div>
   </section>
 
   <section id="celular">
@@ -212,7 +212,7 @@
   <section id="modos">
     <h2><span class="n">6</span>DJ, modos e chamadas</h2>
     <div class="cartoes">
-      <div class="cartao"><b>🎵 DJ</b><p>A página <b>DJ</b> vira um player em tela cheia com o que estiver tocando no computador — Spotify, Música, YouTube no navegador, qualquer player —, com capa, tempo, voltar, tocar/pausar, pular e volume. Vídeos do YouTube aparecem com a miniatura do vídeo, inteira (16:9). Toque na barra para ir a outro ponto. Nas outras páginas aparece um mini player no canto: toque nele para abrir o DJ. Qualquer página vira player em <b>Página › Tipo da página › Player</b>.</p></div>
+      <div class="cartao"><b>🎵 DJ</b><p>A página <b>DJ</b> vira um player em tela cheia com o que estiver tocando no computador — Spotify, Música, YouTube no navegador, qualquer player —, com capa, tempo, voltar, tocar/pausar, pular e volume. Vídeos do YouTube aparecem com a miniatura do vídeo, inteira (16:9). Toque na barra para ir a outro ponto. Nas outras páginas aparece um mini player no canto: toque nele para abrir o DJ. Qualquer página vira player em <b>Página › Tipo da página › Player</b>.</p><p><b>Celular bloqueado:</b> toque no <b>cadeado</b> ao lado dos controles e a música do computador aparece na tela de bloqueio, com tocar/pausar, voltar, pular e a barra de tempo. O deck toca um som inaudível para isso, então a música do próprio celular pausa enquanto estiver ligado. Melhor no Chrome do Android; no iPhone, se os controles sumirem, abra o deck e toque em qualquer lugar.</p></div>
       <div class="cartao"><b>🎯 Modos</b><p>Um toque deixa o computador pronto para o momento: liga o <b>Não perturbe</b>, abre apps e sites, fecha o que distrai, ajusta o volume, troca de página e mostra um <b>cronômetro</b> grande no celular (pausar, +5 min, encerrar — dá para minimizar). Outro toque desliga e desfaz o Não perturbe. Só um modo fica ligado por vez. Vêm prontos Foco, Trabalho, Estudos, Casa e Pausa.</p></div>
       <div class="cartao"><b>📞 Chamadas</b><p>O deck traz a janela da chamada para frente e aperta o atalho do próprio app. No automático, ele acha sozinho a reunião aberta (Meet, Zoom, Teams, Webex ou FaceTime); para Discord e Slack, escolha o app no botão. Sem chamada aberta, o mudo silencia o microfone do computador.</p></div>
     </div>
@@ -252,6 +252,7 @@
   <section id="problemas">
     <h2><span class="n">8</span>Se algo der errado</h2>
     <ul>
+      <li><b>Algum botão não funciona?</b> Dê dois cliques em <b>Testar no Windows.bat</b> ou <b>Testar no Mac.command</b>, na pasta do Deck (ou rode <code>python3 server.py --autoteste</code>). Ele confere cada botão sem apertar nenhum — app achado, atalho certo para aquele sistema, volume, microfone, permissões — e salva tudo em <code>autoteste.txt</code>.</li>
       <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo. Para não repetir, use o link pelo nome (padrão no Mac) ou o cabo USB.</li>
       <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
       <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só), ou instale pela linha do Terminal do site, que não tem esse aviso.</li>

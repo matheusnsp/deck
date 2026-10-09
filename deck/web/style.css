@@ -617,6 +617,8 @@ button { font: inherit; color: inherit; }
 .tempos { display: flex; justify-content: space-between; margin-top: -6px; color: rgba(255,255,255,.6); font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 .player-controles { display: flex; align-items: center; justify-content: center; gap: clamp(14px, 4vw, 34px); }
+.player-controles.com-trava { justify-content: space-between; gap: 4px; width: 100%; max-width: 400px; justify-self: center; }
+.player-controles.com-trava > .ctl:not(.espaco) { flex-shrink: 0; }
 .ctl {
   appearance: none;
   display: grid;
@@ -636,6 +638,11 @@ button { font: inherit; color: inherit; }
 .ctl.pequeno { width: 40px; height: 40px; color: rgba(255,255,255,.8); }
 .ctl.pequeno svg { width: 22px; height: 22px; }
 .ctl.pequeno.ativo { color: var(--tally); }
+.ctl.espaco { visibility: hidden; pointer-events: none; width: auto; min-width: 0; flex: 0 1 40px; }
+.ctl.trava { color: rgba(255,255,255,.55); }
+.ctl.trava.ligado { color: rgb(var(--tom-texto, 147, 197, 253)); background: rgba(var(--tom), .2); box-shadow: inset 0 0 0 1px rgba(var(--tom), .55); }
+.ctl.trava.ligado.pausado { opacity: .5; background: transparent; }
+.ctl.espaco[hidden], .ctl.trava[hidden] { display: none; }
 .ctl.pressionado { transform: scale(.9); background: rgba(255,255,255,.12); }
 .ctl.grande.pressionado { background: #e6e6e6; }
 .ctl:disabled { opacity: .3; }
@@ -653,6 +660,7 @@ button { font: inherit; color: inherit; }
 .player.sem-midia .player-app, .player.sem-midia .player-titulo, .player.sem-midia .player-artista,
 .player.sem-midia .barra.posicao, .player.sem-midia .tempos { display: none; }
 .player.sem-midia .player-controles .ctl:not(.grande) { visibility: hidden; }
+.player.sem-midia .player-controles .ctl.trava { visibility: visible; }
 .player.sem-midia .player-vazio { display: block; }
 
 @media (orientation: portrait) {

@@ -182,19 +182,19 @@
     <h2><span class="n">4</span>Build the buttons</h2>
     <p>Everything is done in the editor, on the computer; the phone mirrors it instantly. Each <b>page</b> in the sidebar is a screen on the phone (4×2 by default). Click an empty space to create a button, or use <b>＋ Apps</b> and <b>＋ Sites</b> at the top.</p>
     <ul class="tipos">
-      <li><b>App</b><span>Pick from the list of installed programs (on a Mac, the ones in the Applications folder and in your other folders, such as Downloads) — the button gets the app's own icon. Search matches initials too: “vs code” finds Visual Studio Code.</span></li>
-      <li><b>Site</b><span>Type an address or pick from open tabs, bookmarks and most visited. It gets the site's official icon.</span></li>
+      <li><b>App</b><span>Pick from the list of installed programs (on a Mac, the ones in the Applications folder and in your other folders, such as Downloads) — the button gets the app's own icon. Search matches initials too: “vs code” finds Visual Studio Code. If the app isn't installed and has a web version (Spotify, WhatsApp, Discord, Slack, Notion…), the button opens the website.</span></li>
+      <li><b>Site</b><span>Type an address or pick from open tabs, bookmarks and most visited. It gets the site's official icon. On a Mac, if the site is already open, a tap brings that tab to the front instead of opening another: change it in the button's panel, under <b>If the site is already open</b>.</span></li>
       <li><b>Keyboard shortcut</b><span>Record a combination, like ⌘C or Ctrl+Z, to press it remotely.</span></li>
       <li><b>Text</b><span>Types a ready-made phrase wherever the cursor is.</span></li>
       <li><b>Media and Volume</b><span>Play/pause, skip, up, down, mute.</span></li>
       <li><b>Microphone</b><span>Mutes and unmutes; the light stays on on the phone while muted.</span></li>
-      <li><b>Power</b><span>Shut down, restart, sleep or lock the computer. Asks for a second tap for safety.</span></li>
+      <li><b>Power</b><span>Shut down, restart, sleep or lock the computer (asks for a second tap for safety). <b>Screen off</b> and <b>Screen on</b> turn only the screen off and on, with the computer running: the deck keeps answering.</span></li>
       <li><b>Go to page</b><span>Jumps to another page on the phone.</span></li>
       <li><b>Mode</b><span>Focus, work, study: turns on Do Not Disturb, opens and closes apps, sets the volume and shows a timer (section 6).</span></li>
       <li><b>Call</b><span>Answer, decline, mute, camera and hang up in Zoom, Teams, Meet and others (section 6).</span></li>
     </ul>
     <p>Drag the buttons to rearrange and the <b>pages</b> in the sidebar to change their order (or <kbd>⌥</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>). The <b>eye</b> next to a page's name hides it from the phone without deleting it — click again to bring it back. Click the card's <b>···</b> to edit (name, icon, color, confirmation), and use <b>Settings</b> (gear) for the theme, the border light, the grid size, the language and the QR code. <kbd>⌘Z</kbd> undoes. Everything is saved automatically to the folder's <code>config.json</code> file — which you can copy to another computer.</p>
-    <div class="nota"><p><b>Turn the computer on from the phone?</b> A computer that's off can't be turned on — nothing is running on it to receive the request. The way out is <b>Sleep</b> instead of shutting down: it wakes with any key or the mouse and, on a Mac with "Wake for network access" on and an Apple TV, HomePod or Apple router on the network, it wakes by itself when Deck opens on the phone.</p></div>
+    <div class="nota"><p><b>Turn the computer on from the phone?</b> A computer that's off can't be turned on — nothing is running on it to receive the request. The way out is <b>Sleep</b> instead of shutting down: it wakes with any key or the mouse and, on a Mac with "Wake for network access" on and an Apple TV, HomePod or Apple router on the network, it wakes by itself when Deck opens on the phone. To just turn the screen off and back on from the phone, use <b>Screen off</b> and <b>Screen on</b>: on power and with the deck open, the computer doesn't sleep by itself (Settings › Computer on power).</p></div>
   </section>
 
   <section id="celular">
@@ -212,7 +212,7 @@
   <section id="modos">
     <h2><span class="n">6</span>DJ, modes and calls</h2>
     <div class="cartoes">
-      <div class="cartao"><b>🎵 DJ</b><p>The <b>DJ</b> page becomes a full-screen player with whatever is playing on the computer — Spotify, Music, YouTube in the browser, any player — with artwork, time, back, play/pause, skip and volume. YouTube videos show up with the video's thumbnail, in full (16:9). Tap the bar to jump to another point. On the other pages a mini player shows up in the corner: tap it to open the DJ. Any page can become a player in <b>Page › Page type › Player</b>.</p></div>
+      <div class="cartao"><b>🎵 DJ</b><p>The <b>DJ</b> page becomes a full-screen player with whatever is playing on the computer — Spotify, Music, YouTube in the browser, any player — with artwork, time, back, play/pause, skip and volume. YouTube videos show up with the video's thumbnail, in full (16:9). Tap the bar to jump to another point. On the other pages a mini player shows up in the corner: tap it to open the DJ. Any page can become a player in <b>Page › Page type › Player</b>.</p><p><b>Phone locked:</b> tap the <b>lock</b> next to the controls and the computer's music shows up on the lock screen, with play/pause, back, skip and the time bar. The deck plays an inaudible sound for that, so the phone's own music pauses while it is on. Best in Chrome on Android; on iPhone, if the controls disappear, open the deck and tap anywhere.</p></div>
       <div class="cartao"><b>🎯 Modes</b><p>One tap gets the computer ready for the moment: turns on <b>Do Not Disturb</b>, opens apps and sites, closes distractions, sets the volume, switches page and shows a big <b>timer</b> on the phone (pause, +5 min, end — it can be minimized). Another tap turns it off and undoes Do Not Disturb. Only one mode is on at a time. Focus, Work, Study, Home and Break come ready.</p></div>
       <div class="cartao"><b>📞 Calls</b><p>The deck brings the call window to the front and presses the app's own shortcut. In automatic, it finds the open meeting by itself (Meet, Zoom, Teams, Webex or FaceTime); for Discord and Slack, choose the app on the button. With no call open, mute silences the computer's microphone.</p></div>
     </div>
@@ -252,6 +252,7 @@
   <section id="problemas">
     <h2><span class="n">8</span>If something goes wrong</h2>
     <ul>
+      <li><b>A button doesn't work?</b> Double-click <b>Testar no Windows.bat</b> or <b>Testar no Mac.command</b> in the Deck folder (or run <code>python3 server.py --autoteste</code>). It checks every button without pressing any — app found, the right shortcut for that system, volume, microphone, permissions — and saves everything to <code>autoteste.txt</code>.</li>
       <li><b>The app opens with a black screen</b> (or "could not connect"): the phone isn't finding the computer at the saved address. Close the app (swipe up) and open it again with the deck on. If it persists, the address changed: open <b>Connect phone</b> — it warns when the computer's IP or name changed and shows the new QR code. To avoid repeating it, use the link by name (default on a Mac) or the USB cable.</li>
       <li><b>Doesn't connect over Wi-Fi:</b> guest and company networks isolate devices from each other. Use the USB cable or Bluetooth.</li>
       <li><b>"Apple could not verify…" when opening <code>Iniciar no Mac.command</code>:</b> that's the macOS warning for programs that didn't go through Apple. System Settings › Privacy &amp; Security › <b>Open Anyway</b> (once only), or install with the Terminal line from the site, which has no such warning.</li>

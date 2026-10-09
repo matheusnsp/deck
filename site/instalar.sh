@@ -51,7 +51,7 @@ principal() {
   fi
   mkdir -p "$DESTINO"
   cp -R "$NOVO/." "$DESTINO/"
-  chmod +x "$DESTINO/Iniciar no Mac.command" "$DESTINO/iniciar-linux.sh" "$DESTINO/server.py" 2>/dev/null || true
+  chmod +x "$DESTINO/Iniciar no Mac.command" "$DESTINO/Testar no Mac.command" "$DESTINO/iniciar-linux.sh" "$DESTINO/server.py" 2>/dev/null || true
   if [ "$(uname)" = "Darwin" ]; then
     xattr -dr com.apple.quarantine "$DESTINO" 2>/dev/null || true
   fi
