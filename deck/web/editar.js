@@ -181,6 +181,21 @@
   function semAcento(s) {
     return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   }
+  function porIniciais(termo, nome) {
+    var q = semAcento(termo).replace(/[^a-z0-9]/g, '');
+    var p = semAcento(String(nome || '').replace(/([a-z])([A-Z])/g, '$1 $2')).split(/[^a-z0-9]+/).filter(Boolean);
+    if (q.length < 2 || p.length < 2) return false;
+    function casa(i, j) {
+      if (i === q.length) return true;
+      if (j >= p.length) return false;
+      for (var n = Math.min(p[j].length, q.length - i); n >= 1; n--) {
+        if (q.substr(i, n) === p[j].substr(0, n) && casa(i + n, j + 1)) return true;
+      }
+      return false;
+    }
+    for (var j = 0; j < p.length; j++) if (casa(0, j)) return true;
+    return false;
+  }
   function simples(s) {
     return String(s).normalize('NFD').replace(/[^\x00-\x7f]/g, '').trim().toLowerCase().replace(/\s+/g, '_');
   }
@@ -1773,7 +1788,8 @@
         return;
       }
       var itens = S.apps.filter(function (a) {
-        return !termo || semAcento(a.nome).indexOf(termo) >= 0 || semAcento(a.valor).indexOf(termo) >= 0;
+        return !termo || semAcento(a.nome).indexOf(termo) >= 0 || semAcento(a.valor).indexOf(termo) >= 0 ||
+          porIniciais(termo, a.nome) || porIniciais(termo, a.valor);
       });
       var exato = itens.some(function (a) { return semAcento(a.nome) === termo || semAcento(a.valor) === termo; });
       itens.forEach(function (a) {

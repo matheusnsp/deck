@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.1"
+VERSAO = "3.2.3"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -596,6 +596,28 @@ def _saida(args, ambiente=None):
         return ""
 
 
+def palavras_do_nome(nome):
+    return comparavel(re.sub(r"([a-z])([A-Z])", r"\1 \2", str(nome))).split()
+
+
+def por_iniciais(alvo, nome):
+    q = comparavel(alvo).replace(" ", "")
+    p = palavras_do_nome(nome)
+    if len(q) < 2 or len(p) < 2:
+        return False
+
+    def casa(i, j):
+        if i == len(q):
+            return True
+        if j >= len(p):
+            return False
+        for n in range(min(len(p[j]), len(q) - i), 0, -1):
+            if q[i:i + n] == p[j][:n] and casa(i + n, j + 1):
+                return True
+        return False
+    return casa(0, 0)
+
+
 def melhor_nome(alvo, opcoes):
     a = comparavel(alvo)
     if not a:
@@ -615,6 +637,8 @@ def melhor_nome(alvo, opcoes):
             nota = 3
         elif a in n:
             nota = 4
+        elif por_iniciais(alvo, nome):
+            nota = 5
         else:
             continue
         if ("uninstall" in n or "desinstal" in n) and "instal" not in a:
@@ -1519,6 +1543,8 @@ class SistemaMac(Sistema):
         self._miniaturas = {}
         self._navs = None
         self._navs_quando = 0.0
+        self._fora = None
+        self._fora_quando = 0.0
         self._avisou_automacao = False
 
     def teclas(self, combos, app, intervalo):
@@ -1547,6 +1573,31 @@ class SistemaMac(Sistema):
                                 achados.append((s[:-4], os.path.join(caminho, s)))
                     except OSError:
                         continue
+        vistos = {c for _, c in achados}
+        achados += [(n, c) for n, c in self.apps_fora_das_pastas() if c not in vistos]
+        return achados
+
+    def apps_fora_das_pastas(self):
+        agora = time.time()
+        if self._fora is not None and agora - self._fora_quando < 120:
+            return self._fora
+        achados = []
+        casa = os.path.expanduser("~")
+        if shutil.which("mdfind") and os.path.isdir(casa):
+            try:
+                codigo, saida, erro = rodar(["mdfind", "-onlyin", casa, "kMDItemContentType == 'com.apple.application-bundle'"], espera=8)
+            except ErroAcao:
+                codigo, saida = 1, ""
+            for linha in (saida or "").splitlines() if codigo == 0 else []:
+                c = linha.strip().rstrip("/")
+                if not c.lower().endswith(".app") or not c.startswith(casa.rstrip("/") + "/"):
+                    continue
+                partes = c[len(casa.rstrip("/")) + 1:].split("/")
+                if partes[0] == "Library" or any(x.startswith(".") or x == "node_modules" or x.lower().endswith(".app") for x in partes[:-1]):
+                    continue
+                if os.path.isdir(c):
+                    achados.append((os.path.basename(c)[:-4], c))
+        self._fora, self._fora_quando = achados, agora
         return achados
 
     def todos_os_apps(self):
