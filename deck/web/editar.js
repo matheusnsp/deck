@@ -388,7 +388,7 @@
 
   function teclaEl(b, info) {
     info = info || {};
-    var t = h('div', { class: 'tecla' });
+    var t = h('div', { class: 'tecla' }, h('span', { class: 'corrente', 'aria-hidden': 'true' }, h('b', { class: 'halo' }, h('i')), h('b', { class: 'fio' }, h('i'))));
     var cor = corDe(ler(b, 'cor'));
     if (cor) {
       t.style.setProperty('--c', cor);
@@ -628,9 +628,17 @@
     atualizarUndo();
   }
 
+  function luzDe(cfg) {
+    var v = String((cfg && cfg.luz) === false ? 'desligada' : ((cfg && cfg.luz) || '')).toLowerCase();
+    if (['correndo', 'corrente', 'animada', 'movendo', 'running', 'moving'].indexOf(v) >= 0) return 'correndo';
+    if (['desligada', 'desligado', 'off', 'nenhuma', 'none'].indexOf(v) >= 0) return 'desligada';
+    return 'parada';
+  }
+
   function aplicarTema() {
     var t = S.cfg && S.cfg.tema === 'normal' ? 'normal' : 'preto';
     document.documentElement.setAttribute('data-tema', t);
+    document.documentElement.setAttribute('data-luz', luzDe(S.cfg));
   }
 
   function iconeDaPagina(p) {
@@ -1052,8 +1060,11 @@
     });
     pn.appendChild(h('div', { class: 'vazio-painel' },
       h('h2', { text: tr('Configurações') }),
-      h('p', { class: 'onde', text: (S.computador || tr('Este computador')) + ' · ' + (S.nomeSistema || '') }),
+      h('p', { class: 'onde', text: (S.computador || tr('Este computador')) + ' · ' + (S.nomeSistema || '') + (S.appVersao ? ' · Deck ' + S.appVersao : '') }),
       secao(tr('Tema (no computador e no celular)'), temas),
+      secao(tr('Luz da borda'), segmentos([['parada', tr('Parada')], ['correndo', tr('Correndo')], ['desligada', tr('Desligada')]], luzDe(S.cfg), function (v) {
+        mudar(function () { if (v === 'parada') delete S.cfg.luz; else S.cfg.luz = v; });
+      }), h('p', { class: 'nota', text: tr('Só no tema Preto. Correndo: a luz dá a volta na borda de cada botão. Desligada: sem o brilho colorido.') })),
       secao(tr('Grade (celular deitado)'), sel, h('p', { class: 'nota', text: tr('Em pé, as colunas viram linhas. Páginas com mais botões do que a grade viram telas extras.') })),
       secao(tr('Idioma'), idiomaSel, h('p', { class: 'nota', text: tr('Vale para o editor, o celular e o guia. Automático segue o idioma do computador.') })),
       secao(tr('Celular'), conectar, h('p', { class: 'nota', text: tr('Os botões aparecem no celular na hora, sem precisar reconectar.') }))));
@@ -2560,6 +2571,15 @@
     }).finally(function () { setTimeout(vigiar, 2000); });
   }
 
+  function mostrarVersao() {
+    var v = $('#versao-app');
+    if (v && S.appVersao) {
+      v.textContent = 'v' + S.appVersao;
+      v.title = tr('Versão do Deck rodando neste computador');
+      v.hidden = false;
+    }
+  }
+
   function aplicarDados(d) {
     S.sistema = d.sistema || S.sistema;
     S.nomeSistema = d.nomeSistema || S.nomeSistema;
@@ -2569,6 +2589,7 @@
     S.cores = d.cores || S.cores;
     S.navegadores = d.navegadores || S.navegadores;
     if (!S.appVersao) S.appVersao = d.app;
+    mostrarVersao();
     S.cfg = normalizarCfg(d.config);
     S.base = d.base;
     S.erroConfig = d.erroConfig || null;

@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.5"
+VERSAO = "3.2.6"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -3962,10 +3962,14 @@ TIPOS_PAGINA = {"": "botoes", "botoes": "botoes", "buttons": "botoes", "player":
                 "musica": "player", "tocando": "player", "nowplaying": "player"}
 TEMAS = {"preto": "preto", "black": "preto", "escuro": "preto", "dark": "preto", "oled": "preto",
          "normal": "normal", "cinza": "normal", "grafite": "normal", "claro": "normal"}
+LUZES = {"parada": "parada", "parado": "parada", "fixa": "parada", "ligada": "parada", "on": "parada", "static": "parada",
+         "correndo": "correndo", "corrente": "correndo", "animada": "correndo", "movendo": "correndo", "running": "correndo",
+         "moving": "correndo", "desligada": "desligada", "desligado": "desligada", "off": "desligada", "nenhuma": "desligada",
+         "none": "desligada"}
 
 
 class Deck:
-    def __init__(self, nome, colunas, linhas, paginas, avisos, versao, tema="preto"):
+    def __init__(self, nome, colunas, linhas, paginas, avisos, versao, tema="preto", luz="parada"):
         self.nome = nome
         self.colunas = colunas
         self.linhas = linhas
@@ -3973,6 +3977,7 @@ class Deck:
         self.avisos = avisos
         self.versao = versao
         self.tema = tema
+        self.luz = luz
         self.total = sum(1 for p in paginas for b in p["botoes"] if b)
 
     @classmethod
@@ -3987,7 +3992,7 @@ class Deck:
     def publico(self, imgs=None):
         imgs = imgs or {}
         return {
-            "nome": self.nome, "versao": self.versao, "tema": self.tema,
+            "nome": self.nome, "versao": self.versao, "tema": self.tema, "luz": self.luz,
             "grade": {"colunas": self.colunas, "linhas": self.linhas},
             "paginas": [dict({"nome": p["nome"], "icone": p.get("icone"), "tipo": p.get("tipo", "botoes"),
                               "botoes": [botao_publico(b, imgs.get((b["p"], b["i"])) if b else None) for b in p["botoes"]]},
@@ -4077,11 +4082,13 @@ def montar_deck(dados, versao):
             a["destino_idx"] = idx
 
     tema = TEMAS.get(simples(dados.get("tema") or "preto"), "preto")
+    luz = dados.get("luz")
+    luz = "desligada" if luz is False else LUZES.get(simples(str(luz or "parada")), "parada")
     return Deck(
         nome=str(dados.get("nome") or "Deck")[:40],
         colunas=_limitar(grade.get("colunas"), 1, 8, 4),
         linhas=_limitar(grade.get("linhas"), 1, 8, 2),
-        paginas=paginas, avisos=avisos, versao=versao, tema=tema,
+        paginas=paginas, avisos=avisos, versao=versao, tema=tema, luz=luz,
     )
 
 

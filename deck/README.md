@@ -74,6 +74,8 @@ Tudo no `http://localhost:8787/editar`, que só abre no próprio computador:
 - **Arraste** os botões para mudar a ordem; solte numa aba lá em cima para levar para outra página. **+ Página** cria mais páginas — no celular, deslize para o lado.
 - **Páginas:** arraste na lateral (ou nas abas lá em cima) para mudar a ordem — pelo teclado, ⌥/Alt+↑/↓. O **olho** ao lado do nome esconde a página do celular sem apagar (clique de novo para mostrar); no `config.json`, `"oculta": true` na página.
 - Nome, emoji ou imagem própria, cor e confirmação (segundo toque) ficam no painel da direita.
+- **Luz da borda** (Configurações, tema Preto): **Parada**, **Correndo** (a luz dá a volta na borda de cada botão) ou **Desligada**. Com Reduzir movimento ligado no celular, ela fica parada.
+- A **versão** do deck aparece no alto do editor (ex.: v3.2.6) e em Configurações. Se ela não mudar depois de atualizar, o deck antigo ainda está aberto: feche a janela dele e abra de novo.
 
 Tudo salva sozinho no `config.json` (uma cópia do anterior fica em `.config-anterior.json`). Ctrl/⌘+Z desfaz. Se existir um `config.local.json` na pasta, o deck usa ele no lugar — útil para manter seus botões fora do Git enquanto o `config.json` continua sendo o exemplo.
 

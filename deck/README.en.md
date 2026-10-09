@@ -74,6 +74,8 @@ Everything at `http://localhost:8787/editar`, which only opens on the computer i
 - **Drag** the buttons to change their order; drop one on a tab at the top to move it to another page. **+ Page** creates more pages — on the phone, swipe sideways.
 - **Pages:** drag them in the sidebar (or in the tabs at the top) to change their order — from the keyboard, ⌥/Alt+↑/↓. The **eye** next to the name hides the page from the phone without deleting it (click again to show it); in `config.json`, `"oculta": true` on the page.
 - Name, emoji or your own image, color and confirmation (second tap) live in the right-hand panel.
+- **Border light** (Settings, Black theme): **Still**, **Running** (the light goes around each button's border) or **Off**. With Reduce Motion on in the phone, it stays still.
+- Deck's **version** shows at the top of the editor (e.g. v3.2.6) and in Settings. If it doesn't change after an update, the old deck is still open: close its window and open it again.
 
 Everything saves by itself to `config.json` (a copy of the previous one stays in `.config-anterior.json`). Ctrl/⌘+Z undoes. If a `config.local.json` exists in the folder, the deck uses it instead — handy to keep your buttons out of Git while `config.json` stays the example.
 

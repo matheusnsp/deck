@@ -1,5 +1,7 @@
 .tecla {
   --tom: 128, 140, 160;
+  --corrente: var(--tom);
+  --cabeca: 255, 255, 255;
   --led: 1;
   --fundo: 1;
   --raio: min(28px, calc(var(--k, 140px) * .11));
@@ -64,6 +66,58 @@
     linear-gradient(135deg, rgba(var(--tom), .82), rgba(var(--tom), .5) 55%, rgba(var(--tom), .36));
 }
 .tecla.clara { color: #15161a; }
+.tecla.colorida { --corrente: 255, 255, 255; }
+.tecla.clara { --corrente: 21, 22, 26; --cabeca: 21, 22, 26; }
+
+.tecla .corrente, .tecla .corrente b {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.tecla .corrente { opacity: calc(.9 * var(--led)); }
+.tecla .corrente .fio {
+  padding: max(2px, calc(var(--k, 140px) * .02));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+.tecla .corrente .halo {
+  opacity: .6;
+  -webkit-mask: linear-gradient(90deg, #000, transparent 10%, transparent 90%, #000), linear-gradient(180deg, #000, transparent 10%, transparent 90%, #000);
+  mask: linear-gradient(90deg, #000, transparent 10%, transparent 90%, #000), linear-gradient(180deg, #000, transparent 10%, transparent 90%, #000);
+}
+.tecla .corrente i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(from 0turn,
+    rgba(var(--corrente), 0) 0turn .5turn,
+    rgba(var(--corrente), .35) .75turn,
+    rgba(var(--corrente), 1) .93turn,
+    rgba(var(--cabeca), 1) .975turn,
+    rgba(var(--corrente), 0) 1turn);
+  transform: translate(-50%, -50%);
+  animation: corrente 3.2s linear infinite;
+}
+.tecla .corrente .halo i {
+  background: conic-gradient(from 0turn,
+    rgba(var(--corrente), 0) 0turn .7turn,
+    rgba(var(--corrente), .45) .9turn,
+    rgba(var(--corrente), 1) .975turn,
+    rgba(var(--corrente), 0) 1turn);
+}
+.tecla.ativa .corrente i {
+  background: conic-gradient(from 0turn, transparent 0turn .5turn, var(--luz) .93turn, #fff .975turn, transparent 1turn);
+}
+.tecla.ativa .corrente .halo i {
+  background: conic-gradient(from 0turn, transparent 0turn .7turn, var(--luz) .975turn, transparent 1turn);
+}
+.tecla.off .corrente, .tecla.vazia .corrente, [data-tema="normal"] .tecla .corrente { display: none; }
+@keyframes corrente { to { transform: translate(-50%, -50%) rotate(1turn); } }
 
 @media (hover: hover) {
   .tecla:hover, .slot:hover > .tecla { --led: 1.25; --fundo: 1.3; transform: translateY(-1px); }
@@ -212,4 +266,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .tecla { transition-duration: .01s; }
+}
+
+.tecla .corrente { display: none; }
+[data-luz="correndo"] .tecla .corrente { display: block; }
+[data-luz="correndo"] .tecla.off .corrente,
+[data-luz="correndo"] .tecla.vazia .corrente,
+[data-luz="correndo"][data-tema="normal"] .tecla .corrente { display: none; }
+[data-luz="desligada"][data-tema="preto"] .tecla:not(.ativa) { --led: 0; }
+[data-luz="desligada"][data-tema="preto"] .tecla:not(.ativa):not(.vazia):not(.colorida):not(.clara) { border-color: rgba(255, 255, 255, .08); }
+[data-luz="desligada"][data-tema="preto"] .slot.selecionado > .tecla { --led: 1.6; }
+@media (prefers-reduced-motion: reduce) {
+  [data-luz="correndo"] .tecla .corrente { display: none; }
 }

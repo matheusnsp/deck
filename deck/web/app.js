@@ -94,6 +94,7 @@
       el.nome.textContent = d.nome || 'Deck';
       document.title = d.nome || 'Deck';
       aplicarTema(d.tema);
+      document.documentElement.setAttribute('data-luz', d.luz || 'parada');
       montarPaginas();
       var salvo = nomeAnterior || guardado.get('deck.pagina');
       var idx = paginas.findIndex(function (p) { return p.nome === salvo; });
@@ -248,6 +249,16 @@
     }
     t._b = b;
     t.dataset.id = b.p + '.' + b.i;
+    var corrente = document.createElement('span');
+    corrente.className = 'corrente';
+    corrente.setAttribute('aria-hidden', 'true');
+    ['halo', 'fio'].forEach(function (nome) {
+      var faixa = document.createElement('b');
+      faixa.className = nome;
+      faixa.appendChild(document.createElement('i'));
+      corrente.appendChild(faixa);
+    });
+    t.appendChild(corrente);
     t.setAttribute('aria-label', b.titulo || b.icone || 'Botão');
     if (b.cor) {
       t.style.setProperty('--c', b.cor);
@@ -1146,10 +1157,17 @@
   }
 
   var esperaMedida = null;
-  window.addEventListener('resize', function () {
+  var timerMedida = null;
+  function medirDeNovo() {
     cancelAnimationFrame(esperaMedida);
     esperaMedida = requestAnimationFrame(medir);
-  });
+    clearTimeout(timerMedida);
+    timerMedida = setTimeout(medir, 400);
+  }
+  window.addEventListener('resize', medirDeNovo);
+  window.addEventListener('orientationchange', medirDeNovo);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', medirDeNovo);
+  if (window.ResizeObserver) new ResizeObserver(function () { medir(); }).observe(el.palco);
 
   if (!token) {
     definirStatus('off', tr('Sem link'));

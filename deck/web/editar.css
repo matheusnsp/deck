@@ -110,6 +110,18 @@ svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round
 .nome-deck:focus { background: var(--campo); outline: 2px solid var(--borda); outline-offset: 0; }
 .barra-direita { display: flex; align-items: center; gap: 10px; flex: none; }
 .salvo { color: var(--fraco); font-size: 13px; white-space: nowrap; }
+.versao-app {
+  flex: none;
+  padding: 3px 9px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  color: var(--apagado);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  cursor: default;
+}
 .salvo.erro { color: var(--vermelho); }
 .salvo.ok { display: none; }
 
