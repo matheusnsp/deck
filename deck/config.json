@@ -12,9 +12,9 @@
         {"titulo": "WhatsApp", "tipo": "site", "url": "https://web.whatsapp.com"},
         {"titulo": "Agenda", "tipo": "site", "url": "https://calendar.google.com"},
         {"titulo": "Drive", "tipo": "site", "url": "https://drive.google.com"},
-        {"titulo": "Instagram", "tipo": "site", "url": "https://www.instagram.com"},
-        {"titulo": "Netflix", "tipo": "site", "url": "https://www.netflix.com"},
-        {"titulo": "Spotify", "tipo": "site", "url": "https://open.spotify.com"}
+        {"tipo": "site", "url": "https://secretaria.cursoscruzvermelha.org/", "titulo": "Secretaria CVBRJ"},
+        {"titulo": "Netflix", "tipo": "app", "app": "Netflix"},
+        {"titulo": "Spotify", "tipo": "app", "app": "Spotify"}
       ]
     },
     {
@@ -31,10 +31,7 @@
         {"titulo": "Trabalho", "tipo": "modo", "icone": "💼", "cor": "azul", "abrir": ["https://mail.google.com", "https://calendar.google.com"]},
         {"titulo": "Estudos", "tipo": "modo", "icone": "📚", "cor": "verde", "nao_perturbe": true, "minutos": 50},
         {"titulo": "Casa", "tipo": "modo", "icone": "🏠", "cor": "laranja", "volume": 50, "pagina": "DJ"},
-        {"titulo": "Pausa", "tipo": "modo", "icone": "☕", "cor": "marrom", "minutos": 5},
-        null,
-        null,
-        null
+        {"titulo": "Pausa", "tipo": "modo", "icone": "☕", "cor": "marrom", "minutos": 5}
       ]
     },
     {
@@ -115,10 +112,7 @@
         {"titulo": "Suspender", "tipo": "energia", "energia": "suspender", "icone": "🌙", "confirmar": true},
         {"titulo": "Reiniciar", "tipo": "energia", "energia": "reiniciar", "icone": "🔄", "confirmar": true},
         {"titulo": "Desligar", "tipo": "energia", "energia": "desligar", "icone": "⏻", "confirmar": true, "cor": "#ef4444"},
-        {"titulo": "Área de trabalho", "tipo": "teclas", "teclas": {"mac": "cmd+f3", "windows": "win+d", "linux": "win+d"}, "icone": "🖥️"},
-        null,
-        null,
-        null
+        {"titulo": "Área de trabalho", "tipo": "teclas", "teclas": {"mac": "cmd+f3", "windows": "win+d", "linux": "win+d"}, "icone": "🖥️"}
       ]
     }
   ]
