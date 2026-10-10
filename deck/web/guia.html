@@ -183,7 +183,7 @@
     <p>Tudo é feito no editor, no computador; o celular espelha na hora. Cada <b>página</b> da lateral é uma tela do celular (4×2 por padrão). Clique num espaço vazio para criar um botão, ou use <b>＋ Apps</b> e <b>＋ Sites</b> no topo.</p>
     <ul class="tipos">
       <li><b>App</b><span>Escolha na lista dos programas instalados (no Mac, os da pasta Aplicativos e os que estão em outras pastas suas, como Downloads) — o botão ganha o mesmo ícone do app. A busca acha pelas iniciais também: “vs code” encontra o Visual Studio Code. Se o app não estiver instalado e tiver versão web (Spotify, WhatsApp, Discord, Slack, Notion…), o botão abre o site.</span></li>
-      <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial do site. No Mac, se o site já estiver aberto, o toque traz a aba para frente em vez de abrir outra: dá para trocar no painel do botão, em <b>Se o site já estiver aberto</b>.</span></li>
+      <li><b>Site</b><span>Digite um endereço ou escolha entre as abas abertas, favoritos e mais visitados. Ganha o ícone oficial do site. No Mac e no Windows, se o site já estiver aberto, o toque traz a aba para frente em vez de abrir outra (no Windows, reconhecendo a aba pelo título): dá para trocar no painel do botão, em <b>Se o site já estiver aberto</b>.</span></li>
       <li><b>Atalho de teclado</b><span>Grave uma combinação, como ⌘C ou Ctrl+Z, para apertar de longe.</span></li>
       <li><b>Texto</b><span>Digita uma frase pronta onde o cursor estiver.</span></li>
       <li><b>Mídia e Volume</b><span>Tocar/pausar, pular, subir, baixar, mudo.</span></li>
@@ -220,7 +220,7 @@
     <table>
       <tr><th>Computador</th><th>Como funciona</th></tr>
       <tr><td>Mac</td><td>Pelo app <b>Atalhos</b> (macOS 12 ou mais novo). Crie uma vez dois atalhos com a ação <b>Definir Foco</b>: <b>Deck Foco Ligar</b> (Não Perturbe › Ligado) e <b>Deck Foco Desligar</b> (Não Perturbe › Desligado). Os nomes precisam ser exatamente esses. Sem os atalhos, o modo faz todo o resto e explica no celular o que falta.</td></tr>
-      <tr><td>Windows</td><td>O Windows não deixa programas ligarem o Não perturbe: o modo faz o resto e lembra no celular de ligar em <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
+      <tr><td>Windows</td><td>O deck liga o <b>Não incomodar</b> sozinho (no Windows 10, o <b>Assistente de foco</b>) e desliga quando o modo acaba. Se o Windows não deixar, o modo faz o resto e lembra no celular de ligar no sininho da Central de notificações (<kbd>Win</kbd>+<kbd>N</kbd>). O autoteste (seção 8) confere.</td></tr>
       <tr><td>Linux</td><td>No GNOME, liga e desliga sozinho (esconde os avisos na tela).</td></tr>
     </table>
     <h3>Chamadas em cada app</h3>
@@ -252,7 +252,7 @@
   <section id="problemas">
     <h2><span class="n">8</span>Se algo der errado</h2>
     <ul>
-      <li><b>Algum botão não funciona?</b> Dê dois cliques em <b>Testar no Windows.bat</b> ou <b>Testar no Mac.command</b>, na pasta do Deck (ou rode <code>python3 server.py --autoteste</code>). Ele confere cada botão sem apertar nenhum — app achado, atalho certo para aquele sistema, volume, microfone, permissões — e salva tudo em <code>autoteste.txt</code>.</li>
+      <li><b>Algum botão não funciona?</b> Dê dois cliques em <b>Testar no Windows.bat</b> ou <b>Testar no Mac.command</b>, na pasta do Deck (ou rode <code>python3 server.py --autoteste</code>). Ele confere cada botão sem apertar nenhum — app achado, atalho certo para aquele sistema, volume, microfone, permissões — e salva tudo em <code>autoteste.txt</code>. No Windows, ele liga e desliga o Não incomodar uma vez, para conferir que os modos conseguem.</li>
       <li><b>O app abre com a tela preta</b> (ou "não foi possível conectar"): o celular não está achando o computador no endereço salvo. Feche o app (deslize para cima) e abra de novo com o deck ligado. Se continuar, o endereço mudou: abra <b>Conectar celular</b> — ele avisa quando o IP ou o nome do computador mudou e mostra o QR code novo. Para não repetir, use o link pelo nome (padrão no Mac) ou o cabo USB.</li>
       <li><b>Não conecta pelo Wi-Fi:</b> redes de visitantes e de empresa isolam os aparelhos entre si. Use o cabo USB ou o Bluetooth.</li>
       <li><b>"A Apple não pôde verificar…" ao abrir o <code>Iniciar no Mac.command</code>:</b> é o aviso do macOS para programas que não passaram pela Apple. Ajustes do Sistema › Privacidade e Segurança › <b>Abrir Mesmo Assim</b> (uma vez só), ou instale pela linha do Terminal do site, que não tem esse aviso.</li>

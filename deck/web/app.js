@@ -579,7 +579,7 @@
         if (r.ok) {
           piscar(t, r.pendente ? 'pendente' : 'ok');
           if (r.info && !(b.selo && typeof r.ativo === 'boolean')) mostrarInfo(t, r.info);
-          if (r.mensagem) toast(r.mensagem, r.pendente ? 'info' : 'ok');
+          if (r.mensagem) toast(r.mensagem, r.pendente ? 'info' : r.aviso ? 'aviso' : 'ok');
         } else {
           vibrar([20, 40, 20]);
           piscar(t, 'erro');
@@ -638,8 +638,9 @@
     el.toast.textContent = msg;
     el.toast.className = 'toast mostra ' + (tipo || '');
     clearTimeout(timerToast);
+    var base = tipo === 'erro' ? 6000 : tipo === 'aviso' ? 4000 : 2400;
     timerToast = setTimeout(function () { el.toast.className = 'toast'; },
-      tipo === 'erro' ? 6000 : tipo === 'aviso' ? 4000 : 2400);
+      Math.max(base, Math.min(9000, 1500 + String(msg).length * 45)));
   }
   el.toast.addEventListener('click', function () { el.toast.className = 'toast'; });
 

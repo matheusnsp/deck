@@ -1336,15 +1336,15 @@
       if (!achou) navSel.appendChild(h('option', { value: navAtual, text: navAtual + tr(' (não achei aqui)'), selected: true }));
       navSel.addEventListener('change', function () { mudar(function () { escrever(b, 'navegador', navSel.value || null); }, { painel: false }); });
       var opcoes = [secao(tr('Abrir em'), navSel)];
-      if (S.sistema === 'mac') {
+      if (S.sistema === 'mac' || S.sistema === 'windows') {
         var modoAba = ler(b, 'aba') === false ? 'nova' : 'trazer';
         opcoes.push(secao(tr('Se o site já estiver aberto'), segmentos([['trazer', tr('Trazer a aba para frente')], ['nova', tr('Abrir outra aba')]], modoAba, function (v) {
           mudar(function () { escrever(b, 'aba', v === 'nova' ? false : null); });
-        }), h('p', { class: 'nota', text: modoAba === 'trazer'
-          ? tr('Tocou de novo, volta para a mesma aba: nada de abas repetidas. Funciona com Safari, Chrome, Edge, Brave, Arc, Vivaldi e Opera.')
-          : tr('Cada toque abre uma aba nova do site.') })));
+        }), h('p', { class: 'nota', text: modoAba === 'nova' ? tr('Cada toque abre uma aba nova do site.') : (S.sistema === 'windows'
+          ? tr('Tocou de novo, volta para a mesma aba. No Windows o deck reconhece a aba pelo título (Gmail, YouTube, WhatsApp…) no Chrome, Edge, Firefox, Brave, Vivaldi e Opera; vale para o endereço principal do site. Se não reconhecer, abre uma aba nova.')
+          : tr('Tocou de novo, volta para a mesma aba: nada de abas repetidas. Funciona com Safari, Chrome, Edge, Brave, Arc, Vivaldi e Opera.')) })));
       } else {
-        opcoes.push(secao(tr('Se o site já estiver aberto'), h('p', { class: 'nota', text: tr('No Windows e no Linux cada toque abre uma aba nova. Trazer para frente a aba que já está aberta só funciona no Mac.') })));
+        opcoes.push(secao(tr('Se o site já estiver aberto'), h('p', { class: 'nota', text: tr('No Linux cada toque abre uma aba nova. Trazer para frente a aba que já está aberta funciona no Mac e no Windows.') })));
       }
       return secao(tr('Endereço'), seletorSites(ler(b, 'url'), tr('Salvar'), function (dados, sug) {
         if (sug.pedido && sug.img) S.mapaImg[sug.pedido] = sug.img;
@@ -1499,7 +1499,7 @@
 
   function notaNaoPerturbe() {
     if (S.sistema === 'mac') return tr('No Mac, o deck liga o Foco pelo app Atalhos: crie uma vez os atalhos “Deck Foco Ligar” e “Deck Foco Desligar” com a ação “Definir Foco” (Não Perturbe › Ligado/Desligado).');
-    if (S.sistema === 'windows') return tr('No Windows não há como ligar o Não perturbe por programa: o deck avisa no celular para você ligar em Win+N.');
+    if (S.sistema === 'windows') return tr('No Windows, o deck liga o Não incomodar sozinho (o sininho da Central de notificações). Se o Windows não deixar, o celular avisa para ligar à mão — o autoteste confere.');
     return tr('No Linux funciona no GNOME (esconde os avisos na tela).');
   }
 

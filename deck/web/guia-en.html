@@ -183,7 +183,7 @@
     <p>Everything is done in the editor, on the computer; the phone mirrors it instantly. Each <b>page</b> in the sidebar is a screen on the phone (4×2 by default). Click an empty space to create a button, or use <b>＋ Apps</b> and <b>＋ Sites</b> at the top.</p>
     <ul class="tipos">
       <li><b>App</b><span>Pick from the list of installed programs (on a Mac, the ones in the Applications folder and in your other folders, such as Downloads) — the button gets the app's own icon. Search matches initials too: “vs code” finds Visual Studio Code. If the app isn't installed and has a web version (Spotify, WhatsApp, Discord, Slack, Notion…), the button opens the website.</span></li>
-      <li><b>Site</b><span>Type an address or pick from open tabs, bookmarks and most visited. It gets the site's official icon. On a Mac, if the site is already open, a tap brings that tab to the front instead of opening another: change it in the button's panel, under <b>If the site is already open</b>.</span></li>
+      <li><b>Site</b><span>Type an address or pick from open tabs, bookmarks and most visited. It gets the site's official icon. On Mac and Windows, if the site is already open, a tap brings that tab to the front instead of opening another (on Windows, recognizing the tab by its title): change it in the button's panel, under <b>If the site is already open</b>.</span></li>
       <li><b>Keyboard shortcut</b><span>Record a combination, like ⌘C or Ctrl+Z, to press it remotely.</span></li>
       <li><b>Text</b><span>Types a ready-made phrase wherever the cursor is.</span></li>
       <li><b>Media and Volume</b><span>Play/pause, skip, up, down, mute.</span></li>
@@ -220,7 +220,7 @@
     <table>
       <tr><th>Computer</th><th>How it works</th></tr>
       <tr><td>Mac</td><td>Through the <b>Shortcuts</b> app (macOS 12 or newer). Create two shortcuts once, with the <b>Set Focus</b> action: <b>Deck Focus On</b> (Do Not Disturb › On) and <b>Deck Focus Off</b> (Do Not Disturb › Off). The names must be exactly these (the Portuguese “Deck Foco Ligar” and “Deck Foco Desligar” also work). Without the shortcuts, the mode does everything else and tells you on the phone what's missing.</td></tr>
-      <tr><td>Windows</td><td>Windows doesn't let programs turn on Do Not Disturb: the mode does the rest and reminds you on the phone to turn it on with <kbd>Win</kbd>+<kbd>N</kbd>.</td></tr>
+      <tr><td>Windows</td><td>The deck turns on <b>Do not disturb</b> by itself (<b>Focus assist</b> on Windows 10) and turns it off when the mode ends. If Windows doesn't allow it, the mode does the rest and reminds you on the phone to turn it on with the bell in the notification center (<kbd>Win</kbd>+<kbd>N</kbd>). The self-test (section 8) checks it.</td></tr>
       <tr><td>Linux</td><td>On GNOME, it turns on and off by itself (hides on-screen notifications).</td></tr>
     </table>
     <h3>Calls in each app</h3>
@@ -252,7 +252,7 @@
   <section id="problemas">
     <h2><span class="n">8</span>If something goes wrong</h2>
     <ul>
-      <li><b>A button doesn't work?</b> Double-click <b>Testar no Windows.bat</b> or <b>Testar no Mac.command</b> in the Deck folder (or run <code>python3 server.py --autoteste</code>). It checks every button without pressing any — app found, the right shortcut for that system, volume, microphone, permissions — and saves everything to <code>autoteste.txt</code>.</li>
+      <li><b>A button doesn't work?</b> Double-click <b>Testar no Windows.bat</b> or <b>Testar no Mac.command</b> in the Deck folder (or run <code>python3 server.py --autoteste</code>). It checks every button without pressing any — app found, the right shortcut for that system, volume, microphone, permissions — and saves everything to <code>autoteste.txt</code>. On Windows, it turns Do not disturb on and off once, to check that modes can do it.</li>
       <li><b>The app opens with a black screen</b> (or "could not connect"): the phone isn't finding the computer at the saved address. Close the app (swipe up) and open it again with the deck on. If it persists, the address changed: open <b>Connect phone</b> — it warns when the computer's IP or name changed and shows the new QR code. To avoid repeating it, use the link by name (default on a Mac) or the USB cable.</li>
       <li><b>Doesn't connect over Wi-Fi:</b> guest and company networks isolate devices from each other. Use the USB cable or Bluetooth.</li>
       <li><b>"Apple could not verify…" when opening <code>Iniciar no Mac.command</code>:</b> that's the macOS warning for programs that didn't go through Apple. System Settings › Privacy &amp; Security › <b>Open Anyway</b> (once only), or install with the Terminal line from the site, which has no such warning.</li>

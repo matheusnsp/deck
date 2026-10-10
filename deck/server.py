@@ -40,7 +40,7 @@ from concurrent.futures import TimeoutError as TempoEsgotado
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlencode, urljoin, urlparse
 
-VERSAO = "3.2.9"
+VERSAO = "3.2.10"
 PASTA = os.path.dirname(os.path.abspath(__file__))
 PASTA_WEB = os.path.join(PASTA, "web")
 PASTA_ICONES = os.path.join(PASTA, "icones")
@@ -261,6 +261,10 @@ TEXTOS_EN = {
     "Desligar": "Shut down", "Reiniciar": "Restart", "Suspender": "Sleep", "Bloquear": "Lock",
     "Apagar tela": "Screen off", "Ligar tela": "Screen on",
     "Não consegui apagar a tela.": "Couldn't turn the screen off.",
+    "Não consegui ler as abas do navegador.": "Couldn't read the browser tabs.",
+    "Abas do navegador": "Browser tabs",
+    "%d abas abertas (%s): o deck consegue trazer a aba do site para frente": "%d open tabs (%s): the deck can bring a site's tab to the front",
+    "nenhuma aba encontrada (abra o Chrome ou o Edge e rode de novo)": "no tabs found (open Chrome or Edge and run it again)",
     "Não consegui ligar a tela.": "Couldn't turn the screen on.",
     "apaga só a tela; o computador continua ligado e o deck responde": "turns only the screen off; the computer stays on and the deck keeps answering",
     "acende a tela de novo (se o computador não estiver dormindo)": "turns the screen back on (if the computer isn't asleep)",
@@ -426,8 +430,16 @@ TEXTOS_EN = {
     "O atalho “%s” falhou: %s": "The shortcut “%s” failed: %s",
     "Para o Não perturbe, crie no app Atalhos os atalhos “Deck Foco Ligar” e “Deck Foco Desligar” (ação Definir Foco). Veja Como usar › Modos.":
         "For Do Not Disturb, create the shortcuts “Deck Focus On” and “Deck Focus Off” in the Shortcuts app (Set Focus action). See How to use › Modes.",
-    "No Windows, o Não perturbe não liga por programa: ligue em Win+N › Não perturbe.":
-        "On Windows, Do Not Disturb can't be turned on by a program: turn it on in Win+N › Do not disturb.",
+    "⚠ Não incomodar do Windows: %s": "⚠ Windows Do not disturb: %s",
+    "sem resposta": "no answer",
+    "O Windows não deixou o deck ligar o Não incomodar: ligue no sininho da Central de notificações (Win+N).":
+        "Windows didn't let the deck turn on Do not disturb: turn it on with the bell in the notification center (Win+N).",
+    "O Windows não deixou o deck desligar o Não incomodar: desligue no sininho da Central de notificações (Win+N).":
+        "Windows didn't let the deck turn off Do not disturb: turn it off with the bell in the notification center (Win+N).",
+    "O Windows não deixou o deck ligar o Assistente de foco: ligue em Win+A › Assistente de foco.":
+        "Windows didn't let the deck turn on Focus assist: turn it on in Win+A › Focus assist.",
+    "O Windows não deixou o deck desligar o Assistente de foco: desligue em Win+A › Assistente de foco.":
+        "Windows didn't let the deck turn off Focus assist: turn it off in Win+A › Focus assist.",
     "Não consegui mudar o Não perturbe neste Linux (funciona no GNOME).": "I couldn't change Do Not Disturb on this Linux (it works on GNOME).",
     "Não sei fechar apps neste computador.": "I don't know how to close apps on this computer.",
     "⏱ %s: tempo encerrado": "⏱ %s: time's up",
@@ -509,7 +521,17 @@ TEXTOS_EN = {
     "clica no aviso da chamada": "clicks the call notification",
     "nenhum app de chamada tem atalho para isso": "no call app has a shortcut for this",
     "volume %d%%": "volume %d%%",
-    "Não perturbe: no Windows não liga sozinho (Win+N)": "Do Not Disturb: Windows doesn't let it turn on by itself (Win+N)",
+    "Não incomodar": "Do not disturb",
+    "Assistente de foco": "Focus assist",
+    "estava ligado: desliguei e liguei de volta": "it was on: I turned it off and back on",
+    "liguei e desliguei de volta": "I turned it on and back off",
+    " — os modos ligam sozinhos": " — modes turn it on by themselves",
+    "pedi %s, ficou %s": "asked for %s, got %s",
+    "o Windows não deixou o deck mexer (%s): os modos fazem o resto e lembram de ligar à mão":
+        "Windows didn't let the deck change it (%s): modes do the rest and remind you to turn it on yourself",
+    "Não incomodar: o Windows não deixou ligar (o celular lembra de ligar à mão)":
+        "Do not disturb: Windows didn't let it turn on (the phone reminds you to turn it on yourself)",
+    "liga o Não incomodar": "turns on Do not disturb",
     "Não perturbe: falta criar o atalho “Deck Foco Ligar” no app Atalhos": "Do Not Disturb: create the “Deck Focus On” shortcut in the Shortcuts app",
     "liga o Não perturbe": "turns on Do Not Disturb",
     "%s não está instalado (abre a versão web)": "%s isn't installed (opens the web version)",
@@ -519,6 +541,8 @@ TEXTOS_EN = {
     "vai para a página %s": "goes to the %s page",
     "  Deck v%s · autoteste no %s": "  Deck v%s · self-test on %s",
     "  Nada é apertado de verdade: só confiro se cada botão tem o que precisa neste computador.": "  Nothing is actually pressed: I only check that each button has what it needs on this computer.",
+    "  A única exceção: ligo e desligo de volta o Não incomodar, para ver se os modos conseguem.":
+        "  The only exception: I turn Do not disturb on and back off, to see whether modes can do it.",
     " (player)": " (player)",
     "Player": "Player",
     "mostra o que está tocando (veja “Tocando agora” acima)": "shows what's playing (see “Now playing” above)",
@@ -1602,7 +1626,7 @@ class Sistema:
     def abas_abertas(self):
         return []
 
-    def focar_aba(self, url, navegador):
+    def focar_aba(self, url, navegador, nomes=()):
         return False
 
     def abrir_site(self, url, navegador):
@@ -1868,7 +1892,7 @@ class SistemaMac(Sistema):
                 log(amarelo(tr("⚠ Para ver as abas abertas e trazê-las para frente, permita que o Terminal controle o "
                             "Safari/Chrome: Ajustes do Sistema › Privacidade e Segurança › Automação.")))
 
-    def focar_aba(self, url, navegador):
+    def focar_aba(self, url, navegador, nomes=()):
         rodando = self._rodando()
         if navegador:
             chave = chave_do_navegador(navegador)
@@ -2358,6 +2382,197 @@ def app_paths_windows(nome):
     return None
 
 
+PS_ABAS = r"""
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+Add-Type -TypeDefinition @'
+using System;
+using System.Runtime.InteropServices;
+public static class DeckJanela {
+  [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, IntPtr p);
+  [DllImport("kernel32.dll")] static extern uint GetCurrentThreadId();
+  [DllImport("user32.dll")] static extern bool AttachThreadInput(uint a, uint b, bool f);
+  [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr h);
+  [DllImport("user32.dll")] static extern bool BringWindowToTop(IntPtr h);
+  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr h, int c);
+  [DllImport("user32.dll")] static extern bool IsIconic(IntPtr h);
+  [DllImport("user32.dll")] static extern void SwitchToThisWindow(IntPtr h, bool alt);
+  public static bool Frente(IntPtr h) {
+    if (IsIconic(h)) ShowWindow(h, 9);
+    IntPtr atual = GetForegroundWindow();
+    if (atual == h) return true;
+    uint dono = GetWindowThreadProcessId(atual, IntPtr.Zero);
+    uint meu = GetCurrentThreadId();
+    bool junto = dono != 0 && dono != meu && AttachThreadInput(meu, dono, true);
+    BringWindowToTop(h);
+    SetForegroundWindow(h);
+    if (junto) AttachThreadInput(meu, dono, false);
+    if (GetForegroundWindow() != h) SwitchToThisWindow(h, true);
+    return GetForegroundWindow() == h;
+  }
+}
+'@
+$A = [System.Windows.Automation.AutomationElement]
+$CT = [System.Windows.Automation.ControlType]
+$navegadores = @('chrome', 'msedge', 'firefox', 'brave', 'vivaldi', 'opera', 'chromium')
+function Texto($s) {
+  $o = ''
+  foreach ($c in ([string]$s).ToCharArray()) {
+    $n = [int]$c
+    if ($n -lt 32 -or $n -gt 126 -or $n -eq 34 -or $n -eq 92) { $o += '\u{0:x4}' -f $n } else { $o += $c }
+  }
+  '"' + $o + '"'
+}
+function Abas($janela) {
+  $andador = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+  $fila = New-Object System.Collections.Queue
+  $fila.Enqueue(@($janela, 0))
+  $achadas = New-Object System.Collections.ArrayList
+  $limite = 99
+  $vistos = 0
+  while ($fila.Count -gt 0 -and $vistos -lt 2500) {
+    $item = $fila.Dequeue()
+    if ($item[1] -gt $limite) { break }
+    $filho = $andador.GetFirstChild($item[0])
+    while ($null -ne $filho) {
+      $vistos++
+      $tipo = $filho.Current.ControlType
+      if ($tipo -eq $CT::TabItem) {
+        [void]$achadas.Add($filho)
+        $limite = $item[1]
+      } elseif ($tipo -ne $CT::Document -and $item[1] -lt 14) {
+        $fila.Enqueue(@($filho, ($item[1] + 1)))
+      }
+      $filho = $andador.GetNextSibling($filho)
+    }
+  }
+  $achadas
+}
+function Selecionada($aba) {
+  try { return $aba.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Current.IsSelected } catch { return $false }
+}
+function Listar {
+  $partes = New-Object System.Collections.ArrayList
+  $todas = $A::RootElement.FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)
+  foreach ($janela in $todas) {
+    try {
+      $classe = $janela.Current.ClassName
+      if ($classe -ne 'Chrome_WidgetWin_1' -and $classe -ne 'MozillaWindowClass') { continue }
+      $proc = (Get-Process -Id $janela.Current.ProcessId).ProcessName.ToLower()
+      if ($navegadores -notcontains $proc) { continue }
+      $h = [long]$janela.Current.NativeWindowHandle
+      $k = 0
+      foreach ($aba in @(Abas $janela)) {
+        $sel = if (Selecionada $aba) { 'true' } else { 'false' }
+        [void]$partes.Add('{"j":' + $h + ',"e":' + (Texto $proc) + ',"i":' + $k + ',"t":' + (Texto $aba.Current.Name) + ',"s":' + $sel + '}')
+        $k++
+      }
+    } catch { }
+  }
+  '"ok":true,"abas":[' + ($partes -join ',') + ']'
+}
+function Focar([string]$h, [string]$i, [string]$nome) {
+  $janela = $A::FromHandle([IntPtr][long]$h)
+  $abas = @(Abas $janela)
+  $k = [int]$i
+  $aba = $null
+  if ($k -lt $abas.Count -and $abas[$k].Current.Name -eq $nome) { $aba = $abas[$k] }
+  else {
+    for ($m = 0; $m -lt $abas.Count; $m++) { if ($abas[$m].Current.Name -eq $nome) { $aba = $abas[$m]; $k = $m; break } }
+  }
+  if ($null -eq $aba) { return '"ok":false,"erro":"sumiu"' }
+  $metodo = 'teclas'
+  try { $aba.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern).Select(); $metodo = 'selecao' } catch {
+    try { $aba.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $metodo = 'invocar' } catch { $metodo = 'teclas' }
+  }
+  $frente = [DeckJanela]::Frente([IntPtr][long]$h)
+  if (-not $frente) {
+    try { $frente = (New-Object -ComObject WScript.Shell).AppActivate($janela.Current.Name) } catch { $frente = $false }
+  }
+  $f = if ($frente) { 'true' } else { 'false' }
+  '"ok":true,"metodo":' + (Texto $metodo) + ',"indice":' + $k + ',"total":' + $abas.Count + ',"frente":' + $f
+}
+while ($true) {
+  $linha = [Console]::In.ReadLine()
+  if ($null -eq $linha) { break }
+  $partes = $linha.Split([char]9)
+  $numero = $partes[0]
+  try {
+    if ($partes.Count -gt 1 -and $partes[1] -eq 'abas') { $corpo = Listar }
+    elseif ($partes.Count -gt 4 -and $partes[1] -eq 'focar') {
+      $nome = [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($partes[4]))
+      $corpo = Focar $partes[2] $partes[3] $nome
+    }
+    else { $corpo = '"ok":false,"erro":"comando"' }
+  } catch { $corpo = '"ok":false,"erro":' + (Texto $_.Exception.Message) }
+  [Console]::Out.WriteLine('{"n":' + (Texto $numero) + ',' + $corpo + '}')
+  [Console]::Out.Flush()
+}
+"""
+
+MARCAS_SITES = {
+    "mail.google.com": ("gmail",), "calendar.google.com": ("google agenda", "google calendar"),
+    "drive.google.com": ("google drive", "meu drive", "my drive"),
+    "docs.google.com": ("documentos google", "google docs", "planilhas google", "google sheets", "apresentacoes google",
+                        "google slides", "formularios google", "google forms"),
+    "sheets.google.com": ("planilhas google", "google sheets"), "slides.google.com": ("apresentacoes google", "google slides"),
+    "meet.google.com": ("meet", "google meet"), "music.youtube.com": ("youtube music",),
+    "teams.microsoft.com": ("microsoft teams",), "outlook.live.com": ("outlook",), "outlook.office.com": ("outlook",),
+    "web.telegram.org": ("telegram", "telegram web"),
+}
+DOMINIOS_AMPLOS = {"google", "microsoft", "live", "office", "apple", "amazon", "yahoo", "globo", "uol"}
+BUSCADORES = {"pesquisa google", "google search", "pesquisa do google", "bing", "pesquisa bing", "duckduckgo",
+              "pesquisa yahoo", "yahoo search", "ecosia"}
+
+
+def partes_do_titulo(titulo):
+    t = re.sub(r"^\(\d+\+?\)\s*", "", str(titulo or "").strip())
+    return [p for p in (comparavel(x) for x in re.split(r"\s+[-–—|·•]\s+", t)) if p]
+
+
+def site_raiz(url):
+    caminho = (urlparse(url).path or "").strip("/")
+    return url.lower().startswith(ESQUEMAS_SITE) and not caminho
+
+
+def marcas_do_site(url, nomes=()):
+    host = (urlparse(url).hostname or "").lower()
+    host = host[4:] if host.startswith("www.") else host
+    marcas = set(MARCAS_SITES.get(host, ()))
+    dominio = comparavel(nome_do_dominio(url))
+    if dominio and dominio not in DOMINIOS_AMPLOS and host not in MARCAS_SITES:
+        marcas.add(dominio)
+    for nome in nomes or ():
+        for parte in partes_do_titulo(nome):
+            if len(parte.split()) <= 3 and parte not in DOMINIOS_AMPLOS and parte not in BUSCADORES:
+                marcas.add(parte)
+    return marcas
+
+
+def escolher_aba_por_titulo(abas, url, nomes=()):
+    marcas = marcas_do_site(url, nomes)
+    achadas = []
+    for a in abas or ():
+        partes = partes_do_titulo(a.get("t"))
+        if partes and not any(p in BUSCADORES for p in partes) and any(p in marcas for p in partes):
+            achadas.append(a)
+    if not achadas:
+        return None
+    janela = achadas[0].get("j")
+    mesma = [a for a in achadas if a.get("j") == janela]
+    return next((a for a in mesma if a.get("s")), mesma[0])
+
+
+def chave_do_processo(nome):
+    n = str(nome or "").lower()
+    for nav in NAVEGADORES:
+        if any(os.path.splitext(e)[0].lower() == n for e in nav["exes"]):
+            return nav["chave"]
+    return None
+
+
 class STATUS_ENERGIA(ctypes.Structure):
     _fields_ = [("ACLineStatus", ctypes.c_ubyte), ("BatteryFlag", ctypes.c_ubyte), ("BatteryLifePercent", ctypes.c_ubyte),
                 ("SystemStatusFlag", ctypes.c_ubyte), ("BatteryLifeTime", ctypes.c_uint32),
@@ -2390,6 +2605,10 @@ class SistemaWindows(Sistema):
         self._trava_player = threading.Lock()
         self._proc_player = None
         self._player_falhou = 0.0
+        self._trava_abas = threading.Lock()
+        self._proc_abas = None
+        self._abas_desde = 0.0
+        self._abas_falhou = 0.0
         self._quer_acordado = False
         self._fio_acordado = None
 
@@ -2708,6 +2927,76 @@ class SistemaWindows(Sistema):
                 raise ErroAcao(tr("O Windows não informou o que está tocando."))
             return self._proc_player, True
 
+    def _pedir_abas(self, partes):
+        with self._trava_abas:
+            if self._proc_abas is None or not self._proc_abas.vivo():
+                if time.time() - self._abas_falhou < 60:
+                    raise ErroAcao(tr("Não consegui ler as abas do navegador."))
+                try:
+                    self._proc_abas = ProcessoPorLinhas(ps_codificado(PS_ABAS))
+                except (OSError, ErroAcao):
+                    self._abas_falhou = time.time()
+                    raise ErroAcao(tr("Não consegui ler as abas do navegador."))
+                self._abas_desde = time.time()
+            proc = self._proc_abas
+            try:
+                return proc.pedir(partes, max(5.0, 20.0 - (time.time() - self._abas_desde)))
+            except ErroAcao:
+                proc.fechar()
+                self._proc_abas = None
+                self._abas_falhou = time.time()
+                raise ErroAcao(tr("Não consegui ler as abas do navegador."))
+
+    def abas_windows(self):
+        r = self._pedir_abas(["abas"])
+        if not r.get("ok"):
+            raise ErroAcao(tr("Não consegui ler as abas do navegador.") + (" (%s)" % r.get("erro") if r.get("erro") else ""))
+        return [x for x in (r.get("abas") or []) if isinstance(x, dict)]
+
+    def preparar_abas(self):
+        time.sleep(4)
+        try:
+            self.abas_windows()
+        except ErroAcao:
+            pass
+
+    def focar_aba(self, url, navegador, nomes=()):
+        if not site_raiz(url):
+            return False
+        try:
+            abas = self.abas_windows()
+        except ErroAcao:
+            return False
+        if navegador:
+            chave = chave_do_navegador(navegador)
+            abas = [x for x in abas if chave_do_processo(x.get("e")) == chave]
+        aba = escolher_aba_por_titulo(abas, url, nomes)
+        if not aba:
+            return False
+        nome = base64.b64encode(str(aba.get("t") or "").encode("utf-8")).decode("ascii")
+        try:
+            r = self._pedir_abas(["focar", aba.get("j"), aba.get("i"), nome])
+        except ErroAcao:
+            return False
+        if not r.get("ok") or not r.get("frente"):
+            return False
+        if r.get("metodo") == "teclas":
+            indice, total = r.get("indice"), r.get("total")
+            if not isinstance(indice, int):
+                return False
+            if indice < 8:
+                tecla = str(indice + 1)
+            elif isinstance(total, int) and indice == total - 1:
+                tecla = "9"
+            else:
+                return False
+            try:
+                t = self.teclado()
+                t.enviar(t.combo((("ctrl",), ("char", tecla))))
+            except ErroAcao:
+                return False
+        return True
+
     def _pedir_player(self, partes):
         proc, novo = self._player()
         try:
@@ -2722,10 +3011,29 @@ class SistemaWindows(Sistema):
             raise ErroAcao(tr("O Windows não informou o que está tocando."))
         return r
 
+    def silencio(self, op):
+        codigo, saida, erro = rodar([sys.executable, os.path.abspath(__file__), "--nao-incomodar-windows", op], espera=10)
+        try:
+            r = json.loads((saida or "").strip().splitlines()[-1])
+            if isinstance(r, dict):
+                return r
+        except (ValueError, IndexError):
+            pass
+        return {"erro": ((erro or saida or "").strip()[-160:] or tr("sem resposta"))}
+
     def nao_perturbe(self, ligar):
-        if not ligar:
+        op = "ligar" if ligar else "desligar"
+        r = self.silencio(op)
+        if not r.get("erro") and r.get("perfil") == PERFIS_SILENCIO[op]:
             return {"ok": True}
-        return {"ok": True, "mensagem": tr("No Windows, o Não perturbe não liga por programa: ligue em Win+N › Não perturbe.")}
+        log(amarelo(tr("⚠ Não incomodar do Windows: %s") % (r.get("erro") or r.get("perfil") or "?")))
+        if windows_11():
+            texto = (tr("O Windows não deixou o deck ligar o Não incomodar: ligue no sininho da Central de notificações (Win+N).")
+                     if ligar else tr("O Windows não deixou o deck desligar o Não incomodar: desligue no sininho da Central de notificações (Win+N)."))
+        else:
+            texto = (tr("O Windows não deixou o deck ligar o Assistente de foco: ligue em Win+A › Assistente de foco.")
+                     if ligar else tr("O Windows não deixou o deck desligar o Assistente de foco: desligue em Win+A › Assistente de foco."))
+        return {"ok": True, "aviso": True, "mensagem": texto}
 
     def manter_acordado(self, ligar):
         self._quer_acordado = bool(ligar)
@@ -3095,6 +3403,101 @@ def audio_windows(op, arg):
         definir_mudo(entrada, not mudo(entrada))
     return {"som_mudo": mudo(saida) if saida else None, "volume": nivel(saida) if saida else None,
             "mic_mudo": mudo(entrada) if entrada else None}
+
+
+PERFIS_SILENCIO = {"ligar": "Microsoft.QuietHoursProfile.PriorityOnly", "desligar": "Microsoft.QuietHoursProfile.Unrestricted"}
+
+
+def windows_11():
+    try:
+        return sys.getwindowsversion().build >= 22000
+    except AttributeError:
+        return True
+
+
+def nao_incomodar_windows(op):
+    import uuid
+
+    class GUID(ctypes.Structure):
+        _fields_ = [("a", ctypes.c_uint32), ("b", ctypes.c_uint16), ("c", ctypes.c_uint16),
+                    ("d", ctypes.c_ubyte * 8)]
+
+    def guid(s):
+        return GUID.from_buffer_copy(uuid.UUID(s).bytes_le)
+
+    def nivel():
+        try:
+            f = ctypes.WinDLL("ntdll").NtQueryWnfStateData
+            f.argtypes = (ctypes.c_void_p,) * 6
+            f.restype = ctypes.c_long
+            nome = ctypes.c_uint64(0x0D83063EA3BF1C75)
+            carimbo, valor, tamanho = ctypes.c_uint32(), ctypes.c_uint32(), ctypes.c_uint32(4)
+            if f(ctypes.byref(nome), None, None, ctypes.byref(carimbo), ctypes.byref(valor), ctypes.byref(tamanho)) != 0:
+                return None
+            return valor.value if tamanho.value >= 4 else 0
+        except (AttributeError, OSError, ValueError):
+            return None
+
+    def esperar_nivel(ligado):
+        fim = time.time() + 2.5
+        while True:
+            n = nivel()
+            if n is None or (n > 0) == ligado or time.time() > fim:
+                return n
+            time.sleep(0.15)
+
+    r = {"nivel_antes": nivel()}
+    try:
+        ole32 = ctypes.OleDLL("ole32")
+        ole32.CoInitializeEx(None, 2)
+        obj = ctypes.c_void_p()
+        ole32.CoCreateInstance(ctypes.byref(guid("F53321FA-34F8-4B7F-B9A3-361877CB94CF")), None, 4,
+                               ctypes.byref(guid("6BFF4732-81EC-4FFB-AE67-B6C1BC29631F")), ctypes.byref(obj))
+        if not obj.value:
+            raise OSError("sem objeto")
+        tabela = ctypes.cast(obj, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
+        ler = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(ctypes.c_wchar_p))(tabela[3])
+        gravar = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.c_void_p)(tabela[4])
+        oleaut = ctypes.WinDLL("oleaut32")
+        oleaut.SysAllocString.argtypes = (ctypes.c_wchar_p,)
+        oleaut.SysAllocString.restype = ctypes.c_void_p
+        oleaut.SysFreeString.argtypes = (ctypes.c_void_p,)
+        oleaut.SysFreeString.restype = None
+
+        def perfil():
+            p = ctypes.c_wchar_p()
+            ler(obj, ctypes.byref(p))
+            return p.value or ""
+
+        def definir(alvo, esperar=False):
+            if perfil() != alvo:
+                texto = oleaut.SysAllocString(alvo)
+                if not texto:
+                    raise OSError("sem memória")
+                try:
+                    gravar(obj, texto)
+                finally:
+                    oleaut.SysFreeString(texto)
+            return perfil(), (esperar_nivel(alvo != PERFIS_SILENCIO["desligar"]) if esperar else nivel())
+
+        r["perfil_antes"] = perfil()
+        if op in PERFIS_SILENCIO:
+            r["perfil"], r["nivel"] = definir(PERFIS_SILENCIO[op])
+        elif op == "testar":
+            antes = r["perfil_antes"] or PERFIS_SILENCIO["desligar"]
+            ligado = antes != PERFIS_SILENCIO["desligar"]
+            outro = PERFIS_SILENCIO["desligar" if ligado else "ligar"]
+            try:
+                r["trocou"], r["nivel_trocado"] = definir(outro, True)
+            finally:
+                r["perfil"], r["nivel"] = definir(antes, True)
+            r["ok"] = r["trocou"] == outro and r["perfil"] == antes
+        else:
+            r["perfil"], r["nivel"] = r["perfil_antes"], r["nivel_antes"]
+    except (AttributeError, OSError, ValueError) as e:
+        codigo = getattr(e, "winerror", None)
+        r["erro"] = "0x%08X" % (codigo & 0xFFFFFFFF) if isinstance(codigo, int) else (str(e) or type(e).__name__)[:120]
+    return r
 
 
 def icones_windows(arquivo):
@@ -3984,6 +4387,7 @@ NOMES_CHAMADA = {"atender": "Atender", "recusar": "Recusar", "mudo": "Mudo na ch
 ROTULOS_ACEITAR = ("accept", "aceitar", "atender", "answer", "aceptar", "contestar")
 ROTULOS_RECUSAR = ("decline", "recusar", "rejeitar", "rechazar", "reject")
 ATALHOS_FOCO_MAC = {True: ("Deck Foco Ligar", "Deck Focus On"), False: ("Deck Foco Desligar", "Deck Focus Off")}
+ESPERA_MODO = 6.0
 ALIAS_ENERGIA = {
     "desligar": "desligar", "shutdown": "desligar", "poweroff": "desligar", "apagar": "desligar", "off": "desligar",
     "reiniciar": "reiniciar", "restart": "reiniciar", "reboot": "reiniciar",
@@ -5887,6 +6291,10 @@ class Icones:
             self.falhas[chave] = time.time()
         return None
 
+    def titulo_salvo(self, url):
+        with self.trava:
+            return self.indice.get("titulo|" + url) or self.titulos.get(url)
+
     def _guardar_titulo(self, url, info):
         with self.trava:
             if info.get("titulo"):
@@ -6418,11 +6826,12 @@ class Executor:
                 web = app_na_web(a["apps"])
                 if not web:
                     raise
-                if not s.focar_aba(web, None):
+                if not s.focar_aba(web, None, self.estado.nomes_do_site(web)):
                     s.abrir_site(web, None)
                 return {"ok": True, "mensagem": tr("“%s” não está instalado neste computador: abri a versão web.") % a["apps"][0]}
         if t == "link":
-            if a.get("aba", True) and a["url"].lower().startswith(ESQUEMAS_SITE) and s.focar_aba(a["url"], a.get("navegador")):
+            if a.get("aba", True) and a["url"].lower().startswith(ESQUEMAS_SITE) and \
+                    s.focar_aba(a["url"], a.get("navegador"), self.estado.nomes_do_site(a["url"])):
                 return {"ok": True}
             return s.abrir_site(a["url"], a.get("navegador"))
         if t == "comando":
@@ -6880,7 +7289,7 @@ class Estado:
         s = self.sistema
         if tem_esquema(item) or re.match(r"^[\w.-]+\.[a-z]{2,}(/|$)", item, re.I):
             url = item if tem_esquema(item) else "https://" + item
-            if url.lower().startswith(ESQUEMAS_SITE) and s.focar_aba(url, None):
+            if url.lower().startswith(ESQUEMAS_SITE) and s.focar_aba(url, None, self.nomes_do_site(url)):
                 return
             s.abrir_site(url, None)
         else:
@@ -6890,8 +7299,12 @@ class Estado:
                 web = app_na_web([item])
                 if not web:
                     raise
-                if not s.focar_aba(web, None):
+                if not s.focar_aba(web, None, self.nomes_do_site(web)):
                     s.abrir_site(web, None)
+
+    def nomes_do_site(self, url):
+        titulo = self.icones.titulo_salvo(url)
+        return [titulo] if titulo else []
 
     def _passo_do_modo(self, avisos, funcao, *args):
         try:
@@ -6954,15 +7367,13 @@ class Estado:
             if atual and not atual.get("concluido"):
                 self._sair_do_modo(atual, a)
         avisos = []
-        s = self.sistema
-        if a.get("nao_perturbe") is not None:
-            self._passo_do_modo(avisos, s.nao_perturbe, a["nao_perturbe"])
-        if a.get("fechar"):
-            self._passo_do_modo(avisos, s.fechar_apps, a["fechar"])
-        for item in a.get("abrir") or []:
-            self._passo_do_modo(avisos, self._abrir_item, item)
-        if a.get("volume") is not None:
-            self._passo_do_modo(avisos, s.volume, str(a["volume"]))
+        controle = {"trava": threading.Lock(), "respondido": False}
+        fio = threading.Thread(target=self._passos_do_modo, args=(a, avisos, controle), daemon=True)
+        fio.start()
+        fio.join(ESPERA_MODO)
+        with controle["trava"]:
+            controle["respondido"] = True
+            avisos = list(avisos)
         agora = time.time()
         with self._trava_modo:
             self.modo = {"id": a["id"], "titulo": a.get("titulo") or tr("Modo"), "icone": a.get("icone"), "cor": a.get("cor"),
@@ -6975,7 +7386,30 @@ class Estado:
         r = {"ok": True, "ativo": True, "info": a.get("titulo") or tr("Modo"), "modo": publico}
         if avisos:
             r["mensagem"] = avisos[0]
+            r["aviso"] = True
         return r
+
+    def _passos_do_modo(self, a, avisos, controle):
+        s = self.sistema
+
+        def passo(funcao, *args):
+            lista = []
+            self._passo_do_modo(lista, funcao, *args)
+            with controle["trava"]:
+                if not controle["respondido"]:
+                    avisos.extend(lista)
+                    return
+            for aviso in lista:
+                log(amarelo("⚠ " + aviso))
+
+        if a.get("nao_perturbe") is not None:
+            passo(s.nao_perturbe, a["nao_perturbe"])
+        if a.get("fechar"):
+            passo(s.fechar_apps, a["fechar"])
+        for item in a.get("abrir") or []:
+            passo(self._abrir_item, item)
+        if a.get("volume") is not None:
+            passo(s.volume, str(a["volume"]))
 
     def modo_publico(self):
         with self._trava_modo:
@@ -7626,6 +8060,11 @@ class Servidor(ThreadingHTTPServer):
         self.server_name = "deck"
         self.server_port = self.server_address[1]
 
+    def handle_error(self, request, client_address):
+        if isinstance(sys.exc_info()[1], (ConnectionError, socket.timeout)):
+            return
+        ThreadingHTTPServer.handle_error(self, request, client_address)
+
 
 def anunciar_na_rede(porta):
     if SISTEMA != "mac" or os.environ.get("DECK_SISTEMA") or not shutil.which("dns-sd"):
@@ -7725,6 +8164,7 @@ class Autoteste:
         self.hotkeys = {}
         self.audio = None
         self.atalhos_mac = None
+        self.silencio = None
 
     def escrever(self, texto="", cor=None):
         self.linhas.append(texto)
@@ -7765,6 +8205,35 @@ class Autoteste:
         else:
             detalhe = " · ".join(x for x in (info.get("motivo"), info.get("detalhe")) if x)
             self.marcar("erro", tr("Menu Iniciar"), tr("não consegui ler a lista de apps") + (" (%s)" % detalhe if detalhe else ""))
+        try:
+            abas = self.s.abas_windows()
+            navs = sorted({POR_CHAVE[c]["nome"] for c in (chave_do_processo(a.get("e")) for a in abas) if c in POR_CHAVE})
+            if abas:
+                self.marcar("ok", tr("Abas do navegador"), tr("%d abas abertas (%s): o deck consegue trazer a aba do site para frente")
+                            % (len(abas), ", ".join(navs)))
+            else:
+                self.marcar("aviso", tr("Abas do navegador"), tr("nenhuma aba encontrada (abra o Chrome ou o Edge e rode de novo)"))
+        except ErroAcao as e:
+            self.marcar("aviso", tr("Abas do navegador"), str(e))
+        finally:
+            proc = getattr(self.s, "_proc_abas", None)
+            if proc is not None:
+                proc.fechar()
+        self._silencio_windows()
+
+    def _silencio_windows(self):
+        nome = tr("Não incomodar") if windows_11() else tr("Assistente de foco")
+        r = self.s.silencio("testar")
+        if r.get("ok"):
+            self.silencio = True
+            ligado = r.get("perfil") != PERFIS_SILENCIO["desligar"]
+            wnf = " (WNF %s → %s)" % (r.get("nivel_trocado"), r.get("nivel")) if r.get("nivel") is not None else ""
+            self.marcar("ok", nome, (tr("estava ligado: desliguei e liguei de volta") if ligado else tr("liguei e desliguei de volta"))
+                        + tr(" — os modos ligam sozinhos") + wnf)
+            return
+        self.silencio = False
+        detalhe = r.get("erro") or tr("pedi %s, ficou %s") % (r.get("trocou") or "?", r.get("perfil") or "?")
+        self.marcar("aviso", nome, tr("o Windows não deixou o deck mexer (%s): os modos fazem o resto e lembram de ligar à mão") % detalhe)
 
     def _mac(self):
         self.ax = _acessibilidade_mac()
@@ -7949,8 +8418,11 @@ class Autoteste:
             partes.append(tr("volume %d%%") % a["volume"])
         if a.get("nao_perturbe"):
             if SISTEMA == "windows":
-                estado = "aviso"
-                partes.append(tr("Não perturbe: no Windows não liga sozinho (Win+N)"))
+                if self.silencio is False:
+                    estado = "aviso"
+                    partes.append(tr("Não incomodar: o Windows não deixou ligar (o celular lembra de ligar à mão)"))
+                else:
+                    partes.append(tr("liga o Não incomodar"))
             elif SISTEMA == "mac":
                 nomes = {comparavel(n) for n in ATALHOS_FOCO_MAC[True]}
                 if self.atalhos_mac is not None and not (nomes & self.atalhos_mac):
@@ -7985,6 +8457,8 @@ class Autoteste:
         self.escrever()
         self.escrever(tr("  Deck v%s · autoteste no %s") % (VERSAO, NOMES_SISTEMA[SISTEMA]), negrito)
         self.escrever(tr("  Nada é apertado de verdade: só confiro se cada botão tem o que precisa neste computador."), cinza)
+        if SISTEMA == "windows":
+            self.escrever(tr("  A única exceção: ligo e desligo de volta o Não incomodar, para ver se os modos conseguem."), cinza)
         self.escrever()
         self.ambiente()
         try:
@@ -8035,6 +8509,9 @@ def main():
     if len(sys.argv) >= 3 and sys.argv[1] == "--audio-windows":
         print(json.dumps(audio_windows(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "")))
         return
+    if len(sys.argv) >= 3 and sys.argv[1] == "--nao-incomodar-windows":
+        print(json.dumps(nao_incomodar_windows(sys.argv[2])))
+        return
     if len(sys.argv) >= 3 and sys.argv[1] == "--icones-windows":
         print(json.dumps(icones_windows(sys.argv[2])))
         return
@@ -8076,6 +8553,7 @@ def main():
     estado.imagens(estado.deck())
     if SISTEMA == "windows":
         threading.Thread(target=estado.sistema.apps_iniciar, daemon=True).start()
+        threading.Thread(target=estado.sistema.preparar_abas, daemon=True).start()
     if SISTEMA in ("mac", "windows") and not os.environ.get("DECK_SISTEMA"):
         threading.Thread(target=estado.vigiar_sono, daemon=True).start()
     if token_novo and args.novo_link:
